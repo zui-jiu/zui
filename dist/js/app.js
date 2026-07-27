@@ -358,22 +358,9 @@ const App = (function () {
       manageBtn.addEventListener('click', showManageModulesModal);
     }
 
-    // 导出数据
-    const exportBtn = document.getElementById('exportDataBtn');
-    if (exportBtn) {
-      exportBtn.addEventListener('click', function () {
-        Store.exportData('json');
-        toast('数据已导出为文件，请妥善保存', 'success');
-      });
-    }
-
-    // 导入数据
-    const importBtn = document.getElementById('importDataBtn');
+    // 导入数据（从数据管理弹窗触发）
     const importFileInput = document.getElementById('importFileInput');
-    if (importBtn && importFileInput) {
-      importBtn.addEventListener('click', function () {
-        importFileInput.click();
-      });
+    if (importFileInput) {
       importFileInput.addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -554,13 +541,13 @@ const App = (function () {
     container.classList.add('active');
   }
 
-  // 导出弹窗
+  // 数据管理弹窗（导出+导入）
   function showExportModal() {
     const html = `
       <div class="modal-overlay" id="exportModal">
         <div class="modal">
-          <div class="modal-title">数据备份导出</div>
-          <p class="text-muted mb-16">选择导出格式，备份你的全部数据：</p>
+          <div class="modal-title">数据管理</div>
+          <p class="text-muted mb-16">导出备份或导入恢复你的数据：</p>
           <div class="flex-row" style="flex-direction:column;gap:12px;align-items:stretch;">
             <div class="list-item" style="cursor:pointer;" id="exportJson">
               <span style="font-size:24px;">📦</span>
@@ -581,6 +568,14 @@ const App = (function () {
               <div class="flex-1">
                 <div class="fw-600">TXT 文本导出</div>
                 <div class="text-sm text-muted">纯文本格式，便于阅读和打印</div>
+              </div>
+            </div>
+            <div style="border-top:1px solid var(--divider);margin:4px 0;"></div>
+            <div class="list-item" style="cursor:pointer;" id="importData">
+              <span style="font-size:24px;">📥</span>
+              <div class="flex-1">
+                <div class="fw-600">导入数据</div>
+                <div class="text-sm text-muted">从 JSON 备份文件恢复数据</div>
               </div>
             </div>
           </div>
@@ -606,6 +601,12 @@ const App = (function () {
       Store.exportData('txt');
       toast('TXT文件已下载', 'success');
       closeModal();
+    });
+    document.getElementById('importData').addEventListener('click', function () {
+      closeModal();
+      setTimeout(function () {
+        document.getElementById('importFileInput').click();
+      }, 200);
     });
     document.getElementById('closeExportModal').addEventListener('click', closeModal);
     document.getElementById('exportModal').addEventListener('click', function (e) {

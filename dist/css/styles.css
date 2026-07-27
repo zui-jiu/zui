@@ -430,18 +430,6 @@ body {
   background: var(--celadon-pale);
 }
 
-.sidebar-data-btns {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-.sidebar-data-btns .manage-modules-btn {
-  flex: 1;
-  margin-top: 0;
-  font-size: 13px;
-  padding: 8px 6px;
-}
-
 .mini-timer-label {
   display: block;
   font-size: 12px;
