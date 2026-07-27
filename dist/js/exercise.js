@@ -5,11 +5,6 @@
 
 const Exercise = (function () {
 
-  const TRAINING_LABELS = [
-    '有氧训练', '力量训练', '练背', '练腿', '练臀',
-    '练肩', '练胸', '核心训练', '拉伸放松'
-  ];
-
   function render(container) {
     const date = Store.getCurrentDate();
     container.innerHTML = `
@@ -19,7 +14,7 @@ const Exercise = (function () {
       </div>
 
       <!-- 板块1：多功能计时器 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">⏱</span>
           多功能计时器
@@ -28,7 +23,7 @@ const Exercise = (function () {
       </div>
 
       <!-- 板块2：每日训练打卡 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">✅</span>
           每日训练打卡
@@ -42,7 +37,7 @@ const Exercise = (function () {
       </div>
 
       <!-- 板块3：训练历史统计 -->
-      <div class="section-block">
+      <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">📊</span>
           训练历史统计
@@ -55,7 +50,7 @@ const Exercise = (function () {
       </div>
 
       <!-- 板块4：体能体重录入 -->
-      <div class="section-block">
+      <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">⚖️</span>
           体能与体重录入
@@ -80,6 +75,8 @@ const Exercise = (function () {
         document.getElementById('exerciseStats').innerHTML = renderStats(this.dataset.period);
       });
     });
+
+    App.bindCollapsible(container);
   }
 
   // 渲染打卡表单
@@ -88,11 +85,14 @@ const Exercise = (function () {
       <div class="checkin-form">
         <div class="mb-12">
           <label class="text-sm text-muted mb-8" style="display:block;">选择训练标签（可多选）</label>
-          <div class="flex-row flex-wrap" id="trainingLabelTags">
-            ${TRAINING_LABELS.map((label, i) => `
-              <span class="tag training-label-tag" data-label="${label}">${label}</span>
-            `).join('')}
+          <div class="training-label-select-wrap" style="display:flex;gap:8px;align-items:center;">
+            <select class="training-label-select" id="trainingLabelSelect" style="flex:1;">
+              <option value="">— 点击选择训练标签 —</option>
+              ${Store.getTrainingLabels().map(label => `<option value="${label}">${label}</option>`).join('')}
+            </select>
+            <button class="btn btn-sm" id="addTrainingLabelBtn">+ 自定义</button>
           </div>
+          <div id="selectedLabelsDisplay" class="mt-8 flex-row flex-wrap" style="gap:6px;"></div>
         </div>
 
         <div class="mb-12">
@@ -137,7 +137,7 @@ const Exercise = (function () {
       return '<div class="mt-16"><div class="empty-state"><div class="empty-state-icon">📋</div>今日暂无训练打卡记录</div></div>';
     }
 
-    let html = '<div class="mt-16"><div class="text-sm text-muted mb-8">今日打卡记录</div>';
+    let html = '<div class="mt-16 section-block collapsible collapsed" style="padding:12px;margin-bottom:0;"><div class="section-title" style="font-size:13px;"><span class="section-title-icon">📋</span>今日打卡记录 <span class="text-muted text-xs">(' + checkins.length + '条)</span></div><div>';
     checkins.forEach(c => {
       const timers = (c.timerIds || []).map(id => {
         const t = Store.getTimer(id);
@@ -160,7 +160,7 @@ const Exercise = (function () {
         </div>
       `;
     });
-    html += '</div>';
+    html += '</div></div>';
     return html;
   }
 
@@ -169,19 +169,44 @@ const Exercise = (function () {
   let selectedTimerIds = [];
 
   function bindCheckinEvents() {
-    // 标签选择
-    document.querySelectorAll('.training-label-tag').forEach(tag => {
-      tag.addEventListener('click', function () {
-        const label = this.dataset.label;
-        if (selectedLabels.includes(label)) {
-          selectedLabels = selectedLabels.filter(l => l !== label);
-          this.classList.remove('selected');
-        } else {
+    // 标签下拉选择
+    var labelSelect = document.getElementById('trainingLabelSelect');
+    if (labelSelect) {
+      labelSelect.addEventListener('change', function () {
+        var label = this.value;
+        if (label && !selectedLabels.includes(label)) {
           selectedLabels.push(label);
-          this.classList.add('selected');
+          renderSelectedLabels();
         }
+        this.value = '';
       });
-    });
+    }
+
+    // 自定义添加训练标签
+    var addLabelBtn = document.getElementById('addTrainingLabelBtn');
+    if (addLabelBtn) {
+      addLabelBtn.addEventListener('click', function () {
+        App.modal('添加训练标签', `
+          <div class="mb-12">
+            <label class="text-sm text-muted mb-8" style="display:block;">标签名称</label>
+            <input type="text" class="input" id="newTrainingLabel" placeholder="如：HIIT训练">
+          </div>
+        `, [
+          { label: '取消' },
+          {
+            label: '添加',
+            primary: true,
+            onClick: function (body) {
+              var name = body.querySelector('#newTrainingLabel').value.trim();
+              if (!name) { App.toast('请输入标签名称', 'warning'); return false; }
+              Store.addTrainingLabel(name);
+              App.toast('标签已添加', 'success');
+              refreshCheckins();
+            }
+          }
+        ]);
+      });
+    }
 
     // 渲染计时仓库（用于导入）
     Timer.renderTimerRepo('checkinTimerRepo', function (t) { return t.source === 'exercise'; }, function (timer) {
@@ -248,6 +273,24 @@ const Exercise = (function () {
     });
   }
 
+  function renderSelectedLabels() {
+    var container = document.getElementById('selectedLabelsDisplay');
+    if (!container) return;
+    if (selectedLabels.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+    container.innerHTML = selectedLabels.map(function (label) {
+      return '<span class="tag selected" style="cursor:pointer;" data-label="' + App.escapeHtml(label) + '">' + App.escapeHtml(label) + ' ✕</span>';
+    }).join(' ');
+    container.querySelectorAll('.tag').forEach(function (tag) {
+      tag.addEventListener('click', function () {
+        selectedLabels = selectedLabels.filter(function (l) { return l !== tag.dataset.label; });
+        renderSelectedLabels();
+      });
+    });
+  }
+
   function refreshCheckins() {
     const area = document.getElementById('exerciseCheckinArea');
     if (!area) return;
@@ -255,6 +298,11 @@ const Exercise = (function () {
     selectedTimerIds = [];
     area.innerHTML = renderCheckinForm() + renderTodayCheckins();
     bindCheckinEvents();
+    // 绑定今日记录的折叠
+    var parent = area.closest('.section-block');
+    if (parent) {
+      App.bindCollapsible(area);
+    }
   }
 
   // 渲染统计

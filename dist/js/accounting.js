@@ -16,7 +16,7 @@ const Accounting = (function () {
       </div>
 
       <!-- 板块1：账户管理 -->
-      <div class="section-block">
+      <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">🏦</span>
           账户管理
@@ -26,7 +26,7 @@ const Accounting = (function () {
       </div>
 
       <!-- 板块2：收支录入 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">✍️</span>
           收支录入
@@ -36,7 +36,7 @@ const Accounting = (function () {
       </div>
 
       <!-- 板块3：数据汇总 -->
-      <div class="section-block">
+      <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">📊</span>
           数据汇总
@@ -50,7 +50,7 @@ const Accounting = (function () {
       </div>
 
       <!-- 板块4：支出占比统计 -->
-      <div class="section-block">
+      <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">🥧</span>
           支出分类占比
@@ -64,6 +64,7 @@ const Accounting = (function () {
     renderSummary();
     renderCategoryStats();
     bindEvents();
+    App.bindCollapsible(container);
   }
 
   // ============ 账户管理 ============
@@ -151,34 +152,68 @@ const Accounting = (function () {
   function renderTodayTransactions() {
     const container = document.getElementById('todayTransactions');
     const date = Store.getCurrentDate();
-    const txs = Store.getTransactions(date);
+    const allTxs = Store.getTransactions();
 
-    if (txs.length === 0) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div>今日暂无账单记录</div>';
+    if (allTxs.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div>暂无账单记录</div>';
       return;
     }
 
-    const sorted = [...txs].sort((a, b) => b.createdAt - a.createdAt);
-    container.innerHTML = sorted.map(t => {
-      const account = Store.getAccounts().find(a => a.id === t.accountId);
-      const isExpense = t.type === 'expense';
-      return `
-        <div class="list-item">
-          <span style="font-size:20px;">${isExpense ? '💸' : '💵'}</span>
-          <div class="flex-1">
-            <div class="fw-600">${App.escapeHtml(t.category)}${t.subCategory ? ' · ' + App.escapeHtml(t.subCategory) : ''}</div>
-            <div class="text-sm text-muted">
-              ${account ? App.escapeHtml(account.name) : '未知账户'}
-              ${t.note ? ' · ' + App.escapeHtml(t.note) : ''}
-            </div>
-          </div>
-          <span class="fw-600" style="color:${isExpense ? 'var(--danger)' : 'var(--celadon-dark)'};">
-            ${isExpense ? '-' : '+'}${App.formatMoney(t.amount)}
-          </span>
-          <button class="btn-text danger delete-tx-btn" data-id="${t.id}">删除</button>
-        </div>
-      `;
-    }).join('');
+    // 按日期分组
+    var grouped = {};
+    allTxs.forEach(function (t) {
+      if (!grouped[t.date]) grouped[t.date] = [];
+      grouped[t.date].push(t);
+    });
+
+    // 按日期倒序，最多显示15天
+    var dates = Object.keys(grouped).sort(function (a, b) { return b.localeCompare(a); }).slice(0, 15);
+    var today = Store.getCurrentDate();
+
+    var html = '';
+    dates.forEach(function (d) {
+      var txs = grouped[d].sort(function (a, b) { return b.createdAt - a.createdAt; });
+      var dayIncome = txs.filter(function (t) { return t.type === 'income'; }).reduce(function (s, t) { return s + t.amount; }, 0);
+      var dayExpense = txs.filter(function (t) { return t.type === 'expense'; }).reduce(function (s, t) { return s + t.amount; }, 0);
+      var isToday = d === today;
+
+      html += '<div class="tx-date-group' + (isToday ? '' : ' collapsed') + '" data-date="' + d + '">';
+      html += '<div class="tx-date-header">';
+      html += '<span>' + App.formatDate(d) + (isToday ? ' （今天）' : '') + '</span>';
+      html += '<span class="text-xs text-muted" style="margin-left:8px;">' + txs.length + '笔</span>';
+      html += '<span class="text-xs" style="margin-left:auto;color:var(--danger);">-' + App.formatMoney(dayExpense) + '</span>';
+      if (dayIncome > 0) html += '<span class="text-xs" style="color:var(--celadon-dark);">+' + App.formatMoney(dayIncome) + '</span>';
+      html += '<span class="collapse-chevron">▼</span>';
+      html += '</div>';
+      html += '<div class="tx-date-body" style="padding:8px 0;">';
+
+      txs.forEach(function (t) {
+        var account = Store.getAccounts().find(function (a) { return a.id === t.accountId; });
+        var isExpense = t.type === 'expense';
+        html += '<div class="list-item">';
+        html += '<span style="font-size:20px;">' + (isExpense ? '💸' : '💵') + '</span>';
+        html += '<div class="flex-1">';
+        html += '<div class="fw-600">' + App.escapeHtml(t.category) + (t.subCategory ? ' · ' + App.escapeHtml(t.subCategory) : '') + '</div>';
+        html += '<div class="text-sm text-muted">' + (account ? App.escapeHtml(account.name) : '未知账户') + (t.note ? ' · ' + App.escapeHtml(t.note) : '') + '</div>';
+        html += '</div>';
+        html += '<span class="fw-600" style="color:' + (isExpense ? 'var(--danger)' : 'var(--celadon-dark)') + ';">' + (isExpense ? '-' : '+') + App.formatMoney(t.amount) + '</span>';
+        html += '<button class="btn-text danger delete-tx-btn" data-id="' + t.id + '">删除</button>';
+        html += '</div>';
+      });
+
+      html += '</div>';
+      html += '</div>';
+    });
+
+    container.innerHTML = html;
+
+    // 绑定日期折叠
+    container.querySelectorAll('.tx-date-header').forEach(function (header) {
+      header.addEventListener('click', function (e) {
+        if (e.target.closest('button')) return;
+        this.parentElement.classList.toggle('collapsed');
+      });
+    });
 
     container.querySelectorAll('.delete-tx-btn').forEach(btn => {
       btn.addEventListener('click', function () {

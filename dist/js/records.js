@@ -27,6 +27,7 @@ const Records = (function () {
 
     renderBoards();
     bindEvents();
+    App.bindCollapsible(container);
   }
 
   function renderBoards() {
@@ -44,7 +45,7 @@ const Records = (function () {
       const entries = Store.getRecordEntries(board.id, date);
 
       html += `
-        <div class="section-block" data-board-id="${board.id}">
+        <div class="section-block collapsible" data-board-id="${board.id}">
           <div class="section-title">
             <span class="section-title-icon">${getBoardIcon(board.type)}</span>
             ${App.escapeHtml(board.name)}
@@ -103,6 +104,9 @@ const Records = (function () {
         showImagePreview(this.src);
       });
     });
+
+    // 绑定折叠
+    App.bindCollapsible(container);
   }
 
   function renderBoardEntries(board, entries) {

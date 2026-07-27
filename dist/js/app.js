@@ -103,50 +103,130 @@ const App = (function () {
     }
   }
 
-  // 渲染自定义页面（按日期的笔记/记录）
-  function renderCustomPage(container, pageId) {
-    const mod = Store.getModules().find(m => m.id === pageId);
-    const pageName = mod ? mod.name : '自定义页面';
-    const pageIcon = mod ? mod.icon : '📝';
-    const date = Store.getCurrentDate();
-    const entries = Store.getCustomPageEntriesByDate(pageId, date);
+  // 自定义页面小板块选中状态
+  var customSectionState = {};
 
-    container.innerHTML = `
-      <div class="module-header">
-        <h2>${pageIcon} ${pageName}</h2>
-        <p class="module-subtitle">${date} 的记录</p>
-      </div>
-      <div class="card">
-        <textarea class="custom-page-input" id="customPageInput" placeholder="在这里写下内容，点击添加保存到 ${date}…" rows="4" style="width:100%;border:1px solid var(--divider);border-radius:var(--radius-md);padding:12px;font-size:14px;font-family:inherit;background:var(--celadon-paler);color:var(--ink);resize:vertical;"></textarea>
-        <div style="margin-top:10px;text-align:right;">
-          <button class="btn-primary" id="customPageAdd" style="padding:8px 20px;border:none;border-radius:var(--radius-md);background:var(--celadon);color:#fff;font-size:14px;cursor:pointer;">添加记录</button>
-        </div>
-      </div>
-      <div id="customPageList">
-        ${entries.length === 0 ? '<div class="card text-muted text-center" style="padding:30px;">今天还没有记录，写点什么吧</div>' : entries.map(e => `
-          <div class="card custom-entry" data-id="${e.id}">
-            <div class="flex-row" style="justify-content:space-between;align-items:flex-start;">
-              <div class="flex-1" style="white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.7;color:var(--ink);">${escapeHtml(e.content)}</div>
-              <button class="custom-entry-del" data-id="${e.id}" style="border:none;background:transparent;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px 8px;">✕</button>
-            </div>
-            <div class="text-sm text-muted" style="margin-top:8px;">${new Date(e.createdAt).toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'})}</div>
-          </div>
-        `).join('')}
-      </div>
-    `;
+  // 渲染自定义页面（按日期的笔记/记录，支持小板块）
+  function renderCustomPage(container, pageId) {
+    var mod = Store.getModules().find(m => m.id === pageId);
+    var pageName = mod ? mod.name : '自定义页面';
+    var pageIcon = mod ? mod.icon : '📝';
+    var date = Store.getCurrentDate();
+    var sections = Store.getCustomSections(pageId);
+    var activeSection = customSectionState[pageId] || 'all';
+    var allEntries = Store.getCustomPageEntriesByDate(pageId, date);
+    var entries = activeSection === 'all'
+      ? allEntries
+      : allEntries.filter(e => e.sectionId === activeSection);
+
+    // 小板块标签栏
+    var tabsHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">';
+    tabsHtml += '<button class="btn btn-sm ' + (activeSection === 'all' ? 'btn-primary' : '') + '" data-section="all">全部</button>';
+    sections.forEach(function (s) {
+      tabsHtml += '<button class="btn btn-sm ' + (activeSection === s.id ? 'btn-primary' : '') + '" data-section="' + s.id + '">' + escapeHtml(s.name) + '</button>';
+    });
+    tabsHtml += '<button class="btn btn-sm" id="addSectionBtn" style="border-style:dashed;">+ 小板块</button>';
+    if (activeSection !== 'all') {
+      tabsHtml += '<button class="btn-text danger" id="deleteSectionBtn" data-id="' + activeSection + '" style="font-size:12px;padding:2px 8px;">删除该板块</button>';
+    }
+    tabsHtml += '</div>';
+
+    // 记录列表
+    var listHtml = '';
+    if (entries.length === 0) {
+      listHtml = '<div class="card text-muted text-center" style="padding:30px;">今天还没有记录，写点什么吧</div>';
+    } else {
+      listHtml = entries.map(function (e) {
+        var sec = e.sectionId ? sections.find(s => s.id === e.sectionId) : null;
+        return '<div class="card custom-entry" data-id="' + e.id + '">' +
+          '<div class="flex-row" style="justify-content:space-between;align-items:flex-start;">' +
+            '<div class="flex-1" style="white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.7;color:var(--ink);">' + escapeHtml(e.content) + '</div>' +
+            '<button class="custom-entry-del" data-id="' + e.id + '" style="border:none;background:transparent;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px 8px;">✕</button>' +
+          '</div>' +
+          '<div class="text-sm text-muted" style="margin-top:8px;">' +
+            (sec ? '<span class="tag" style="font-size:11px;">' + escapeHtml(sec.name) + '</span> · ' : '') +
+            new Date(e.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    container.innerHTML =
+      '<div class="module-header">' +
+        '<h2>' + pageIcon + ' ' + pageName + '</h2>' +
+        '<p class="module-subtitle">' + date + ' 的记录</p>' +
+      '</div>' +
+      tabsHtml +
+      '<div class="card">' +
+        '<textarea class="custom-page-input" id="customPageInput" placeholder="在这里写下内容，点击添加保存到 ' + date + '…" rows="4" style="width:100%;border:1px solid var(--divider);border-radius:var(--radius-md);padding:12px;font-size:14px;font-family:inherit;background:var(--celadon-paler);color:var(--ink);resize:vertical;"></textarea>' +
+        '<div style="margin-top:10px;text-align:right;">' +
+          '<button class="btn-primary" id="customPageAdd" style="padding:8px 20px;border:none;border-radius:var(--radius-md);background:var(--celadon);color:#fff;font-size:14px;cursor:pointer;">添加记录</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="customPageList">' + listHtml + '</div>';
+
+    // 小板块切换
+    container.querySelectorAll('[data-section]').forEach(function (btn) {
+      if (btn.id === 'addSectionBtn' || btn.id === 'deleteSectionBtn') return;
+      btn.addEventListener('click', function () {
+        customSectionState[pageId] = this.dataset.section;
+        renderCustomPage(container, pageId);
+      });
+    });
+
+    // 添加小板块
+    var addSecBtn = container.querySelector('#addSectionBtn');
+    if (addSecBtn) {
+      addSecBtn.addEventListener('click', function () {
+        modal('添加小板块',
+          '<div class="mb-12">' +
+            '<label class="text-sm text-muted mb-8" style="display:block;">小板块名称</label>' +
+            '<input type="text" class="input" id="newSectionName" placeholder="如：工作记录">' +
+          '</div>',
+          [
+            { label: '取消' },
+            {
+              label: '添加',
+              primary: true,
+              onClick: function (body) {
+                var name = body.querySelector('#newSectionName').value.trim();
+                if (!name) { toast('请输入小板块名称', 'warning'); return false; }
+                Store.addCustomSection(pageId, name);
+                toast('小板块已添加', 'success');
+                renderCustomPage(container, pageId);
+              }
+            }
+          ]
+        );
+      });
+    }
+
+    // 删除小板块
+    var delSecBtn = container.querySelector('#deleteSectionBtn');
+    if (delSecBtn) {
+      delSecBtn.addEventListener('click', function () {
+        if (confirm('删除小板块将同时删除该板块下所有记录，确定？')) {
+          Store.deleteCustomSection(pageId, this.dataset.id);
+          customSectionState[pageId] = 'all';
+          toast('已删除', 'success');
+          renderCustomPage(container, pageId);
+        }
+      });
+    }
 
     // 添加记录
-    const input = container.querySelector('#customPageInput');
+    var input = container.querySelector('#customPageInput');
     container.querySelector('#customPageAdd').addEventListener('click', function () {
-      const val = input.value.trim();
+      var val = input.value.trim();
       if (!val) { toast('请输入内容', 'error'); return; }
-      Store.addCustomPageEntry(pageId, val);
+      var secId = activeSection === 'all' ? null : activeSection;
+      Store.addCustomPageEntry(pageId, val, secId);
       toast('记录已添加', 'success');
       renderCustomPage(container, pageId);
     });
 
     // 删除记录
-    container.querySelectorAll('.custom-entry-del').forEach(btn => {
+    container.querySelectorAll('.custom-entry-del').forEach(function (btn) {
       btn.addEventListener('click', function () {
         Store.deleteCustomPageEntry(pageId, this.dataset.id);
         renderCustomPage(container, pageId);
@@ -277,6 +357,65 @@ const App = (function () {
     if (manageBtn) {
       manageBtn.addEventListener('click', showManageModulesModal);
     }
+
+    // 导出数据
+    const exportBtn = document.getElementById('exportDataBtn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', function () {
+        Store.exportData('json');
+        toast('数据已导出为文件，请妥善保存', 'success');
+      });
+    }
+
+    // 导入数据
+    const importBtn = document.getElementById('importDataBtn');
+    const importFileInput = document.getElementById('importFileInput');
+    if (importBtn && importFileInput) {
+      importBtn.addEventListener('click', function () {
+        importFileInput.click();
+      });
+      importFileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const fileContent = ev.target.result;
+          showImportConfirmModal(fileContent, file.name);
+        };
+        reader.readAsText(file);
+        // 重置 input，允许重复选同一文件
+        importFileInput.value = '';
+      });
+    }
+  }
+
+  // 导入数据确认弹窗
+  function showImportConfirmModal(fileContent, fileName) {
+    modal('📥 确认导入数据', `
+      <p style="font-size:14px;line-height:1.7;color:var(--ink);margin-bottom:8px;">
+        即将导入文件：<strong>${escapeHtml(fileName)}</strong>
+      </p>
+      <p style="font-size:13px;color:var(--danger);margin-bottom:0;">
+        ⚠️ 此操作将<strong>覆盖</strong>当前所有数据，且无法撤销。建议先导出当前数据作为备份。
+      </p>
+    `, [
+      { label: '取消', onClick: closeModal },
+      {
+        label: '确认导入',
+        primary: true,
+        onClick: function () {
+          try {
+            Store.importData(fileContent);
+            closeModal();
+            toast('数据导入成功，正在刷新…', 'success');
+            setTimeout(function () { location.reload(); }, 1200);
+          } catch (err) {
+            closeModal();
+            toast('导入失败：' + err.message, 'error');
+          }
+        }
+      }
+    ]);
   }
 
   // 管理目录弹窗
@@ -478,9 +617,9 @@ const App = (function () {
   function showTimerRepoModal() {
     const html = `
       <div class="modal-overlay" id="timerRepoModal">
-        <div class="modal" style="min-width:520px;">
+        <div class="modal">
           <div class="modal-title">⏱ 全局计时仓库</div>
-          <p class="text-muted mb-12">所有计时记录汇总于此，可在锻炼和学习模块中调取使用。</p>
+          <p class="text-muted mb-12 modal-desc">所有计时记录汇总于此，可在锻炼和学习模块中调取使用。</p>
           <div id="timerRepoModalList" style="max-height:400px;overflow-y:auto;"></div>
           <div class="modal-actions">
             <button class="btn" id="closeTimerRepoModal">关闭</button>
@@ -596,6 +735,28 @@ const App = (function () {
     };
   }
 
+  // 绑定折叠组件：让 .section-block.collapsible 的标题可点击展开/收起
+  function bindCollapsible(container, defaultCollapsed) {
+    var blocks = container.querySelectorAll('.section-block.collapsible');
+    blocks.forEach(function (block) {
+      if (block.dataset.collapsibleBound) return;
+      block.dataset.collapsibleBound = '1';
+      var title = block.querySelector('.section-title');
+      if (!title) return;
+      // 添加折叠箭头
+      var chevron = document.createElement('span');
+      chevron.className = 'collapse-chevron';
+      chevron.textContent = '▼';
+      title.appendChild(chevron);
+      // 默认折叠
+      if (defaultCollapsed) block.classList.add('collapsed');
+      title.addEventListener('click', function (e) {
+        if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
+        block.classList.toggle('collapsed');
+      });
+    });
+  }
+
   return {
     init,
     loadModule,
@@ -607,6 +768,7 @@ const App = (function () {
     formatDate,
     formatMoney,
     getMonthRange,
+    bindCollapsible,
     getCurrentDate: () => Store.getCurrentDate()
   };
 })();

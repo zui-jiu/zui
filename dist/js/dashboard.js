@@ -77,37 +77,43 @@ const Dashboard = (function () {
       </div>
 
       <!-- 今日概览卡片 -->
-      <div class="grid-4 mb-20">
+      <div class="grid-2 mb-20">
         <div class="dashboard-card">
           <div class="dashboard-card-icon">📋</div>
-          <div class="dashboard-card-value">${checklistTasks.length}</div>
-          <div class="dashboard-card-label">今日待办</div>
-          <div class="dashboard-card-sub">${archivedTasks.length} 已完成</div>
+          <div class="dashboard-card-info">
+            <div class="dashboard-card-value">${checklistTasks.length}</div>
+            <div class="dashboard-card-label">今日待办</div>
+            <div class="dashboard-card-sub">${archivedTasks.length} 已完成</div>
+          </div>
         </div>
         <div class="dashboard-card">
           <div class="dashboard-card-icon">🏃</div>
-          <div class="dashboard-card-value">${Timer.formatTime(exerciseDuration)}</div>
-          <div class="dashboard-card-label">今日运动时长</div>
-          <div class="dashboard-card-sub">${exerciseCheckins.length} 次训练</div>
+          <div class="dashboard-card-info">
+            <div class="dashboard-card-value">${Timer.formatTime(exerciseDuration)}</div>
+            <div class="dashboard-card-label">今日运动时长</div>
+            <div class="dashboard-card-sub">${exerciseCheckins.length} 次训练</div>
+          </div>
         </div>
         <div class="dashboard-card">
           <div class="dashboard-card-icon">📚</div>
-          <div class="dashboard-card-value">${Timer.formatTime(studyDuration)}</div>
-          <div class="dashboard-card-label">今日学习时长</div>
-          <div class="dashboard-card-sub">${studyTodos.filter(t => t.completed).length}/${studyTodos.length} 任务完成</div>
+          <div class="dashboard-card-info">
+            <div class="dashboard-card-value">${Timer.formatTime(studyDuration)}</div>
+            <div class="dashboard-card-label">今日学习时长</div>
+            <div class="dashboard-card-sub">${studyTodos.filter(t => (t.checkDates || []).includes(date)).length}/${studyTodos.length} 任务完成</div>
+          </div>
         </div>
         <div class="dashboard-card">
           <div class="dashboard-card-icon">💰</div>
-          <div class="dashboard-card-value" style="color:${expense > income ? 'var(--danger)' : 'var(--celadon-dark)'};">
-            ${App.formatMoney(expense)}
+          <div class="dashboard-card-info">
+            <div class="dashboard-card-value" style="color:${expense > income ? 'var(--danger)' : 'var(--celadon-dark)'};">${App.formatMoney(expense)}</div>
+            <div class="dashboard-card-label">今日支出</div>
+            <div class="dashboard-card-sub">收入 ${App.formatMoney(income)}</div>
           </div>
-          <div class="dashboard-card-label">今日支出</div>
-          <div class="dashboard-card-sub">收入 ${App.formatMoney(income)}</div>
         </div>
       </div>
 
       <!-- 今日待办概览 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">📋</span>
           今日待办概览
@@ -132,7 +138,7 @@ const Dashboard = (function () {
       </div>
 
       <!-- 目标管理 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">🎯</span>
           目标管理
@@ -146,7 +152,7 @@ const Dashboard = (function () {
       </div>
 
       <!-- 快捷入口 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">⚡</span>
           快捷入口
@@ -173,6 +179,7 @@ const Dashboard = (function () {
     `;
 
     bindEvents();
+    App.bindCollapsible(container);
   }
 
   function renderGoalCard(key, label, currentValue, targetValue, current, target, unit) {

@@ -16,7 +16,7 @@ const Study = (function () {
       </div>
 
       <!-- 板块1：学习计时器 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">⏱</span>
           学习计时器
@@ -25,17 +25,17 @@ const Study = (function () {
       </div>
 
       <!-- 板块2：待学清单 -->
-      <div class="section-block">
+      <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">📝</span>
-          待学清单
+          待学清单（每日打卡）
           <button class="btn btn-sm" id="addStudyTodoBtn" style="margin-left:auto;">+ 新增任务</button>
         </div>
         <div id="studyTodoList"></div>
       </div>
 
       <!-- 板块3：学习笔记 -->
-      <div class="section-block">
+      <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">📖</span>
           学习笔记
@@ -51,7 +51,7 @@ const Study = (function () {
       </div>
 
       <!-- 板块4：分类时长统计 -->
-      <div class="section-block">
+      <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">📊</span>
           学习时长统计
@@ -70,6 +70,7 @@ const Study = (function () {
     renderCategories();
     renderTimeStats();
     bindEvents();
+    App.bindCollapsible(container);
   }
 
   // ============ 待学清单 ============
@@ -85,6 +86,7 @@ const Study = (function () {
 
     let html = '';
     todos.forEach(t => {
+      const isCheckedToday = (t.checkDates || []).includes(date);
       const linkedTimers = (t.timerIds || []).map(id => {
         const timer = Store.getTimer(id);
         return timer ? `<span class="tag" style="font-size:11px;cursor:pointer;" data-timer-id="${id}">${App.escapeHtml(timer.name)} (${Timer.formatTime(timer.duration)})</span>` : '';
@@ -97,20 +99,28 @@ const Study = (function () {
       };
       const priorityLabels = { high: '高', normal: '中', low: '低' };
 
+      // 截止日期：当前日期之前显示已过天数，之后显示剩余倒数
+      var deadlineInfo = null;
+      if (t.deadline) {
+        var dDiff = Math.floor((new Date(t.deadline) - new Date(Store.getCurrentDate())) / 86400000);
+        if (dDiff > 0) deadlineInfo = { text: '剩' + dDiff + '天', color: 'var(--celadon)' };
+        else if (dDiff < 0) deadlineInfo = { text: '已过' + Math.abs(dDiff) + '天', color: 'var(--danger)' };
+        else deadlineInfo = { text: '今天截止', color: '#e8a04e' };
+      }
+
       html += `
         <div class="list-item study-todo-item" data-id="${t.id}" style="align-items:flex-start;flex-direction:column;">
           <div class="flex-between w-full">
             <div class="flex-row">
-              <div class="checkbox ${t.completed ? 'checked' : ''}" data-id="${t.id}"></div>
-              <span style="${t.completed ? 'text-decoration:line-through;color:var(--ink-faint);' : ''}">${App.escapeHtml(t.name)}</span>
-              ${t.preset ? '<span class="tag" style="font-size:10px;cursor:default;">预置</span>' : ''}
+              <div class="checkbox ${isCheckedToday ? 'checked' : ''}" data-id="${t.id}"></div>
+              <span style="${isCheckedToday ? 'text-decoration:line-through;color:var(--ink-faint);' : ''}">${App.escapeHtml(t.name)}</span>
               <span class="text-xs" style="color:${priorityColors[t.priority]};border:1px solid ${priorityColors[t.priority]};padding:1px 6px;border-radius:4px;">${priorityLabels[t.priority]}</span>
             </div>
             <div class="flex-row">
-              ${t.deadline ? `<span class="text-sm text-muted">截止: ${t.deadline}</span>` : ''}
+              ${deadlineInfo ? '<span class="text-sm" style="color:' + deadlineInfo.color + ';">' + deadlineInfo.text + '</span>' : ''}
               <button class="btn-text import-timer-btn" data-id="${t.id}" title="导入计时">⏱ 导入</button>
               <button class="btn-text edit-todo-btn" data-id="${t.id}">编辑</button>
-              ${!t.preset ? `<button class="btn-text danger delete-todo-btn" data-id="${t.id}">删除</button>` : ''}
+              <button class="btn-text danger delete-todo-btn" data-id="${t.id}">删除</button>
             </div>
           </div>
           ${linkedTimers ? `<div class="mt-8">${linkedTimers}</div>` : ''}
@@ -119,14 +129,22 @@ const Study = (function () {
     });
     container.innerHTML = html;
 
-    // 绑定事件
+    // 绑定事件 - 每日打卡
     container.querySelectorAll('.checkbox').forEach(cb => {
       cb.addEventListener('click', function () {
         const todo = Store.getStudyTodos().find(t => t.id === this.dataset.id);
         if (todo) {
-          Store.updateStudyTodo(this.dataset.id, { completed: !todo.completed });
+          var dates = todo.checkDates || [];
+          var today = Store.getCurrentDate();
+          if (dates.includes(today)) {
+            dates = dates.filter(d => d !== today);
+            App.toast('已取消今日打卡', 'success');
+          } else {
+            dates = [...dates, today];
+            App.toast('今日打卡完成！', 'success');
+          }
+          Store.updateStudyTodo(this.dataset.id, { checkDates: dates, completed: dates.includes(today) });
           renderTodoList();
-          App.toast(todo.completed ? '已取消完成' : '打卡完成！', 'success');
         }
       });
     });

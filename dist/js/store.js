@@ -13,13 +13,14 @@ const Store = (function () {
       currentDate: today,
       globalTimers: [], // 全局计时仓库
       exercise: {
-        checkins: [] // {id, date, labels:[], timerIds:[], notes, summary, weight, fitness}
+        checkins: [], // {id, date, labels:[], timerIds:[], notes, summary, weight, fitness}
+        trainingLabels: ['有氧训练', '力量训练', '练背', '练腿', '练臀', '练肩', '练胸', '核心训练', '拉伸放松']
       },
       study: {
         todos: [
-          { id: uid(), name: '英语学习', completed: false, date: today, deadline: '', priority: 'normal', timerIds: [], preset: true },
-          { id: uid(), name: '日常阅读', completed: false, date: today, deadline: '', priority: 'normal', timerIds: [], preset: true },
-          { id: uid(), name: '驾照考取', completed: false, date: today, deadline: '', priority: 'normal', timerIds: [], preset: true }
+          { id: uid(), name: '英语学习', completed: false, checkDates: [], date: today, deadline: '', priority: 'normal', timerIds: [], preset: true },
+          { id: uid(), name: '日常阅读', completed: false, checkDates: [], date: today, deadline: '', priority: 'normal', timerIds: [], preset: true },
+          { id: uid(), name: '驾照考取', completed: false, checkDates: [], date: today, deadline: '', priority: 'normal', timerIds: [], preset: true }
         ],
         categories: [
           { id: uid(), name: '英语' },
@@ -72,7 +73,8 @@ const Store = (function () {
         { id: 'accounting', name: '每日记账', icon: '💰', builtin: true, visible: true },
         { id: 'records', name: '日常记录', icon: '✏️', builtin: true, visible: true }
       ],
-      customPages: {}, // { pageId: [{ id, date, content, createdAt }] }
+      customPages: {}, // { pageId: [{ id, date, content, sectionId, createdAt }] }
+      customSections: {}, // { pageId: [{ id, name }] }
       theme: 'light'
     };
   }
@@ -220,6 +222,28 @@ const Store = (function () {
     save();
   }
 
+  // 训练标签管理
+  function getTrainingLabels() {
+    if (!data.exercise.trainingLabels) {
+      data.exercise.trainingLabels = ['有氧训练', '力量训练', '练背', '练腿', '练臀', '练肩', '练胸', '核心训练', '拉伸放松'];
+    }
+    return data.exercise.trainingLabels;
+  }
+
+  function addTrainingLabel(label) {
+    if (!data.exercise.trainingLabels) data.exercise.trainingLabels = [];
+    if (!data.exercise.trainingLabels.includes(label)) {
+      data.exercise.trainingLabels.push(label);
+      save();
+    }
+  }
+
+  function deleteTrainingLabel(label) {
+    if (!data.exercise.trainingLabels) return;
+    data.exercise.trainingLabels = data.exercise.trainingLabels.filter(l => l !== label);
+    save();
+  }
+
   // ============ 学习模块 ============
   function getStudyTodos() {
     return data.study.todos;
@@ -235,6 +259,7 @@ const Store = (function () {
       id: uid(),
       name: todo.name,
       completed: false,
+      checkDates: [],
       date: todo.date || data.currentDate,
       deadline: todo.deadline || '',
       priority: todo.priority || 'normal',
@@ -583,6 +608,8 @@ const Store = (function () {
     const id = 'custom_' + uid();
     data.modules.push({ id, name, icon: icon || '📝', builtin: false, visible: true });
     data.customPages[id] = [];
+    if (!data.customSections) data.customSections = {};
+    data.customSections[id] = [];
     save();
     return id;
   }
@@ -590,6 +617,7 @@ const Store = (function () {
   function deleteCustomModule(id) {
     data.modules = data.modules.filter(m => m.id !== id);
     delete data.customPages[id];
+    if (data.customSections) delete data.customSections[id];
     save();
   }
 
@@ -603,12 +631,13 @@ const Store = (function () {
     return (data.customPages[pageId] || []).filter(e => e.date === date);
   }
 
-  function addCustomPageEntry(pageId, content) {
+  function addCustomPageEntry(pageId, content, sectionId) {
     if (!data.customPages[pageId]) data.customPages[pageId] = [];
     const entry = {
       id: uid(),
       date: data.currentDate,
       content: content,
+      sectionId: sectionId || null,
       createdAt: Date.now()
     };
     data.customPages[pageId].push(entry);
@@ -620,6 +649,37 @@ const Store = (function () {
     if (!data.customPages[pageId]) return;
     data.customPages[pageId] = data.customPages[pageId].filter(e => e.id !== entryId);
     save();
+  }
+
+  // ============ 自定义页面小板块 ============
+  function getCustomSections(pageId) {
+    if (!data.customSections) data.customSections = {};
+    return data.customSections[pageId] || [];
+  }
+
+  function addCustomSection(pageId, name) {
+    if (!data.customSections) data.customSections = {};
+    if (!data.customSections[pageId]) data.customSections[pageId] = [];
+    const section = { id: uid(), name: name };
+    data.customSections[pageId].push(section);
+    save();
+    return section;
+  }
+
+  function deleteCustomSection(pageId, sectionId) {
+    if (!data.customSections || !data.customSections[pageId]) return;
+    data.customSections[pageId] = data.customSections[pageId].filter(s => s.id !== sectionId);
+    // 同时删除该板块下的记录
+    if (data.customPages[pageId]) {
+      data.customPages[pageId] = data.customPages[pageId].filter(e => e.sectionId !== sectionId);
+    }
+    save();
+  }
+
+  function updateCustomSection(pageId, sectionId, name) {
+    if (!data.customSections || !data.customSections[pageId]) return;
+    const s = data.customSections[pageId].find(s => s.id === sectionId);
+    if (s) { s.name = name; save(); }
   }
 
   // ============ 全局搜索 ============
@@ -725,6 +785,29 @@ const Store = (function () {
       const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
       downloadBlob(blob, `workstation_export_${data.currentDate}.txt`);
     }
+  }
+
+  // ============ 数据导入 ============
+  function importData(jsonString) {
+    const parsed = JSON.parse(jsonString);
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error('数据格式不正确');
+    }
+    // 合并：用导入数据覆盖，但保留必要字段缺失时的默认值
+    const defaults = getDefaultData();
+    data = Object.assign({}, defaults, parsed);
+    // 确保关键子对象存在
+    if (!data.exercise) data.exercise = defaults.exercise;
+    if (!data.study) data.study = defaults.study;
+    if (!data.accounting) data.accounting = defaults.accounting;
+    if (!data.records) data.records = defaults.records;
+    if (!data.modules) data.modules = defaults.modules;
+    if (!data.globalTimers) data.globalTimers = [];
+    if (!data.customPages) data.customPages = {};
+    if (!data.customSections) data.customSections = {};
+    if (!data.exercise.customLabels) data.exercise.customLabels = ['有氧训练','力量训练','练背','练腿','练臀','练肩','练胸','核心训练','拉伸放松'];
+    save();
+    return true;
   }
 
   function downloadBlob(blob, filename) {
@@ -849,6 +932,9 @@ const Store = (function () {
     addExerciseCheckin,
     updateExerciseCheckin,
     deleteExerciseCheckin,
+    getTrainingLabels,
+    addTrainingLabel,
+    deleteTrainingLabel,
     // 学习
     getStudyTodos,
     getStudyTodosByDate,
@@ -908,9 +994,15 @@ const Store = (function () {
     getCustomPageEntriesByDate,
     addCustomPageEntry,
     deleteCustomPageEntry,
+    getCustomSections,
+    addCustomSection,
+    deleteCustomSection,
+    updateCustomSection,
     // 搜索
     search,
     // 导出
-    exportData
+    exportData,
+    // 导入
+    importData
   };
 })();
