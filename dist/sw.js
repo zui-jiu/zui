@@ -1,7 +1,7 @@
 // Service Worker - 个人综合工作台
 // 缓存核心文件，支持离线访问和PWA安装
 
-var CACHE_NAME = 'workbench-v1';
+var CACHE_NAME = 'workbench-v5';
 var ASSETS = [
   './',
   './index.html',
