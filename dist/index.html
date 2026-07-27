@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="工作台">
+  <meta name="theme-color" content="#6B9B95">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>个人综合工作台</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶栏 -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button class="menu-toggle" id="menuToggle" title="目录">☰</button>
+        <span class="app-title">个人综合工作台</span>
+      </div>
+      <div class="top-bar-center">
+        <div class="date-selector">
+          <button class="date-nav-btn" id="prevDate" title="前一天">‹</button>
+          <input type="date" id="currentDate" class="date-input">
+          <button class="date-nav-btn" id="nextDate" title="后一天">›</button>
+          <button class="date-today-btn" id="todayBtn">今天</button>
+        </div>
+      </div>
+      <div class="top-bar-right">
+        <div class="search-box">
+          <button class="search-toggle" id="searchToggle" title="搜索">🔍</button>
+          <input type="text" id="globalSearch" placeholder="全局搜索…" class="search-input">
+          <div id="searchResults" class="search-results-dropdown"></div>
+        </div>
+        <button class="icon-btn" id="exportBtn" title="导出数据">导出</button>
+        <button class="icon-btn theme-toggle" id="themeToggle" title="切换主题">◐</button>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <!-- 遮罩层（移动端抽屉打开时） -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+      <!-- 左侧导航 -->
+      <nav class="sidebar" id="sidebar">
+        <div class="nav-list" id="navList">
+          <!-- 由JS生成 -->
+        </div>
+        <div class="sidebar-footer">
+          <div class="global-timer-display" id="globalTimerMini">
+            <span class="mini-timer-label">计时仓库</span>
+            <span class="mini-timer-count" id="timerRepoCount">0 条记录</span>
+          </div>
+          <button class="manage-modules-btn" id="manageModulesBtn">⚙ 管理目录</button>
+        </div>
+      </nav>
+
+      <!-- 右侧内容区 -->
+      <main class="content-area" id="contentArea">
+        <!-- 由JS渲染各模块 -->
+      </main>
+    </div>
+  </div>
+
+  <!-- 模态框容器 -->
+  <div id="modalContainer"></div>
+
+  <!-- Toast通知容器 -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- 脚本加载（注意顺序） -->
+  <script src="js/store.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/exercise.js"></script>
+  <script src="js/study.js"></script>
+  <script src="js/checklist.js"></script>
+  <script src="js/accounting.js"></script>
+  <script src="js/records.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // 注册 Service Worker，支持PWA离线访问和安装到主屏幕
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').then(function (reg) {
+          console.log('Service Worker 已注册');
+        }).catch(function (err) {
+          console.log('Service Worker 注册失败:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
