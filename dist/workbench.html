@@ -1622,6 +1622,597 @@ body {
   transform: translateY(-2px);
 }
 
+/* ============================================
+   重构新增样式
+   ============================================ */
+
+/* ---------- 月历组件 ---------- */
+.calendar {
+  background: var(--celadon-paler);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.calendar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--celadon-dark);
+  min-width: 110px;
+  text-align: center;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-light);
+  padding: 4px 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+  transition: background 0.15s;
+  background: var(--bg-card);
+}
+
+.cal-cell:hover {
+  background: var(--celadon-tint);
+}
+
+.cal-cell-empty {
+  background: transparent;
+  cursor: default;
+}
+
+.cal-cell.cal-today .cal-num {
+  color: var(--celadon-dark);
+  font-weight: 700;
+}
+
+.cal-cell.cal-today {
+  box-shadow: inset 0 0 0 2px var(--celadon);
+}
+
+.cal-cell.cal-selected {
+  background: var(--celadon);
+  color: var(--white);
+}
+
+.cal-cell.cal-selected.cal-today {
+  box-shadow: inset 0 0 0 2px var(--white);
+}
+
+.cal-note-dot {
+  position: absolute;
+  bottom: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--warning);
+}
+
+/* ---------- 今日动态 ---------- */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.today-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.today-summary-card {
+  background: var(--celadon-paler);
+}
+
+/* ---------- 倒数日 ---------- */
+.countdown-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.countdown-grid.grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.countdown-grid-one {
+  grid-template-columns: 1fr;
+}
+
+.countdown-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 140px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.countdown-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.countdown-card-overlay {
+  background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.25));
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  padding: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+
+.countdown-bar {
+  background: rgba(0,0,0,0.28);
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.countdown-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.countdown-days {
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.countdown-date {
+  font-size: 11px;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+
+.cd-color-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.cd-color-swatch.selected {
+  outline: 2px solid var(--celadon-dark);
+  outline-offset: 2px;
+}
+
+.countdown-detail {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 60vh;
+  box-shadow: var(--shadow-sm);
+}
+
+.countdown-detail-overlay {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  padding: 24px;
+}
+
+.countdown-detail-days {
+  font-size: 88px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-detail-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.countdown-detail-sub {
+  font-size: 14px;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
+.countdown-detail-desc {
+  font-size: 13px;
+  margin-top: 14px;
+  max-width: 320px;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.countdown-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.countdown-act-btn {
+  background: rgba(255,255,255,0.92);
+  color: var(--ink);
+  border: none;
+}
+
+/* ---------- 目录式列表（通用） ---------- */
+.dir-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dir-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--celadon-paler);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.dir-item:hover {
+  background: var(--celadon-pale);
+  border-color: var(--celadon-light);
+}
+
+.dir-item-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.dir-item-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dir-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dir-item-sub {
+  font-size: 12px;
+  color: var(--ink-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dir-item-arrow {
+  font-size: 20px;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.dir-item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ---------- 锻炼：打卡状态方框 ---------- */
+.checkin-status-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: var(--celadon-pale);
+  border: 1px solid var(--celadon-tint);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkin-status-box:hover {
+  background: var(--celadon-tint);
+}
+
+.checkin-status-box.checked {
+  background: var(--celadon-pale);
+  border-color: var(--celadon-light);
+}
+
+.checkin-status-date {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--celadon-dark);
+}
+
+.checkin-status-text {
+  font-size: 13px;
+  color: var(--ink-medium);
+  margin-top: 2px;
+}
+
+.checkin-mini {
+  cursor: pointer;
+}
+
+/* ---------- 学习：紧凑待办行 ---------- */
+.study-todo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--celadon-paler);
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+  transition: background 0.15s;
+}
+
+.study-todo-row:hover {
+  background: var(--celadon-pale);
+}
+
+.note-cat-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.note-cat-chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: var(--celadon-pale);
+  color: var(--ink-medium);
+  cursor: pointer;
+  border: 1px solid var(--celadon-tint);
+  transition: all 0.2s;
+}
+
+.note-cat-chip.active {
+  background: var(--celadon);
+  color: var(--white);
+  border-color: var(--celadon);
+}
+
+.stat-chart-block {
+  background: var(--celadon-paler);
+  border-radius: var(--radius-md);
+  padding: 8px;
+}
+
+/* ---------- 清单：象限内联添加 ---------- */
+.quadrant-add-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px dashed var(--celadon-light);
+  background: transparent;
+  color: var(--celadon-dark);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.quadrant-add-btn:hover {
+  background: var(--celadon-pale);
+}
+
+.inline-add {
+  background: var(--bg-card);
+  border: 1px solid var(--celadon-light);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  margin-bottom: 6px;
+}
+
+.inline-add-input {
+  width: 100%;
+}
+
+/* ---------- 日常记录：编辑页 ---------- */
+.board-dir-item {
+  background: var(--celadon-paler);
+}
+
+.record-date-group {
+  margin-bottom: 14px;
+}
+
+.record-date-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--celadon-dark);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.entry-row {
+  background: var(--celadon-paler);
+}
+
+.entry-thumb {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-right: 8px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* 富文本编辑器 */
+.rich-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: var(--celadon-pale);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.re-tool {
+  min-width: 32px;
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid var(--divider);
+  background: var(--bg-card);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.re-tool:hover {
+  background: var(--celadon-tint);
+}
+
+.re-tool.active {
+  background: var(--celadon);
+  color: var(--white);
+  border-color: var(--celadon);
+}
+
+.re-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--divider);
+  margin: 0 2px;
+}
+
+.re-color {
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+}
+
+.rich-editor {
+  min-height: 220px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid var(--divider);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: var(--bg-card);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.7;
+  outline: none;
+}
+
+.rich-editor:focus {
+  border-color: var(--celadon-light);
+}
+
+.rich-editor img {
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  margin: 4px 0;
+}
+
+.doodle-area {
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--celadon-paler);
+  border-radius: var(--radius-md);
+}
+
+.doodle-canvas {
+  width: 100%;
+  max-width: 320px;
+  height: 180px;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--divider);
+  touch-action: none;
+}
+
+/* 图表图例 */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-medium);
+}
+
+.chart-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 /* ---------- 响应式补充 ---------- */
 @media (max-width: 768px) {
   .quadrant-board {
@@ -1654,6 +2245,36 @@ body {
 
   .timer-display {
     font-size: 36px;
+  }
+
+  /* 重构组件移动端适配 */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .today-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .countdown-grid.grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .countdown-grid-one {
+    grid-template-columns: 1fr;
+  }
+
+  .cal-cell {
+    font-size: 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .countdown-days {
+    font-size: 38px;
+  }
+
+  .countdown-detail-days {
+    font-size: 64px;
   }
 }
 
@@ -1793,8 +2414,12 @@ const Store = (function () {
           { id: uid(), name: '图片记录', type: 'image' },
           { id: uid(), name: '习惯打卡', type: 'habit' }
         ],
-        entries: [] // {id, boardId, date, content, mood, images:[base64], habitStreak, lastCheckDate}
+        // entry.content 可存储 HTML 富文本字符串；可选样式字段 fontSize/fontFamily/color
+        entries: [] // {id, boardId, date, content, mood, images:[base64], habitStreak, lastCheckDate,
+                     //  fontSize, fontFamily, color, habitPeriod, createdAt}
       },
+      countdowns: [], // 倒数日事件：{id, title, date, bg, detail, layout, createdAt}
+      dailyNotes: {}, // 日期一句话备注：{ 'YYYY-MM-DD': '备注内容' }
       goals: {
         exercise: { monthlyMinutes: 0, label: '月度运动目标(分钟)' },
         reading: { monthlyMinutes: 0, label: '月度阅读目标(分钟)' },
@@ -1806,7 +2431,9 @@ const Store = (function () {
         { id: 'study', name: '学习计划', icon: '📚', builtin: true, visible: true },
         { id: 'checklist', name: '每日清单', icon: '📋', builtin: true, visible: true },
         { id: 'accounting', name: '每日记账', icon: '💰', builtin: true, visible: true },
-        { id: 'records', name: '日常记录', icon: '✏️', builtin: true, visible: true }
+        { id: 'records', name: '日常记录', icon: '✏️', builtin: true, visible: true },
+        { id: 'timer', name: '计时器', icon: '⏱', builtin: true, visible: true },
+        { id: 'countdown', name: '倒数日', icon: '⏳', builtin: true, visible: true }
       ],
       customPages: {}, // { pageId: [{ id, date, content, sectionId, createdAt }] }
       customSections: {}, // { pageId: [{ id, name }] }
@@ -2288,6 +2915,10 @@ const Store = (function () {
       habitStreak: entry.habitStreak || 0,
       lastCheckDate: entry.lastCheckDate || null,
       habitPeriod: entry.habitPeriod || 'daily',
+      // 富文本样式字段（可选）
+      fontSize: entry.fontSize || '',
+      fontFamily: entry.fontFamily || '',
+      color: entry.color || '',
       createdAt: Date.now()
     };
     data.records.entries.push(e);
@@ -2304,6 +2935,67 @@ const Store = (function () {
   function deleteRecordEntry(id) {
     data.records.entries = data.records.entries.filter(e => e.id !== id);
     save();
+  }
+
+  // ============ 倒数日 ============
+  function getCountdowns() {
+    return data.countdowns || [];
+  }
+
+  function getCountdown(id) {
+    return (data.countdowns || []).find(c => c.id === id);
+  }
+
+  function addCountdown(item) {
+    const c = {
+      id: uid(),
+      title: item.title || '未命名倒数日',
+      date: item.date || data.currentDate,
+      bg: item.bg || '',
+      detail: item.detail || '',
+      layout: item.layout || 'two',
+      createdAt: Date.now()
+    };
+    if (!data.countdowns) data.countdowns = [];
+    data.countdowns.push(c);
+    save();
+    return c;
+  }
+
+  function updateCountdown(id, updates) {
+    const c = (data.countdowns || []).find(c => c.id === id);
+    if (c) {
+      Object.assign(c, updates);
+      save();
+    }
+    return c;
+  }
+
+  function deleteCountdown(id) {
+    data.countdowns = (data.countdowns || []).filter(c => c.id !== id);
+    save();
+  }
+
+  // ============ 日期一句话备注 ============
+  function getDailyNote(date) {
+    return (data.dailyNotes && data.dailyNotes[date]) || '';
+  }
+
+  function setDailyNote(date, note) {
+    if (!data.dailyNotes) data.dailyNotes = {};
+    if (note && note.trim()) {
+      data.dailyNotes[date] = note.trim();
+    } else {
+      delete data.dailyNotes[date];
+    }
+    save();
+  }
+
+  function deleteDailyNote(date) {
+    if (data.dailyNotes) {
+      delete data.dailyNotes[date];
+      save();
+    }
   }
 
   // ============ 目标管理 ============
@@ -2713,6 +3405,16 @@ const Store = (function () {
     addRecordEntry,
     updateRecordEntry,
     deleteRecordEntry,
+    // 倒数日
+    getCountdowns,
+    getCountdown,
+    addCountdown,
+    updateCountdown,
+    deleteCountdown,
+    // 日期备注
+    getDailyNote,
+    setDailyNote,
+    deleteDailyNote,
     // 目标
     getGoals,
     updateGoals,
@@ -3007,10 +3709,46 @@ const Timer = (function () {
     return div.innerHTML;
   }
 
+  // 独立计时器页面
+  function render(container) {
+    container.innerHTML = `
+      <div class="module-header">
+        <h2>⏱ 计时器</h2>
+        <div class="module-subtitle">正计时 / 倒计时 · 记录自动存入全局计时仓库</div>
+      </div>
+
+      <div class="section-block">
+        <div id="timerMainWidget"></div>
+      </div>
+
+      <div class="section-block collapsible">
+        <div class="section-title">
+          <span class="section-title-icon">📜</span>
+          计时记录
+          <span class="text-xs text-muted" style="margin-left:4px;">（来源：计时器）</span>
+        </div>
+        <div id="timerRecordsList" style="max-height:320px;overflow-y:auto;"></div>
+      </div>
+    `;
+
+    createTimerWidget('timerMainWidget', 'timer', function () {
+      renderRecords();
+    });
+    renderRecords();
+    App.bindCollapsible(container);
+  }
+
+  function renderRecords() {
+    const el = document.getElementById('timerRecordsList');
+    if (!el) return;
+    renderTimerRepo('timerRecordsList', function (t) { return t.source === 'timer'; }, null);
+  }
+
   return {
     createTimerWidget,
     renderTimerRepo,
-    formatTime
+    formatTime,
+    render
   };
 })();
 
@@ -3018,141 +3756,36 @@ const Timer = (function () {
 /* ===== dashboard.js ===== */
 /* ============================================
  * dashboard.js - 总览面板模块
- * 今日待办 · 学习/运动时长 · 收支汇总 · 目标管理
+ * 月历组件 · 今日动态（快捷入口 + 当日汇总）· 目标管理
  * ============================================ */
 
 const Dashboard = (function () {
 
+  // 当前日历显示的月份（YYYY-MM），默认跟随当前日期
+  let calMonth = null;
+
   function render(container) {
+    if (!calMonth) calMonth = Store.getCurrentDate().slice(0, 7);
     const date = Store.getCurrentDate();
-    const d = new Date(date);
-    const monthStr = date.slice(0, 7);
-
-    // 获取各模块数据
-    const checklistTasks = Store.getChecklistTasks(date);
-    const archivedTasks = Store.getArchivedTasks(date);
-    const exerciseCheckins = Store.getExerciseCheckins(date);
-    const studyTodos = Store.getStudyTodosByDate(date);
-    const transactions = Store.getTransactions(date);
-
-    // 计算今日运动时长
-    let exerciseDuration = 0;
-    exerciseCheckins.forEach(c => {
-      (c.timerIds || []).forEach(id => {
-        const t = Store.getTimer(id);
-        if (t) exerciseDuration += t.duration;
-      });
-    });
-
-    // 计算今日学习时长
-    let studyDuration = 0;
-    studyTodos.forEach(t => {
-      (t.timerIds || []).forEach(id => {
-        const timer = Store.getTimer(id);
-        if (timer) studyDuration += timer.duration;
-      });
-    });
-
-    // 收支
-    const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-    const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-
-    // 目标
-    const goals = Store.getGoals();
-
-    // 本月运动时长
-    let monthExerciseDuration = 0;
-    Store.getAllCheckins().forEach(c => {
-      if (c.date.startsWith(monthStr)) {
-        (c.timerIds || []).forEach(id => {
-          const t = Store.getTimer(id);
-          if (t) monthExerciseDuration += t.duration;
-        });
-      }
-    });
-
-    // 本月学习时长
-    let monthStudyDuration = 0;
-    Store.getStudyTodos().forEach(t => {
-      (t.timerIds || []).forEach(id => {
-        const timer = Store.getTimer(id);
-        if (timer && timer.date.startsWith(monthStr)) {
-          monthStudyDuration += timer.duration;
-        }
-      });
-    });
-
-    // 本月储蓄（收入-支出）
-    const monthTxs = Store.getTransactionsByMonth(monthStr);
-    const monthIncome = monthTxs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-    const monthExpense = monthTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-    const monthSavings = monthIncome - monthExpense;
 
     container.innerHTML = `
       <div class="module-header">
         <h2>◈ 总览面板</h2>
-        <div class="module-subtitle">${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 · 星期${'日一二三四五六'[d.getDay()]}</div>
+        <div class="module-subtitle">${getWeekdayText(date)}</div>
       </div>
 
-      <!-- 今日概览卡片 -->
-      <div class="grid-2 mb-20">
-        <div class="dashboard-card">
-          <div class="dashboard-card-icon">📋</div>
-          <div class="dashboard-card-info">
-            <div class="dashboard-card-value">${checklistTasks.length}</div>
-            <div class="dashboard-card-label">今日待办</div>
-            <div class="dashboard-card-sub">${archivedTasks.length} 已完成</div>
-          </div>
-        </div>
-        <div class="dashboard-card">
-          <div class="dashboard-card-icon">🏃</div>
-          <div class="dashboard-card-info">
-            <div class="dashboard-card-value">${Timer.formatTime(exerciseDuration)}</div>
-            <div class="dashboard-card-label">今日运动时长</div>
-            <div class="dashboard-card-sub">${exerciseCheckins.length} 次训练</div>
-          </div>
-        </div>
-        <div class="dashboard-card">
-          <div class="dashboard-card-icon">📚</div>
-          <div class="dashboard-card-info">
-            <div class="dashboard-card-value">${Timer.formatTime(studyDuration)}</div>
-            <div class="dashboard-card-label">今日学习时长</div>
-            <div class="dashboard-card-sub">${studyTodos.filter(t => (t.checkDates || []).includes(date)).length}/${studyTodos.length} 任务完成</div>
-          </div>
-        </div>
-        <div class="dashboard-card">
-          <div class="dashboard-card-icon">💰</div>
-          <div class="dashboard-card-info">
-            <div class="dashboard-card-value" style="color:${expense > income ? 'var(--danger)' : 'var(--celadon-dark)'};">${App.formatMoney(expense)}</div>
-            <div class="dashboard-card-label">今日支出</div>
-            <div class="dashboard-card-sub">收入 ${App.formatMoney(income)}</div>
-          </div>
-        </div>
+      <!-- 月历组件 -->
+      <div class="section-block">
+        <div id="calendarArea">${renderCalendar()}</div>
       </div>
 
-      <!-- 今日待办概览 -->
+      <!-- 今日动态：合并快捷入口 + 当日汇总 -->
       <div class="section-block collapsible">
         <div class="section-title">
-          <span class="section-title-icon">📋</span>
-          今日待办概览
-          <button class="btn-text" id="goChecklistBtn" style="margin-left:auto;">前往清单 →</button>
+          <span class="section-title-icon">⚡</span>
+          今日动态
         </div>
-        ${checklistTasks.length === 0
-          ? '<div class="empty-state"><div class="empty-state-icon">📋</div>今日暂无待办事项</div>'
-          : `<div class="dashboard-todo-preview">
-              ${checklistTasks.slice(0, 5).map(t => {
-                const qColors = ['var(--danger)', 'var(--warning)', '#D4855E', 'var(--bean-green)'];
-                return `
-                  <div class="list-item">
-                    <span style="width:8px;height:8px;border-radius:50%;background:${qColors[t.quadrant]};flex-shrink:0;"></span>
-                    <span class="flex-1 text-sm">${App.escapeHtml(t.text)}</span>
-                    ${t.recurring !== 'none' ? '<span class="text-xs text-muted">🔁</span>' : ''}
-                  </div>
-                `;
-              }).join('')}
-              ${checklistTasks.length > 5 ? `<div class="text-center text-sm text-muted mt-8">还有 ${checklistTasks.length - 5} 项…</div>` : ''}
-            </div>`
-        }
+        <div id="todayDynamicArea">${renderTodayDynamic()}</div>
       </div>
 
       <!-- 目标管理 -->
@@ -3163,35 +3796,9 @@ const Dashboard = (function () {
           <button class="btn btn-sm" id="editGoalsBtn" style="margin-left:auto;">设置目标</button>
         </div>
         <div class="grid-3">
-          ${renderGoalCard('exercise', '月度运动目标', Timer.formatTime(monthExerciseDuration), goals.exercise.monthlyMinutes ? Timer.formatTime(goals.exercise.monthlyMinutes * 60) : '未设置', monthExerciseDuration, goals.exercise.monthlyMinutes * 60, '分')}
-          ${renderGoalCard('reading', '月度阅读目标', Timer.formatTime(monthStudyDuration), goals.reading.monthlyMinutes ? Timer.formatTime(goals.reading.monthlyMinutes * 60) : '未设置', monthStudyDuration, goals.reading.monthlyMinutes * 60, '分')}
-          ${renderGoalCard('savings', '月度储蓄目标', App.formatMoney(monthSavings), goals.savings.monthlyTarget ? App.formatMoney(goals.savings.monthlyTarget) : '未设置', monthSavings, goals.savings.monthlyTarget, '元')}
-        </div>
-      </div>
-
-      <!-- 快捷入口 -->
-      <div class="section-block collapsible">
-        <div class="section-title">
-          <span class="section-title-icon">⚡</span>
-          快捷入口
-        </div>
-        <div class="grid-4">
-          <div class="quick-action" data-module="exercise">
-            <span style="font-size:28px;">🏃</span>
-            <span class="text-sm">开始锻炼</span>
-          </div>
-          <div class="quick-action" data-module="study">
-            <span style="font-size:28px;">📚</span>
-            <span class="text-sm">学习计时</span>
-          </div>
-          <div class="quick-action" data-module="accounting">
-            <span style="font-size:28px;">💰</span>
-            <span class="text-sm">记一笔</span>
-          </div>
-          <div class="quick-action" data-module="records">
-            <span style="font-size:28px;">✏️</span>
-            <span class="text-sm">写记录</span>
-          </div>
+          ${renderGoalCard('exercise', '月度运动目标', Timer.formatTime(monthExerciseDuration()), goalsSummary().exercise.target ? Timer.formatTime(goalsSummary().exercise.target) : '未设置', monthExerciseDuration(), goalsSummary().exercise.target, '分')}
+          ${renderGoalCard('reading', '月度阅读目标', Timer.formatTime(monthStudyDuration()), goalsSummary().reading.target ? Timer.formatTime(goalsSummary().reading.target) : '未设置', goalsSummary().reading.current, goalsSummary().reading.target, '分')}
+          ${renderGoalCard('savings', '月度储蓄目标', App.formatMoney(monthSavings()), goalsSummary().savings.target ? App.formatMoney(goalsSummary().savings.target) : '未设置', monthSavings(), goalsSummary().savings.target, '元')}
         </div>
       </div>
     `;
@@ -3200,9 +3807,147 @@ const Dashboard = (function () {
     App.bindCollapsible(container);
   }
 
+  // 月历渲染
+  function renderCalendar() {
+    const [year, month] = calMonth.split('-').map(Number);
+    const firstDay = new Date(year, month - 1, 1);
+    const startWeekday = firstDay.getDay(); // 0=周日
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const curDate = Store.getCurrentDate();
+
+    // 备注标记
+    const dailyNotes = Store.getAll().dailyNotes || {};
+
+    let cells = '';
+    for (let i = 0; i < startWeekday; i++) {
+      cells += '<div class="cal-cell cal-cell-empty"></div>';
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const ds = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const isToday = ds === todayStr;
+      const isSelected = ds === curDate;
+      const hasNote = !!dailyNotes[ds];
+      const cls = ['cal-cell'];
+      if (isToday) cls.push('cal-today');
+      if (isSelected) cls.push('cal-selected');
+      cells += `<div class="${cls.join(' ')}" data-date="${ds}">
+        <span class="cal-num">${d}</span>
+        ${hasNote ? '<span class="cal-note-dot"></span>' : ''}
+      </div>`;
+    }
+
+    const weekHead = ['日', '一', '二', '三', '四', '五', '六'].map(w => `<div class="cal-weekday">${w}</div>`).join('');
+
+    return `
+      <div class="calendar">
+        <div class="calendar-header">
+          <button class="date-nav-btn" id="calPrevBtn" title="上一月">‹</button>
+          <div class="calendar-title">${year}年${month}月</div>
+          <button class="date-nav-btn" id="calNextBtn" title="下一月">›</button>
+          <button class="date-today-btn" id="calTodayBtn" style="margin-left:8px;">今天</button>
+        </div>
+        <div class="calendar-weekdays">${weekHead}</div>
+        <div class="calendar-grid">${cells}</div>
+      </div>
+    `;
+  }
+
+  // 今日动态（快捷入口 + 当日汇总）
+  function renderTodayDynamic() {
+    const date = Store.getCurrentDate();
+
+    const checklistTasks = Store.getChecklistTasks(date);
+    const archivedTasks = Store.getArchivedTasks(date);
+    const exerciseCheckins = Store.getExerciseCheckins(date);
+    const studyTodos = Store.getStudyTodosByDate(date);
+    const transactions = Store.getTransactions(date);
+
+    let exerciseDuration = 0;
+    exerciseCheckins.forEach(c => (c.timerIds || []).forEach(id => {
+      const t = Store.getTimer(id); if (t) exerciseDuration += t.duration;
+    }));
+    let studyDuration = 0;
+    studyTodos.forEach(t => (t.timerIds || []).forEach(id => {
+      const tm = Store.getTimer(id); if (tm) studyDuration += tm.duration;
+    }));
+    const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+
+    const quickActions = [
+      { module: 'exercise', icon: '🏃', label: '去锻炼' },
+      { module: 'study', icon: '📚', label: '去学习' },
+      { module: 'checklist', icon: '📋', label: '去清单' },
+      { module: 'accounting', icon: '💰', label: '去记账' }
+    ];
+
+    const summaryCards = [
+      { icon: '🏃', value: Timer.formatTime(exerciseDuration), label: '运动时长', sub: `${exerciseCheckins.length} 次训练` },
+      { icon: '📚', value: Timer.formatTime(studyDuration), label: '学习时长', sub: `${studyTodos.filter(t => (t.checkDates || []).includes(date)).length}/${studyTodos.length} 已完成` },
+      { icon: '📋', value: checklistTasks.length, label: '待办事项', sub: `${archivedTasks.length} 已完成` },
+      { icon: '💰', value: App.formatMoney(expense), label: '今日支出', sub: `收入 ${App.formatMoney(income)}` }
+    ];
+
+    return `
+      <div class="quick-actions-grid">
+        ${quickActions.map(q => `
+          <div class="quick-action" data-module="${q.module}">
+            <span style="font-size:26px;">${q.icon}</span>
+            <span class="text-sm">${q.label}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="today-summary mt-16">
+        ${summaryCards.map(c => `
+          <div class="dashboard-card today-summary-card">
+            <div class="dashboard-card-icon">${c.icon}</div>
+            <div class="dashboard-card-info">
+              <div class="dashboard-card-value">${c.value}</div>
+              <div class="dashboard-card-label">${c.label}</div>
+              <div class="dashboard-card-sub">${c.sub}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // 月份维度的目标统计
+  function goalsSummary() {
+    const monthStr = Store.getCurrentDate().slice(0, 7);
+    let monthExerciseDuration = 0;
+    Store.getAllCheckins().forEach(c => {
+      if (c.date.startsWith(monthStr)) (c.timerIds || []).forEach(id => {
+        const t = Store.getTimer(id); if (t) monthExerciseDuration += t.duration;
+      });
+    });
+    let monthStudyDuration = 0;
+    Store.getStudyTodos().forEach(t => (t.timerIds || []).forEach(id => {
+      const tm = Store.getTimer(id);
+      if (tm && tm.date.startsWith(monthStr)) monthStudyDuration += tm.duration;
+    }));
+    const monthTxs = Store.getTransactionsByMonth(monthStr);
+    const monthIncome = monthTxs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const monthExpense = monthTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    const goals = Store.getGoals();
+    return {
+      exercise: { current: monthExerciseDuration, target: goals.exercise.monthlyMinutes * 60 },
+      reading: { current: monthStudyDuration, target: goals.reading.monthlyMinutes * 60 },
+      savings: { current: monthIncome - monthExpense, target: goals.savings.monthlyTarget }
+    };
+  }
+  function monthExerciseDuration() { return goalsSummary().exercise.current; }
+  function monthStudyDuration() { return goalsSummary().reading.current; }
+  function monthSavings() { return goalsSummary().savings.current; }
+
+  function getWeekdayText(dateStr) {
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 · 星期${'日一二三四五六'[d.getDay()]}`;
+  }
+
   function renderGoalCard(key, label, currentValue, targetValue, current, target, unit) {
     const percent = target > 0 ? Math.min(100, (current / target * 100)).toFixed(0) : 0;
-    const isMoney = unit === '元';
     return `
       <div class="goal-card stat-card">
         <div class="text-sm text-muted mb-8">${label}</div>
@@ -3216,6 +3961,75 @@ const Dashboard = (function () {
         <div class="text-xs text-muted mt-8">${percent}% ${percent >= 100 ? '🎉 已达成！' : ''}</div>
       </div>
     `;
+  }
+
+  // 编辑某日期「一句话备注」的弹窗
+  function showDateNoteModal(dateStr) {
+    const existing = Store.getDailyNote(dateStr);
+    App.modal(`${dateStr} 的备注`, `
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">一句话备注</label>
+        <textarea class="textarea" id="dailyNoteInput" rows="3" placeholder="为这一天写一句话备注…">${App.escapeHtml(existing)}</textarea>
+      </div>
+      <div class="text-sm text-muted">该备注会显示在月历对应日期上。</div>
+    `, [
+      { label: '删除', onClick: function () {
+          Store.deleteDailyNote(dateStr);
+          App.toast('备注已删除', 'success');
+          refreshCalendar();
+        }
+      },
+      { label: '保存', primary: true, onClick: function (body) {
+          const val = body.querySelector('#dailyNoteInput').value;
+          Store.setDailyNote(dateStr, val);
+          App.toast('备注已保存', 'success');
+          refreshCalendar();
+        }
+      }
+    ]);
+  }
+
+  function refreshCalendar() {
+    const area = document.getElementById('calendarArea');
+    if (area) area.innerHTML = renderCalendar();
+    bindCalendarEvents();
+  }
+
+  function bindCalendarEvents() {
+    const prev = document.getElementById('calPrevBtn');
+    const next = document.getElementById('calNextBtn');
+    const todayBtn = document.getElementById('calTodayBtn');
+    if (prev) prev.addEventListener('click', function () {
+      const [y, m] = calMonth.split('-').map(Number);
+      const d = new Date(y, m - 2, 1);
+      calMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      refreshCalendar();
+    });
+    if (next) next.addEventListener('click', function () {
+      const [y, m] = calMonth.split('-').map(Number);
+      const d = new Date(y, m, 1);
+      calMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      refreshCalendar();
+    });
+    if (todayBtn) todayBtn.addEventListener('click', function () {
+      const t = new Date().toISOString().slice(0, 10);
+      calMonth = t.slice(0, 7);
+      Store.setCurrentDate(t);
+      const di = document.getElementById('currentDate');
+      if (di) di.value = t;
+      render(document.getElementById('contentArea'));
+    });
+    document.querySelectorAll('.cal-cell[data-date]').forEach(cell => {
+      cell.addEventListener('click', function () {
+        const ds = this.dataset.date;
+        Store.setCurrentDate(ds);
+        const di = document.getElementById('currentDate');
+        if (di) di.value = ds;
+        // 先刷新高亮，再弹备注
+        refreshCalendar();
+        showDateNoteModal(ds);
+      });
+    });
   }
 
   function showEditGoalsModal() {
@@ -3245,20 +4059,15 @@ const Dashboard = (function () {
             savings: { monthlyTarget: parseFloat(body.querySelector('#goalSavings').value) || 0, label: '月度储蓄目标(元)' }
           });
           App.toast('目标已设置', 'success');
-          const contentArea = document.getElementById('contentArea');
-          render(contentArea);
+          render(document.getElementById('contentArea'));
         }
       }
     ]);
   }
 
   function bindEvents() {
-    document.getElementById('goChecklistBtn').addEventListener('click', function () {
-      App.loadModule('checklist');
-    });
-
     document.getElementById('editGoalsBtn').addEventListener('click', showEditGoalsModal);
-
+    bindCalendarEvents();
     document.querySelectorAll('.quick-action').forEach(el => {
       el.addEventListener('click', function () {
         App.loadModule(this.dataset.module);
@@ -3272,153 +4081,109 @@ const Dashboard = (function () {
 
 /* ===== exercise.js ===== */
 /* ============================================
- * exercise.js - 锻炼计划模块
- * 多功能计时器 + 每日训练打卡 + 历史统计
+ * exercise.js - 锻炼计划模块（重构）
+ * 每日打卡方框 · 详情弹窗 · 目录式历史统计（SVG 折线图）· 数据录入
  * ============================================ */
 
 const Exercise = (function () {
 
+  // 历史统计视图状态
+  let statView = 'menu'; // 'menu' | 'weight' | 'fitness' | 'freq' | 'all'
+  let statPeriod = 'month'; // 'week' | 'month'
+
+  // 选中的标签和计时器（详情弹窗内）
+  let selectedLabels = [];
+  let selectedTimerIds = [];
+
   function render(container) {
     const date = Store.getCurrentDate();
+    const checkins = Store.getExerciseCheckins(date);
+    const checkedToday = checkins.length > 0;
+
     container.innerHTML = `
       <div class="module-header">
         <h2>🏃 锻炼计划</h2>
-        <div class="module-subtitle">计时训练 · 每日打卡 · 历史追踪</div>
+        <div class="module-subtitle">每日打卡 · 历史追踪 · 数据可视化</div>
       </div>
 
-      <!-- 板块1：多功能计时器 -->
-      <div class="section-block collapsible">
-        <div class="section-title">
-          <span class="section-title-icon">⏱</span>
-          多功能计时器
-        </div>
-        <div id="exerciseTimerWidget"></div>
-      </div>
-
-      <!-- 板块2：每日训练打卡 -->
+      <!-- 板块1：每日训练打卡（横向方框） -->
       <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">✅</span>
           每日训练打卡
-          <span class="text-muted text-sm" style="margin-left:auto;">${App.formatDate(date)}</span>
         </div>
-
-        <div id="exerciseCheckinArea">
-          ${renderCheckinForm()}
-          ${renderTodayCheckins()}
+        <div class="checkin-status-box ${checkedToday ? 'checked' : ''}" id="checkinStatusBox">
+          <div class="checkin-status-left">
+            <div class="checkin-status-date">${App.formatDate(date)}</div>
+            <div class="checkin-status-text">${checkedToday ? '今日已打卡 ✓' : '今日未打卡'}</div>
+          </div>
+          <button class="btn ${checkedToday ? '' : 'btn-primary'}" id="openCheckinBtn">${checkedToday ? '查看/补充' : '立即打卡'}</button>
         </div>
+        <div id="todayCheckinsList" class="mt-12">${renderTodayCheckins()}</div>
       </div>
 
-      <!-- 板块3：训练历史统计 -->
+      <!-- 板块2：训练历史统计（目录式） -->
       <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">📊</span>
           训练历史统计
-          <div style="margin-left:auto;display:flex;gap:6px;">
-            <button class="btn btn-sm stat-period-btn active" data-period="week">本周</button>
-            <button class="btn btn-sm stat-period-btn" data-period="month">本月</button>
-          </div>
         </div>
-        <div id="exerciseStats">${renderStats('week')}</div>
+        <div id="exerciseStatsArea">${renderStatsArea()}</div>
       </div>
 
-      <!-- 板块4：体能体重录入 -->
+      <!-- 板块3：数据录入（目录式） -->
       <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">⚖️</span>
           体能与体重录入
         </div>
-        <div id="bodyMetricsArea">${renderBodyMetrics()}</div>
+        <div class="dir-list">
+          <div class="dir-item" data-action="new-checkin">
+            <span class="dir-item-icon">🏋</span>
+            <span class="dir-item-main">
+              <span class="dir-item-title">新增训练打卡</span>
+              <span class="dir-item-sub">记录今日训练标签、备注、体重、体能</span>
+            </span>
+            <span class="dir-item-arrow">›</span>
+          </div>
+          <div class="dir-item" data-action="weight-quick">
+            <span class="dir-item-icon">⚖️</span>
+            <span class="dir-item-main">
+              <span class="dir-item-title">体重速记</span>
+              <span class="dir-item-sub">快速记录今日体重</span>
+            </span>
+            <span class="dir-item-arrow">›</span>
+          </div>
+          <div class="dir-item" data-action="fitness-quick">
+            <span class="dir-item-icon">🔥</span>
+            <span class="dir-item-main">
+              <span class="dir-item-title">体能速记</span>
+              <span class="dir-item-sub">快速记录今日体能</span>
+            </span>
+            <span class="dir-item-arrow">›</span>
+          </div>
+        </div>
       </div>
     `;
 
-    // 初始化计时器
-    Timer.createTimerWidget('exerciseTimerWidget', 'exercise', function () {
-      refreshCheckins();
-    });
-
-    // 绑定标签选择
-    bindCheckinEvents();
-
-    // 统计周期切换
-    container.querySelectorAll('.stat-period-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        container.querySelectorAll('.stat-period-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        document.getElementById('exerciseStats').innerHTML = renderStats(this.dataset.period);
-      });
-    });
-
+    bindEvents();
     App.bindCollapsible(container);
   }
 
-  // 渲染打卡表单
-  function renderCheckinForm() {
-    return `
-      <div class="checkin-form">
-        <div class="mb-12">
-          <label class="text-sm text-muted mb-8" style="display:block;">选择训练标签（可多选）</label>
-          <div class="training-label-select-wrap" style="display:flex;gap:8px;align-items:center;">
-            <select class="training-label-select" id="trainingLabelSelect" style="flex:1;">
-              <option value="">— 点击选择训练标签 —</option>
-              ${Store.getTrainingLabels().map(label => `<option value="${label}">${label}</option>`).join('')}
-            </select>
-            <button class="btn btn-sm" id="addTrainingLabelBtn">+ 自定义</button>
-          </div>
-          <div id="selectedLabelsDisplay" class="mt-8 flex-row flex-wrap" style="gap:6px;"></div>
-        </div>
-
-        <div class="mb-12">
-          <label class="text-sm text-muted mb-8" style="display:block;">导入计时记录（可选）</label>
-          <div id="checkinTimerRepo" class="timer-repo-container"></div>
-          <div id="selectedTimersDisplay" class="mt-8"></div>
-        </div>
-
-        <div class="grid-2 mb-12">
-          <div>
-            <label class="text-sm text-muted mb-8" style="display:block;">当日训练备注</label>
-            <textarea class="textarea" id="checkinNotes" placeholder="今天训练的感受、状态…" rows="2"></textarea>
-          </div>
-          <div>
-            <label class="text-sm text-muted mb-8" style="display:block;">当日训练总结</label>
-            <textarea class="textarea" id="checkinSummary" placeholder="训练完成情况、改进点…" rows="2"></textarea>
-          </div>
-        </div>
-
-        <div class="grid-2 mb-12">
-          <div>
-            <label class="text-sm text-muted mb-8" style="display:block;">体重 (kg)</label>
-            <input type="number" class="input" id="checkinWeight" placeholder="如 65.5" step="0.1">
-          </div>
-          <div>
-            <label class="text-sm text-muted mb-8" style="display:block;">体能记录</label>
-            <input type="text" class="input" id="checkinFitness" placeholder="如 跑步5km/俯卧撑30个">
-          </div>
-        </div>
-
-        <button class="btn btn-primary" id="saveCheckinBtn">保存训练打卡</button>
-      </div>
-    `;
-  }
-
-  // 渲染今日打卡列表
+  // 渲染今日打卡列表（紧凑）
   function renderTodayCheckins() {
     const date = Store.getCurrentDate();
     const checkins = Store.getExerciseCheckins(date);
-
     if (checkins.length === 0) {
-      return '<div class="mt-16"><div class="empty-state"><div class="empty-state-icon">📋</div>今日暂无训练打卡记录</div></div>';
+      return '<div class="text-sm text-muted">今日还没有打卡记录</div>';
     }
-
-    let html = '<div class="mt-16 section-block collapsible collapsed" style="padding:12px;margin-bottom:0;"><div class="section-title" style="font-size:13px;"><span class="section-title-icon">📋</span>今日打卡记录 <span class="text-muted text-xs">(' + checkins.length + '条)</span></div><div>';
-    checkins.forEach(c => {
+    return checkins.map(c => {
       const timers = (c.timerIds || []).map(id => {
         const t = Store.getTimer(id);
         return t ? `<span class="tag" style="font-size:11px;">${App.escapeHtml(t.name)} (${Timer.formatTime(t.duration)})</span>` : '';
       }).join(' ');
-
-      html += `
-        <div class="list-item" style="align-items:flex-start;flex-direction:column;">
+      return `
+        <div class="list-item checkin-mini" data-id="${c.id}" style="cursor:pointer;align-items:flex-start;flex-direction:column;">
           <div class="flex-between w-full">
             <div class="flex-row flex-wrap">
               ${c.labels.map(l => `<span class="tag selected" style="cursor:default;">${l}</span>`).join(' ')}
@@ -3426,270 +4191,344 @@ const Exercise = (function () {
             <button class="btn-text danger delete-checkin-btn" data-id="${c.id}">删除</button>
           </div>
           ${timers ? `<div class="mt-8">${timers}</div>` : ''}
-          ${c.notes ? `<div class="text-sm mt-8"><span class="text-muted">备注：</span>${App.escapeHtml(c.notes)}</div>` : ''}
-          ${c.summary ? `<div class="text-sm"><span class="text-muted">总结：</span>${App.escapeHtml(c.summary)}</div>` : ''}
-          ${c.weight ? `<div class="text-sm"><span class="text-muted">体重：</span>${c.weight} kg</div>` : ''}
-          ${c.fitness ? `<div class="text-sm"><span class="text-muted">体能：</span>${App.escapeHtml(c.fitness)}</div>` : ''}
+          ${c.notes || c.summary || c.weight || c.fitness ? `
+            <div class="text-sm text-muted mt-8" style="line-height:1.7;">
+              ${c.weight ? '体重 ' + App.escapeHtml(c.weight) + 'kg · ' : ''}${c.fitness ? '体能 ' + App.escapeHtml(c.fitness) + ' · ' : ''}${c.notes ? App.escapeHtml(c.notes) : ''}${c.summary ? '『' + App.escapeHtml(c.summary) + '』' : ''}
+            </div>` : ''}
         </div>
       `;
-    });
-    html += '</div></div>';
+    }).join('');
+  }
+
+  // 历史统计区域（目录 / 图表）
+  function renderStatsArea() {
+    if (statView === 'menu') {
+      const items = [
+        { key: 'weight', icon: '⚖️', title: '体重变化', sub: '体重随时间的折线趋势' },
+        { key: 'fitness', icon: '🔥', title: '体能评分', sub: '体能记录数值化折线趋势' },
+        { key: 'freq', icon: '📅', title: '训练频次', sub: '每日训练次数折线' },
+        { key: 'all', icon: '📈', title: '综合概览', sub: '体重 / 体能 / 频次 同图' }
+      ];
+      return '<div class="dir-list">' + items.map(it => `
+        <div class="dir-item" data-stat="${it.key}">
+          <span class="dir-item-icon">${it.icon}</span>
+          <span class="dir-item-main">
+            <span class="dir-item-title">${it.title}</span>
+            <span class="dir-item-sub">${it.sub}</span>
+          </span>
+          <span class="dir-item-arrow">›</span>
+        </div>
+      `).join('') + '</div>';
+    }
+
+    // 子视图
+    const titles = { weight: '体重变化', fitness: '体能评分', freq: '训练频次', all: '综合概览' };
+    let html = `
+      <div class="flex-between mb-12">
+        <button class="btn-text" id="statBackBtn">← 返回目录</button>
+        <div class="flex-row" style="gap:6px;">
+          <button class="btn btn-sm stat-period-btn ${statPeriod === 'week' ? 'btn-primary' : ''}" data-period="week">本周</button>
+          <button class="btn btn-sm stat-period-btn ${statPeriod === 'month' ? 'btn-primary' : ''}" data-period="month">本月</button>
+        </div>
+      </div>
+      <div class="text-sm text-muted mb-8">${titles[statView]} · ${statPeriod === 'week' ? '本周' : '本月'}</div>
+      <div id="statChartArea"></div>
+    `;
     return html;
   }
 
-  // 选中的标签和计时器
-  let selectedLabels = [];
-  let selectedTimerIds = [];
-
-  function bindCheckinEvents() {
-    // 标签下拉选择
-    var labelSelect = document.getElementById('trainingLabelSelect');
-    if (labelSelect) {
-      labelSelect.addEventListener('change', function () {
-        var label = this.value;
-        if (label && !selectedLabels.includes(label)) {
-          selectedLabels.push(label);
-          renderSelectedLabels();
-        }
-        this.value = '';
-      });
+  // 计算统计序列
+  function buildSeries() {
+    const all = Store.getAllCheckins();
+    const today = new Date(Store.getCurrentDate());
+    let dates = [];
+    if (statPeriod === 'week') {
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        dates.push(d.toISOString().slice(0, 10));
+      }
+    } else {
+      const y = today.getFullYear(), m = today.getMonth();
+      const days = new Date(y, m + 1, 0).getDate();
+      for (let i = 1; i <= days; i++) {
+        dates.push(`${y}-${String(m + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`);
+      }
     }
+    // 频次
+    const freqData = dates.map(ds => all.filter(c => c.date === ds).length);
+    // 体重 / 体能
+    const wMap = {}, fMap = {};
+    all.forEach(c => {
+      if (c.weight && !isNaN(parseFloat(c.weight))) wMap[c.date] = parseFloat(c.weight);
+      const num = extractNumber(c.fitness);
+      if (num != null) fMap[c.date] = num;
+    });
+    const wDates = Object.keys(wMap).filter(d => dates.includes(d)).sort();
+    const fDates = Object.keys(fMap).filter(d => dates.includes(d)).sort();
+    return {
+      freq: { labels: dates.map(d => d.slice(5)), data: freqData },
+      weight: { labels: wDates.map(d => d.slice(5)), data: wDates.map(d => wMap[d]) },
+      fitness: { labels: fDates.map(d => d.slice(5)), data: fDates.map(d => fMap[d]) }
+    };
+  }
 
-    // 自定义添加训练标签
-    var addLabelBtn = document.getElementById('addTrainingLabelBtn');
-    if (addLabelBtn) {
-      addLabelBtn.addEventListener('click', function () {
-        App.modal('添加训练标签', `
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">标签名称</label>
-            <input type="text" class="input" id="newTrainingLabel" placeholder="如：HIIT训练">
-          </div>
-        `, [
-          { label: '取消' },
-          {
-            label: '添加',
-            primary: true,
-            onClick: function (body) {
-              var name = body.querySelector('#newTrainingLabel').value.trim();
-              if (!name) { App.toast('请输入标签名称', 'warning'); return false; }
-              Store.addTrainingLabel(name);
-              App.toast('标签已添加', 'success');
-              refreshCheckins();
-            }
+  function extractNumber(str) {
+    if (!str) return null;
+    const m = str.match(/-?\d+(\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  function renderStatChart() {
+    const el = document.getElementById('statChartArea');
+    if (!el) return;
+    const s = buildSeries();
+    if (statView === 'weight') {
+      if (s.weight.data.length < 2) { el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚖️</div>体重数据不足，请在打卡时填写体重</div>'; return; }
+      App.lineChart(el, { labels: s.weight.labels, series: [{ name: '体重(kg)', color: 'var(--info)', data: s.weight.data }] });
+    } else if (statView === 'fitness') {
+      if (s.fitness.data.length < 2) { el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔥</div>体能数据不足，请在打卡时填写可量化的体能（如 5km）</div>'; return; }
+      App.lineChart(el, { labels: s.fitness.labels, series: [{ name: '体能(数值)', color: 'var(--warning)', data: s.fitness.data }] });
+    } else if (statView === 'freq') {
+      App.lineChart(el, { labels: s.freq.labels, series: [{ name: '训练次数', color: 'var(--celadon)', data: s.freq.data }] });
+    } else if (statView === 'all') {
+      const series = [];
+      if (s.weight.data.length >= 2) series.push({ name: '体重(kg)', color: 'var(--info)', data: s.weight.data });
+      if (s.fitness.data.length >= 2) series.push({ name: '体能', color: 'var(--warning)', data: s.fitness.data });
+      series.push({ name: '训练次数', color: 'var(--celadon)', data: s.freq.data });
+      if (series.length === 0) { el.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📈</div>暂无足够数据</div>'; return; }
+      App.lineChart(el, { labels: s.freq.labels, series: series });
+    }
+  }
+
+  // 打卡详情弹窗
+  function openCheckinModal(existing) {
+    const isEdit = !!existing;
+    if (!isEdit) { selectedLabels = []; selectedTimerIds = []; }
+    else {
+      selectedLabels = [...(existing.labels || [])];
+      selectedTimerIds = [...(existing.timerIds || [])];
+    }
+    const labels = Store.getTrainingLabels();
+
+    App.modal(isEdit ? '编辑训练打卡' : '训练打卡', `
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">训练标签（可多选）</label>
+        <div class="flex-row flex-wrap" id="modalLabels" style="gap:6px;">
+          ${labels.map(l => `<span class="tag training-label-tag ${selectedLabels.includes(l) ? 'selected' : ''}" data-label="${App.escapeHtml(l)}">${App.escapeHtml(l)}</span>`).join('')}
+        </div>
+        <button class="btn btn-sm mt-8" id="addTrainingLabelBtn">+ 自定义标签</button>
+      </div>
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">导入计时记录（可选）</label>
+        <div id="checkinTimerRepo" class="timer-repo-container"></div>
+        <div id="selectedTimersDisplay" class="mt-8 flex-row flex-wrap" style="gap:6px;"></div>
+      </div>
+      <div class="grid-2 mb-12">
+        <div>
+          <label class="text-sm text-muted mb-8" style="display:block;">备注</label>
+          <textarea class="textarea" id="checkinNotes" rows="2" placeholder="训练感受…">${isEdit ? App.escapeHtml(existing.notes || '') : ''}</textarea>
+        </div>
+        <div>
+          <label class="text-sm text-muted mb-8" style="display:block;">总结</label>
+          <textarea class="textarea" id="checkinSummary" rows="2" placeholder="完成情况…">${isEdit ? App.escapeHtml(existing.summary || '') : ''}</textarea>
+        </div>
+      </div>
+      <div class="grid-2 mb-12">
+        <div>
+          <label class="text-sm text-muted mb-8" style="display:block;">体重 (kg)</label>
+          <input type="number" class="input" id="checkinWeight" step="0.1" placeholder="如 65.5" value="${isEdit ? App.escapeHtml(existing.weight || '') : ''}">
+        </div>
+        <div>
+          <label class="text-sm text-muted mb-8" style="display:block;">体能记录</label>
+          <input type="text" class="input" id="checkinFitness" placeholder="如 跑步5km/俯卧撑30" value="${isEdit ? App.escapeHtml(existing.fitness || '') : ''}">
+        </div>
+      </div>
+    `, [
+      ...(isEdit ? [{ label: '删除', onClick: function () {
+          if (confirm('确定删除这条打卡？')) {
+            Store.deleteExerciseCheckin(existing.id);
+            App.toast('已删除', 'success');
+            refreshAfterCheckin();
           }
-        ]);
-      });
-    }
+        } }] : []),
+      { label: '取消' },
+      {
+        label: '保存',
+        primary: true,
+        onClick: function (body) {
+          const data = {
+            labels: [...selectedLabels],
+            timerIds: [...selectedTimerIds],
+            notes: body.querySelector('#checkinNotes').value,
+            summary: body.querySelector('#checkinSummary').value,
+            weight: body.querySelector('#checkinWeight').value,
+            fitness: body.querySelector('#checkinFitness').value
+          };
+          if (isEdit) {
+            Store.updateExerciseCheckin(existing.id, data);
+            App.toast('打卡已更新', 'success');
+          } else {
+            if (data.labels.length === 0 && data.timerIds.length === 0 && !data.notes && !data.summary && !data.weight && !data.fitness) {
+              App.toast('请至少填写一项内容', 'warning');
+              return false;
+            }
+            Store.addExerciseCheckin(data);
+            App.toast('打卡已保存', 'success');
+          }
+          refreshAfterCheckin();
+        }
+      }
+    ]);
 
-    // 渲染计时仓库（用于导入）
-    Timer.renderTimerRepo('checkinTimerRepo', function (t) { return t.source === 'exercise'; }, function (timer) {
+    // 标签选择
+    document.querySelectorAll('#modalLabels .training-label-tag').forEach(tag => {
+      tag.addEventListener('click', function () {
+        const l = this.dataset.label;
+        if (selectedLabels.includes(l)) { selectedLabels = selectedLabels.filter(x => x !== l); this.classList.remove('selected'); }
+        else { selectedLabels.push(l); this.classList.add('selected'); }
+      });
+    });
+    const addLblBtn = document.getElementById('addTrainingLabelBtn');
+    addLblBtn.addEventListener('click', function () {
+      App.modal('添加训练标签', `
+        <div class="mb-12"><input type="text" class="input" id="newTrainingLabel" placeholder="如：HIIT训练"></div>
+      `, [
+        { label: '取消' },
+        { label: '添加', primary: true, onClick: function (b) {
+            const name = b.querySelector('#newTrainingLabel').value.trim();
+            if (!name) { App.toast('请输入名称', 'warning'); return false; }
+            Store.addTrainingLabel(name);
+            App.toast('已添加', 'success');
+            openCheckinModal(isEdit ? existing : null);
+          } }
+      ]);
+    });
+
+    // 计时仓库
+    Timer.renderTimerRepo('checkinTimerRepo', function (t) { return t.source === 'exercise' || t.source === 'timer'; }, function (timer) {
       if (!selectedTimerIds.includes(timer.id)) {
         selectedTimerIds.push(timer.id);
-        App.toast(`已导入"${timer.name}"`, 'success');
+        App.toast(`已导入「${timer.name}」`, 'success');
         renderSelectedTimers();
-      } else {
-        App.toast('该计时已导入', 'warning');
       }
     });
-
-    // 保存打卡
-    document.getElementById('saveCheckinBtn').addEventListener('click', function () {
-      if (selectedLabels.length === 0 && selectedTimerIds.length === 0) {
-        App.toast('请至少选择一个训练标签或导入计时记录', 'warning');
-        return;
-      }
-
-      Store.addExerciseCheckin({
-        labels: [...selectedLabels],
-        timerIds: [...selectedTimerIds],
-        notes: document.getElementById('checkinNotes').value,
-        summary: document.getElementById('checkinSummary').value,
-        weight: document.getElementById('checkinWeight').value,
-        fitness: document.getElementById('checkinFitness').value
-      });
-
-      App.toast('训练打卡已保存！', 'success');
-      selectedLabels = [];
-      selectedTimerIds = [];
-      refreshCheckins();
-    });
-
-    // 删除打卡
-    document.querySelectorAll('.delete-checkin-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        if (confirm('确定删除这条打卡记录？')) {
-          Store.deleteExerciseCheckin(this.dataset.id);
-          App.toast('已删除', 'success');
-          refreshCheckins();
-        }
-      });
-    });
+    renderSelectedTimers();
   }
 
   function renderSelectedTimers() {
-    const container = document.getElementById('selectedTimersDisplay');
-    if (selectedTimerIds.length === 0) {
-      container.innerHTML = '';
-      return;
-    }
-    container.innerHTML = selectedTimerIds.map(id => {
+    const el = document.getElementById('selectedTimersDisplay');
+    if (!el) return;
+    if (selectedTimerIds.length === 0) { el.innerHTML = ''; return; }
+    el.innerHTML = selectedTimerIds.map(id => {
       const t = Store.getTimer(id);
-      if (!t) return '';
-      return `<span class="tag selected" style="cursor:pointer;" data-id="${id}">${App.escapeHtml(t.name)} ✕</span>`;
+      return t ? `<span class="tag selected" style="cursor:pointer;" data-id="${id}">${App.escapeHtml(t.name)} ✕</span>` : '';
     }).join(' ');
-
-    container.querySelectorAll('.tag').forEach(tag => {
+    el.querySelectorAll('.tag').forEach(tag => {
       tag.addEventListener('click', function () {
-        selectedTimerIds = selectedTimerIds.filter(id => id !== this.dataset.id);
+        selectedTimerIds = selectedTimerIds.filter(x => x !== this.dataset.id);
         renderSelectedTimers();
       });
     });
   }
 
-  function renderSelectedLabels() {
-    var container = document.getElementById('selectedLabelsDisplay');
-    if (!container) return;
-    if (selectedLabels.length === 0) {
-      container.innerHTML = '';
-      return;
-    }
-    container.innerHTML = selectedLabels.map(function (label) {
-      return '<span class="tag selected" style="cursor:pointer;" data-label="' + App.escapeHtml(label) + '">' + App.escapeHtml(label) + ' ✕</span>';
-    }).join(' ');
-    container.querySelectorAll('.tag').forEach(function (tag) {
-      tag.addEventListener('click', function () {
-        selectedLabels = selectedLabels.filter(function (l) { return l !== tag.dataset.label; });
-        renderSelectedLabels();
-      });
-    });
-  }
-
-  function refreshCheckins() {
-    const area = document.getElementById('exerciseCheckinArea');
-    if (!area) return;
-    selectedLabels = [];
-    selectedTimerIds = [];
-    area.innerHTML = renderCheckinForm() + renderTodayCheckins();
-    bindCheckinEvents();
-    // 绑定今日记录的折叠
-    var parent = area.closest('.section-block');
-    if (parent) {
-      App.bindCollapsible(area);
-    }
-  }
-
-  // 渲染统计
-  function renderStats(period) {
-    const allCheckins = Store.getAllCheckins();
-    const now = new Date(Store.getCurrentDate());
-
-    let filtered = [];
-    if (period === 'week') {
-      // 本周
-      const weekStart = new Date(now);
-      const day = weekStart.getDay() || 7;
-      weekStart.setDate(weekStart.getDate() - day + 1);
-      weekStart.setHours(0, 0, 0, 0);
-      filtered = allCheckins.filter(c => new Date(c.date) >= weekStart && new Date(c.date) <= now);
-    } else {
-      // 本月
-      const monthStr = now.toISOString().slice(0, 7);
-      filtered = allCheckins.filter(c => c.date.startsWith(monthStr));
-    }
-
-    if (filtered.length === 0) {
-      return '<div class="empty-state"><div class="empty-state-icon">📊</div>暂无统计数据</div>';
-    }
-
-    // 统计训练频次
-    const freq = {};
-    filtered.forEach(c => {
-      c.labels.forEach(l => {
-        freq[l] = (freq[l] || 0) + 1;
-      });
-    });
-
-    // 统计累计训练时长
-    let totalDuration = 0;
-    filtered.forEach(c => {
-      (c.timerIds || []).forEach(id => {
-        const t = Store.getTimer(id);
-        if (t) totalDuration += t.duration;
-      });
-    });
-
-    const totalMins = Math.floor(totalDuration / 60);
-    const periodLabel = period === 'week' ? '本周' : '本月';
-
-    let html = `
-      <div class="grid-3 mb-16">
-        <div class="stat-card">
-          <div class="stat-card-value">${filtered.length}</div>
-          <div class="stat-card-label">${periodLabel}训练次数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-value">${totalMins}<span class="text-sm" style="font-weight:400;">分</span></div>
-          <div class="stat-card-label">${periodLabel}累计训练时长</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-value">${Object.keys(freq).length}</div>
-          <div class="stat-card-label">${periodLabel}训练类型数</div>
-        </div>
-      </div>
-    `;
-
-    // 训练频次分布
-    const sortedFreq = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-    const maxFreq = sortedFreq.length > 0 ? sortedFreq[0][1] : 1;
-
-    html += '<div class="text-sm text-muted mb-8">训练频次分布</div>';
-    html += '<div class="freq-chart">';
-    sortedFreq.forEach(([label, count]) => {
-      const width = (count / maxFreq * 100).toFixed(0);
-      html += `
-        <div class="freq-bar-row">
-          <span class="freq-bar-label">${label}</span>
-          <div class="freq-bar-track">
-            <div class="freq-bar-fill" style="width:${width}%;"></div>
-          </div>
-          <span class="freq-bar-count">${count}次</span>
-        </div>
-      `;
-    });
-    html += '</div>';
-
-    return html;
-  }
-
-  // 体能体重录入
-  function renderBodyMetrics() {
+  // 快捷录入（体重/体能）
+  function quickEntry(kind) {
     const date = Store.getCurrentDate();
-    const checkins = Store.getExerciseCheckins(date);
-    const latest = checkins.length > 0 ? checkins[checkins.length - 1] : null;
-
-    // 历史体重记录
-    const allCheckins = Store.getAllCheckins().filter(c => c.weight);
-    const recentWeights = allCheckins.slice(-10).reverse();
-
-    let html = '<div class="text-sm text-muted mb-8">最近体重记录趋势</div>';
-
-    if (recentWeights.length === 0) {
-      html += '<div class="empty-state"><div class="empty-state-icon">⚖️</div>暂无体重记录，请在上方打卡时填写</div>';
+    const existing = Store.getExerciseCheckins(date)[0];
+    if (existing) {
+      const val = prompt(kind === 'weight' ? '请输入今日体重(kg)：' : '请输入今日体能记录：');
+      if (val == null) return;
+      const updates = kind === 'weight' ? { weight: val } : { fitness: val };
+      Store.updateExerciseCheckin(existing.id, updates);
+      App.toast('已记录', 'success');
+      render(document.getElementById('contentArea'));
     } else {
-      html += '<div class="weight-history-list">';
-      recentWeights.forEach(c => {
-        html += `
-          <div class="list-item">
-            <span class="text-muted text-sm">${c.date}</span>
-            <span class="flex-1"></span>
-            <span class="fw-600">${c.weight} kg</span>
-          </div>
-        `;
-      });
-      html += '</div>';
+      const val = prompt(kind === 'weight' ? '请输入今日体重(kg)：' : '请输入今日体能记录：');
+      if (val == null) return;
+      const data = kind === 'weight' ? { weight: val } : { fitness: val };
+      Store.addExerciseCheckin(data);
+      App.toast('已打卡并记录', 'success');
+      render(document.getElementById('contentArea'));
     }
+  }
 
-    return html;
+  function refreshAfterCheckin() {
+    render(document.getElementById('contentArea'));
+  }
+
+  function bindEvents() {
+    document.getElementById('openCheckinBtn').addEventListener('click', function () {
+      const date = Store.getCurrentDate();
+      const checkins = Store.getExerciseCheckins(date);
+      openCheckinModal(checkins.length > 0 ? checkins[0] : null);
+    });
+
+    document.getElementById('checkinStatusBox').addEventListener('click', function (e) {
+      if (e.target.closest('#openCheckinBtn')) return;
+      const date = Store.getCurrentDate();
+      const checkins = Store.getExerciseCheckins(date);
+      openCheckinModal(checkins.length > 0 ? checkins[0] : null);
+    });
+
+    document.querySelectorAll('.checkin-mini').forEach(el => {
+      el.addEventListener('click', function (e) {
+        if (e.target.closest('.delete-checkin-btn')) return;
+        const c = Store.getExerciseCheckins(Store.getCurrentDate()).find(x => x.id === this.dataset.id);
+        if (c) openCheckinModal(c);
+      });
+    });
+
+    document.querySelectorAll('.delete-checkin-btn').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (confirm('确定删除这条打卡？')) {
+          Store.deleteExerciseCheckin(this.dataset.id);
+          App.toast('已删除', 'success');
+          render(document.getElementById('contentArea'));
+        }
+      });
+    });
+
+    // 历史统计目录
+    document.querySelectorAll('[data-stat]').forEach(item => {
+      item.addEventListener('click', function () {
+        statView = this.dataset.stat;
+        const area = document.getElementById('exerciseStatsArea');
+        area.innerHTML = renderStatsArea();
+        bindStatsArea();
+        if (statView !== 'menu') renderStatChart();
+      });
+    });
+
+    // 数据录入目录
+    document.querySelectorAll('.dir-item[data-action]').forEach(item => {
+      item.addEventListener('click', function () {
+        const action = this.dataset.action;
+        if (action === 'new-checkin') {
+          const date = Store.getCurrentDate();
+          openCheckinModal(Store.getExerciseCheckins(date)[0] || null);
+        } else if (action === 'weight-quick') quickEntry('weight');
+        else if (action === 'fitness-quick') quickEntry('fitness');
+      });
+    });
+  }
+
+  function bindStatsArea() {
+    const back = document.getElementById('statBackBtn');
+    if (back) back.addEventListener('click', function () {
+      statView = 'menu';
+      document.getElementById('exerciseStatsArea').innerHTML = renderStatsArea();
+      bindStatsArea();
+    });
+    document.querySelectorAll('.stat-period-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        statPeriod = this.dataset.period;
+        document.querySelectorAll('.stat-period-btn').forEach(b => b.classList.remove('btn-primary'));
+        this.classList.add('btn-primary');
+        renderStatChart();
+      });
+    });
   }
 
   return { render };
@@ -3698,32 +4537,25 @@ const Exercise = (function () {
 
 /* ===== study.js ===== */
 /* ============================================
- * study.js - 学习计划模块
- * 学习计时器 + 待学清单 + 学习笔记
+ * study.js - 学习计划模块（重构）
+ * 紧凑待学列表 · 统计(条形/折线切换) · 笔记竖型目录 · 编辑页
  * ============================================ */
 
 const Study = (function () {
 
   let currentCategoryId = null;
+  let statType = 'bar'; // 'bar' | 'line'
+  let statPeriod = 'month'; // 'week' | 'month'
 
   function render(container) {
     const date = Store.getCurrentDate();
     container.innerHTML = `
       <div class="module-header">
         <h2>📚 学习计划</h2>
-        <div class="module-subtitle">学习计时 · 任务管理 · 笔记积累</div>
+        <div class="module-subtitle">任务打卡 · 学习笔记 · 数据统计</div>
       </div>
 
-      <!-- 板块1：学习计时器 -->
-      <div class="section-block collapsible">
-        <div class="section-title">
-          <span class="section-title-icon">⏱</span>
-          学习计时器
-        </div>
-        <div id="studyTimerWidget"></div>
-      </div>
-
-      <!-- 板块2：待学清单 -->
+      <!-- 板块1：待学清单（紧凑） -->
       <div class="section-block collapsible">
         <div class="section-title">
           <span class="section-title-icon">📝</span>
@@ -3733,46 +4565,46 @@ const Study = (function () {
         <div id="studyTodoList"></div>
       </div>
 
-      <!-- 板块3：学习笔记 -->
+      <!-- 板块2：学习笔记（竖型目录） -->
       <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">📖</span>
           学习笔记
           <div style="margin-left:auto;display:flex;gap:6px;">
-            <button class="btn btn-sm" id="addStudyCategoryBtn">+ 新增目录</button>
+            <button class="btn btn-sm" id="addStudyCategoryBtn">+ 目录</button>
             <button class="btn btn-sm btn-primary" id="addStudyNoteBtn">+ 写笔记</button>
           </div>
         </div>
-        <div class="study-notes-layout">
-          <div class="study-notes-sidebar" id="studyCategoriesList"></div>
-          <div class="study-notes-content" id="studyNotesList"></div>
-        </div>
+        <div id="studyNotesDir"></div>
       </div>
 
-      <!-- 板块4：分类时长统计 -->
+      <!-- 板块3：学习统计 -->
       <div class="section-block collapsible collapsed">
         <div class="section-title">
           <span class="section-title-icon">📊</span>
-          学习时长统计
+          学习统计
+          <div style="margin-left:auto;display:flex;gap:6px;">
+            <button class="btn btn-sm stat-period-btn ${statPeriod === 'week' ? 'btn-primary' : ''}" data-period="week">本周</button>
+            <button class="btn btn-sm stat-period-btn ${statPeriod === 'month' ? 'btn-primary' : ''}" data-period="month">本月</button>
+          </div>
         </div>
-        <div id="studyTimeStats"></div>
+        <div class="flex-row mb-12" style="gap:6px;justify-content:flex-end;">
+          <span class="text-sm text-muted">图表类型：</span>
+          <button class="btn btn-sm chart-type-btn ${statType === 'bar' ? 'btn-primary' : ''}" data-type="bar">条形图</button>
+          <button class="btn btn-sm chart-type-btn ${statType === 'line' ? 'btn-primary' : ''}" data-type="line">折线图</button>
+        </div>
+        <div id="studyStatsArea"></div>
       </div>
     `;
 
-    // 初始化计时器
-    Timer.createTimerWidget('studyTimerWidget', 'study', function () {
-      renderTodoList();
-      renderTimeStats();
-    });
-
     renderTodoList();
-    renderCategories();
-    renderTimeStats();
+    renderNotesDir();
+    renderStats();
     bindEvents();
     App.bindCollapsible(container);
   }
 
-  // ============ 待学清单 ============
+  // ============ 待学清单（紧凑） ============
   function renderTodoList() {
     const container = document.getElementById('studyTodoList');
     const date = Store.getCurrentDate();
@@ -3790,91 +4622,61 @@ const Study = (function () {
         const timer = Store.getTimer(id);
         return timer ? `<span class="tag" style="font-size:11px;cursor:pointer;" data-timer-id="${id}">${App.escapeHtml(timer.name)} (${Timer.formatTime(timer.duration)})</span>` : '';
       }).join(' ');
-
-      const priorityColors = {
-        high: 'var(--danger)',
-        normal: 'var(--ink-light)',
-        low: 'var(--ink-faint)'
-      };
+      const priorityColors = { high: 'var(--danger)', normal: 'var(--ink-light)', low: 'var(--ink-faint)' };
       const priorityLabels = { high: '高', normal: '中', low: '低' };
-
-      // 截止日期：当前日期之前显示已过天数，之后显示剩余倒数
-      var deadlineInfo = null;
+      let deadlineInfo = null;
       if (t.deadline) {
-        var dDiff = Math.floor((new Date(t.deadline) - new Date(Store.getCurrentDate())) / 86400000);
+        const dDiff = Math.floor((new Date(t.deadline) - new Date(Store.getCurrentDate())) / 86400000);
         if (dDiff > 0) deadlineInfo = { text: '剩' + dDiff + '天', color: 'var(--celadon)' };
         else if (dDiff < 0) deadlineInfo = { text: '已过' + Math.abs(dDiff) + '天', color: 'var(--danger)' };
         else deadlineInfo = { text: '今天截止', color: '#e8a04e' };
       }
 
       html += `
-        <div class="list-item study-todo-item" data-id="${t.id}" style="align-items:flex-start;flex-direction:column;">
-          <div class="flex-between w-full">
-            <div class="flex-row">
-              <div class="checkbox ${isCheckedToday ? 'checked' : ''}" data-id="${t.id}"></div>
+        <div class="study-todo-row" data-id="${t.id}">
+          <div class="checkbox ${isCheckedToday ? 'checked' : ''}" data-id="${t.id}"></div>
+          <div class="flex-1">
+            <div class="flex-row" style="gap:6px;">
               <span style="${isCheckedToday ? 'text-decoration:line-through;color:var(--ink-faint);' : ''}">${App.escapeHtml(t.name)}</span>
-              <span class="text-xs" style="color:${priorityColors[t.priority]};border:1px solid ${priorityColors[t.priority]};padding:1px 6px;border-radius:4px;">${priorityLabels[t.priority]}</span>
+              <span class="text-xs" style="color:${priorityColors[t.priority]};border:1px solid ${priorityColors[t.priority]};padding:0 5px;border-radius:4px;">${priorityLabels[t.priority]}</span>
             </div>
-            <div class="flex-row">
-              ${deadlineInfo ? '<span class="text-sm" style="color:' + deadlineInfo.color + ';">' + deadlineInfo.text + '</span>' : ''}
-              <button class="btn-text import-timer-btn" data-id="${t.id}" title="导入计时">⏱ 导入</button>
-              <button class="btn-text edit-todo-btn" data-id="${t.id}">编辑</button>
-              <button class="btn-text danger delete-todo-btn" data-id="${t.id}">删除</button>
-            </div>
+            ${linkedTimers ? `<div class="mt-8">${linkedTimers}</div>` : ''}
           </div>
-          ${linkedTimers ? `<div class="mt-8">${linkedTimers}</div>` : ''}
+          <div class="flex-row">
+            ${deadlineInfo ? `<span class="text-sm" style="color:${deadlineInfo.color};margin-right:6px;">${deadlineInfo.text}</span>` : ''}
+            <button class="btn-text import-timer-btn" data-id="${t.id}" title="导入计时">⏱</button>
+            <button class="btn-text edit-todo-btn" data-id="${t.id}">编辑</button>
+            <button class="btn-text danger delete-todo-btn" data-id="${t.id}">✕</button>
+          </div>
         </div>
       `;
     });
     container.innerHTML = html;
 
-    // 绑定事件 - 每日打卡
     container.querySelectorAll('.checkbox').forEach(cb => {
       cb.addEventListener('click', function () {
         const todo = Store.getStudyTodos().find(t => t.id === this.dataset.id);
-        if (todo) {
-          var dates = todo.checkDates || [];
-          var today = Store.getCurrentDate();
-          if (dates.includes(today)) {
-            dates = dates.filter(d => d !== today);
-            App.toast('已取消今日打卡', 'success');
-          } else {
-            dates = [...dates, today];
-            App.toast('今日打卡完成！', 'success');
-          }
-          Store.updateStudyTodo(this.dataset.id, { checkDates: dates, completed: dates.includes(today) });
-          renderTodoList();
-        }
+        if (!todo) return;
+        let dates = todo.checkDates || [];
+        const today = Store.getCurrentDate();
+        if (dates.includes(today)) { dates = dates.filter(d => d !== today); App.toast('已取消今日打卡', 'success'); }
+        else { dates = [...dates, today]; App.toast('今日打卡完成！', 'success'); }
+        Store.updateStudyTodo(this.dataset.id, { checkDates: dates, completed: dates.includes(today) });
+        renderTodoList();
       });
     });
-
     container.querySelectorAll('.delete-todo-btn').forEach(btn => {
       btn.addEventListener('click', function () {
-        if (confirm('确定删除该任务？')) {
-          Store.deleteStudyTodo(this.dataset.id);
-          renderTodoList();
-          App.toast('已删除', 'success');
-        }
+        if (confirm('确定删除该任务？')) { Store.deleteStudyTodo(this.dataset.id); renderTodoList(); App.toast('已删除', 'success'); }
       });
     });
-
-    container.querySelectorAll('.edit-todo-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        showEditTodoModal(this.dataset.id);
-      });
-    });
-
-    container.querySelectorAll('.import-timer-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        showImportTimerModal(this.dataset.id);
-      });
-    });
+    container.querySelectorAll('.edit-todo-btn').forEach(btn => btn.addEventListener('click', function () { showEditTodoModal(this.dataset.id); }));
+    container.querySelectorAll('.import-timer-btn').forEach(btn => btn.addEventListener('click', function () { showImportTimerModal(this.dataset.id); }));
   }
 
   function showEditTodoModal(id) {
     const todo = Store.getStudyTodos().find(t => t.id === id);
     if (!todo) return;
-
     App.modal('编辑任务', `
       <div class="mb-12">
         <label class="text-sm text-muted mb-8" style="display:block;">任务名称</label>
@@ -3895,307 +4697,190 @@ const Study = (function () {
         </div>
       </div>
     `, [
-      {
-        label: '取消',
-        onClick: function () {}
-      },
-      {
-        label: '保存',
-        primary: true,
-        onClick: function (body) {
+      { label: '取消' },
+      { label: '保存', primary: true, onClick: function (body) {
           const name = body.querySelector('#editTodoName').value.trim();
-          if (!name) {
-            App.toast('请输入任务名称', 'warning');
-            return false;
-          }
-          Store.updateStudyTodo(id, {
-            name: name,
-            deadline: body.querySelector('#editTodoDeadline').value,
-            priority: body.querySelector('#editTodoPriority').value
-          });
-          renderTodoList();
-          App.toast('已更新', 'success');
-        }
-      }
+          if (!name) { App.toast('请输入任务名称', 'warning'); return false; }
+          Store.updateStudyTodo(id, { name, deadline: body.querySelector('#editTodoDeadline').value, priority: body.querySelector('#editTodoPriority').value });
+          renderTodoList(); App.toast('已更新', 'success');
+        } }
     ]);
   }
 
   function showImportTimerModal(todoId) {
     const todo = Store.getStudyTodos().find(t => t.id === todoId);
     if (!todo) return;
-
     App.modal(`导入计时到「${todo.name}」`, `
-      <p class="text-muted mb-12">从全局计时仓库中选择一段学习计时数据关联到该任务：</p>
+      <p class="text-muted mb-12">从全局计时仓库选择一段学习计时关联：</p>
       <div id="importTimerList" style="max-height:300px;overflow-y:auto;"></div>
-    `, [
-      { label: '关闭' }
-    ]);
-
-    Timer.renderTimerRepo('importTimerList', function (t) { return t.source === 'study'; }, function (timer) {
-      const currentTimerIds = todo.timerIds || [];
-      if (currentTimerIds.includes(timer.id)) {
-        App.toast('该计时已关联', 'warning');
-        return;
-      }
-      Store.updateStudyTodo(todoId, { timerIds: [...currentTimerIds, timer.id] });
-      App.toast(`已关联"${timer.name}"`, 'success');
-      App.closeModal();
-      renderTodoList();
-      renderTimeStats();
+    `, [{ label: '关闭' }]);
+    Timer.renderTimerRepo('importTimerList', function (t) { return t.source === 'study' || t.source === 'timer'; }, function (timer) {
+      const cur = todo.timerIds || [];
+      if (cur.includes(timer.id)) { App.toast('已关联', 'warning'); return; }
+      Store.updateStudyTodo(todoId, { timerIds: [...cur, timer.id] });
+      App.toast(`已关联「${timer.name}」`, 'success');
+      App.closeModal(); renderTodoList(); renderStats();
     });
   }
 
-  // ============ 学习笔记 ============
-  function renderCategories() {
-    const container = document.getElementById('studyCategoriesList');
-    const categories = Store.getStudyCategories();
-
-    let html = `<div class="note-cat-item ${currentCategoryId === null ? 'active' : ''}" data-id="">
-      <span>📚 全部</span>
-      <span class="text-xs text-muted">${Store.getStudyNotes().length}</span>
-    </div>`;
-
-    categories.forEach(c => {
-      const count = Store.getStudyNotes(c.id).length;
-      html += `
-        <div class="note-cat-item ${currentCategoryId === c.id ? 'active' : ''}" data-id="${c.id}">
-          <span>${App.escapeHtml(c.name)}</span>
-          <div class="flex-row">
-            <span class="text-xs text-muted">${count}</span>
-            <button class="btn-text danger delete-cat-btn" data-id="${c.id}" style="padding:0 4px;font-size:12px;">✕</button>
-          </div>
-        </div>
-      `;
-    });
-
-    container.innerHTML = html;
-
-    container.querySelectorAll('.note-cat-item').forEach(el => {
-      el.addEventListener('click', function (e) {
-        if (e.target.closest('.delete-cat-btn')) return;
-        currentCategoryId = this.dataset.id || null;
-        renderCategories();
-        renderNotes();
-      });
-    });
-
-    container.querySelectorAll('.delete-cat-btn').forEach(btn => {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (confirm('删除目录将同时删除该目录下所有笔记，确定？')) {
-          Store.deleteStudyCategory(this.dataset.id);
-          if (currentCategoryId === this.dataset.id) currentCategoryId = null;
-          renderCategories();
-          renderNotes();
-          App.toast('已删除目录', 'success');
-        }
-      });
-    });
-  }
-
-  function renderNotes() {
-    const container = document.getElementById('studyNotesList');
+  // ============ 学习笔记（竖型目录） ============
+  function renderNotesDir() {
+    const container = document.getElementById('studyNotesDir');
     const notes = currentCategoryId ? Store.getStudyNotes(currentCategoryId) : Store.getStudyNotes();
+    const categories = Store.getStudyCategories();
+    const sorted = [...notes].sort((a, b) => b.createdAt - a.createdAt);
 
-    if (notes.length === 0) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📖</div>暂无笔记，点击右上角开始写笔记</div>';
-      return;
+    let catRow = '<div class="note-cat-row mb-12">';
+    catRow += `<span class="note-cat-chip ${currentCategoryId === null ? 'active' : ''}" data-id="">📚 全部 (${Store.getStudyNotes().length})</span>`;
+    categories.forEach(c => {
+      catRow += `<span class="note-cat-chip ${currentCategoryId === c.id ? 'active' : ''}" data-id="${c.id}">${App.escapeHtml(c.name)} (${Store.getStudyNotes(c.id).length})</span>`;
+    });
+    catRow += '</div>';
+
+    if (sorted.length === 0) {
+      container.innerHTML = catRow + '<div class="empty-state"><div class="empty-state-icon">📖</div>暂无笔记，点击右上角开始写笔记</div>';
+    } else {
+      container.innerHTML = catRow + '<div class="dir-list">' + sorted.map(n => {
+        const cat = Store.getStudyCategories().find(c => c.id === n.categoryId);
+        return `
+          <div class="dir-item note-dir-item" data-id="${n.id}">
+            <span class="dir-item-icon">📄</span>
+            <span class="dir-item-main">
+              <span class="dir-item-title">${App.escapeHtml(n.title)}</span>
+              <span class="dir-item-sub">${cat ? App.escapeHtml(cat.name) : '未分类'} · ${n.date}</span>
+            </span>
+            <span class="dir-item-arrow">›</span>
+          </div>`;
+      }).join('') + '</div>';
     }
 
-    const sorted = [...notes].sort((a, b) => b.createdAt - a.createdAt);
-    let html = '';
-    sorted.forEach(n => {
-      const cat = Store.getStudyCategories().find(c => c.id === n.categoryId);
-      const linkedTodo = n.linkedTodoId ? Store.getStudyTodos().find(t => t.id === n.linkedTodoId) : null;
-
-      html += `
-        <div class="note-card" data-id="${n.id}">
-          <div class="flex-between">
-            <div class="fw-600 note-title">${App.escapeHtml(n.title)}</div>
-            <div class="flex-row">
-              <button class="btn-text edit-note-btn" data-id="${n.id}">编辑</button>
-              <button class="btn-text danger delete-note-btn" data-id="${n.id}">删除</button>
-            </div>
-          </div>
-          <div class="text-sm text-muted mt-8 note-date">
-            ${cat ? App.escapeHtml(cat.name) : '未分类'} · ${n.date}
-            ${linkedTodo ? ` · 关联任务: <span class="note-linked-task" data-todo-id="${linkedTodo.id}">${App.escapeHtml(linkedTodo.name)}</span>` : ''}
-          </div>
-          <div class="note-content mt-8">${App.escapeHtml(n.content).replace(/\n/g, '<br>')}</div>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
-
-    container.querySelectorAll('.edit-note-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        showEditNoteModal(this.dataset.id);
+    container.querySelectorAll('.note-cat-chip').forEach(chip => {
+      chip.addEventListener('click', function () {
+        currentCategoryId = this.dataset.id || null;
+        renderNotesDir();
       });
     });
-
-    container.querySelectorAll('.delete-note-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        if (confirm('确定删除这篇笔记？')) {
-          Store.deleteStudyNote(this.dataset.id);
-          renderNotes();
-          renderCategories();
-          App.toast('已删除', 'success');
-        }
-      });
-    });
-
-    container.querySelectorAll('.note-linked-task').forEach(el => {
-      el.addEventListener('click', function () {
-        // 滚动到对应任务
-        document.querySelectorAll('.study-todo-item').forEach(item => {
-          if (item.dataset.id === this.dataset.todoId) {
-            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            item.style.transition = 'background 0.3s';
-            item.style.background = 'var(--celadon-tint)';
-            setTimeout(() => item.style.background = '', 1500);
-          }
-        });
-      });
+    container.querySelectorAll('.note-dir-item').forEach(item => {
+      item.addEventListener('click', function () { renderNoteEditor(this.dataset.id); });
     });
   }
 
-  function showEditNoteModal(id) {
+  // 笔记编辑页（独立页面）
+  function renderNoteEditor(id) {
     const note = id ? Store.getStudyNotes().find(n => n.id === id) : null;
     const categories = Store.getStudyCategories();
     const todos = Store.getStudyTodos();
-
-    App.modal(note ? '编辑笔记' : '写笔记', `
-      <div class="mb-12">
-        <label class="text-sm text-muted mb-8" style="display:block;">标题</label>
-        <input type="text" class="input" id="noteTitle" value="${note ? App.escapeHtml(note.title) : ''}" placeholder="输入笔记标题">
+    const container = document.getElementById('contentArea');
+    container.innerHTML = `
+      <div class="module-header">
+        <button class="btn-text" id="noteBackBtn">← 返回</button>
       </div>
-      <div class="grid-2 mb-12">
-        <div>
-          <label class="text-sm text-muted mb-8" style="display:block;">所属目录</label>
-          <select class="select" id="noteCategory">
-            ${categories.map(c => `<option value="${c.id}" ${note && note.categoryId === c.id ? 'selected' : ''}>${App.escapeHtml(c.name)}</option>`).join('')}
-          </select>
+      <div class="section-block">
+        <div class="mb-12">
+          <label class="text-sm text-muted mb-8" style="display:block;">标题</label>
+          <input type="text" class="input" id="noteTitle" value="${note ? App.escapeHtml(note.title) : ''}" placeholder="输入笔记标题">
         </div>
-        <div>
-          <label class="text-sm text-muted mb-8" style="display:block;">关联任务（可选）</label>
-          <select class="select" id="noteLinkedTodo">
-            <option value="">不关联</option>
-            ${todos.map(t => `<option value="${t.id}" ${note && note.linkedTodoId === t.id ? 'selected' : ''}>${App.escapeHtml(t.name)}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div class="mb-12">
-        <label class="text-sm text-muted mb-8" style="display:block;">内容</label>
-        <textarea class="textarea" id="noteContent" rows="8" placeholder="开始记录...">${note ? App.escapeHtml(note.content) : ''}</textarea>
-      </div>
-    `, [
-      { label: '取消' },
-      {
-        label: '保存',
-        primary: true,
-        onClick: function (body) {
-          const title = body.querySelector('#noteTitle').value.trim();
-          if (!title) {
-            App.toast('请输入标题', 'warning');
-            return false;
-          }
-          const data = {
-            title: title,
-            categoryId: body.querySelector('#noteCategory').value,
-            linkedTodoId: body.querySelector('#noteLinkedTodo').value || null,
-            content: body.querySelector('#noteContent').value
-          };
-          if (note) {
-            Store.updateStudyNote(note.id, data);
-          } else {
-            Store.addStudyNote(data);
-          }
-          renderNotes();
-          renderCategories();
-          App.toast('已保存', 'success');
-        }
-      }
-    ]);
-  }
-
-  // ============ 学习时长统计 ============
-  function renderTimeStats() {
-    const container = document.getElementById('studyTimeStats');
-    const categories = Store.getStudyCategories();
-    const todos = Store.getStudyTodos();
-
-    // 按目录统计累计时长
-    const stats = {};
-    categories.forEach(c => { stats[c.id] = { name: c.name, duration: 0, count: 0 }; });
-
-    todos.forEach(t => {
-      (t.timerIds || []).forEach(id => {
-        const timer = Store.getTimer(id);
-        if (timer) {
-          // 通过笔记的关联任务反查目录
-          const notes = Store.getStudyNotes().filter(n => n.linkedTodoId === t.id);
-          if (notes.length > 0) {
-            notes.forEach(n => {
-              if (stats[n.categoryId]) {
-                stats[n.categoryId].duration += timer.duration;
-                stats[n.categoryId].count++;
-              }
-            });
-          } else {
-            // 没有关联笔记的任务，归到"未分类"
-            if (!stats['uncategorized']) {
-              stats['uncategorized'] = { name: '未分类', duration: 0, count: 0 };
-            }
-            stats['uncategorized'].duration += timer.duration;
-            stats['uncategorized'].count++;
-          }
-        }
-      });
-    });
-
-    const entries = Object.entries(stats).filter(([k, v]) => v.duration > 0);
-
-    if (entries.length === 0) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div>暂无学习时长数据，开始计时学习吧！</div>';
-      return;
-    }
-
-    const totalDuration = entries.reduce((sum, [, v]) => sum + v.duration, 0);
-    const maxDuration = Math.max(...entries.map(([, v]) => v.duration));
-
-    let html = `
-      <div class="stat-card mb-16" style="text-align:left;">
-        <div class="flex-between">
+        <div class="grid-2 mb-12">
           <div>
-            <div class="stat-card-value">${Timer.formatTime(totalDuration)}</div>
-            <div class="stat-card-label">累计学习总时长</div>
+            <label class="text-sm text-muted mb-8" style="display:block;">所属目录</label>
+            <select class="select" id="noteCategory">
+              ${categories.length === 0 ? '<option value="">无目录</option>' : categories.map(c => `<option value="${c.id}" ${note && note.categoryId === c.id ? 'selected' : ''}>${App.escapeHtml(c.name)}</option>`).join('')}
+            </select>
           </div>
-          <div style="font-size:36px;opacity:0.3;">📚</div>
+          <div>
+            <label class="text-sm text-muted mb-8" style="display:block;">关联任务（可选）</label>
+            <select class="select" id="noteLinkedTodo">
+              <option value="">不关联</option>
+              ${todos.map(t => `<option value="${t.id}" ${note && note.linkedTodoId === t.id ? 'selected' : ''}>${App.escapeHtml(t.name)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="mb-12">
+          <label class="text-sm text-muted mb-8" style="display:block;">内容</label>
+          <textarea class="textarea" id="noteContent" rows="12" placeholder="开始记录...">${note ? App.escapeHtml(note.content) : ''}</textarea>
+        </div>
+        <div class="flex-row" style="gap:8px;justify-content:flex-end;">
+          ${note ? '<button class="btn btn-danger" id="noteDelBtn">删除</button>' : ''}
+          <button class="btn" id="noteCancelBtn">取消</button>
+          <button class="btn btn-primary" id="noteSaveBtn">保存</button>
         </div>
       </div>
-      <div class="text-sm text-muted mb-8">各学习类目累计时长</div>
-      <div class="freq-chart">
     `;
-
-    entries.sort((a, b) => b[1].duration - a[1].duration);
-    entries.forEach(([, v]) => {
-      const width = (v.duration / maxDuration * 100).toFixed(0);
-      html += `
-        <div class="freq-bar-row">
-          <span class="freq-bar-label">${App.escapeHtml(v.name)}</span>
-          <div class="freq-bar-track">
-            <div class="freq-bar-fill" style="width:${width}%;"></div>
-          </div>
-          <span class="freq-bar-count">${Timer.formatTime(v.duration)}</span>
-        </div>
-      `;
+    container.querySelector('#noteBackBtn').addEventListener('click', function () { render(container); });
+    container.querySelector('#noteCancelBtn').addEventListener('click', function () { render(container); });
+    if (note) {
+      container.querySelector('#noteDelBtn').addEventListener('click', function () {
+        if (confirm('确定删除这篇笔记？')) { Store.deleteStudyNote(note.id); App.toast('已删除', 'success'); render(container); }
+      });
+    }
+    container.querySelector('#noteSaveBtn').addEventListener('click', function () {
+      const title = container.querySelector('#noteTitle').value.trim();
+      if (!title) { App.toast('请输入标题', 'warning'); return; }
+      const data = {
+        title,
+        categoryId: container.querySelector('#noteCategory').value || null,
+        linkedTodoId: container.querySelector('#noteLinkedTodo').value || null,
+        content: container.querySelector('#noteContent').value
+      };
+      if (note) Store.updateStudyNote(note.id, data);
+      else Store.addStudyNote(data);
+      App.toast('已保存', 'success');
+      render(container);
     });
-    html += '</div>';
-
-    container.innerHTML = html;
   }
 
-  // ============ 事件绑定 ============
+  // ============ 学习统计 ============
+  function buildStatSeries() {
+    const today = new Date(Store.getCurrentDate());
+    let dates = [];
+    if (statPeriod === 'week') {
+      for (let i = 6; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); dates.push(d.toISOString().slice(0, 10)); }
+    } else {
+      const y = today.getFullYear(), m = today.getMonth();
+      const days = new Date(y, m + 1, 0).getDate();
+      for (let i = 1; i <= days; i++) dates.push(`${y}-${String(m+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`);
+    }
+    const todos = Store.getStudyTodos();
+    const dailyCompleted = dates.map(ds => todos.filter(t => (t.checkDates || []).includes(ds)).length);
+    let cum = 0;
+    const cumulative = dailyCompleted.map(v => (cum += v));
+    const duration = dates.map(ds => {
+      let sum = 0;
+      todos.forEach(t => (t.timerIds || []).forEach(tid => {
+        const tm = Store.getTimer(tid);
+        if (tm && tm.date === ds) sum += tm.duration;
+      }));
+      return sum;
+    });
+    return { labels: dates.map(d => d.slice(5)), dailyCompleted, cumulative, duration };
+  }
+
+  function renderStats() {
+    const el = document.getElementById('studyStatsArea');
+    if (!el) return;
+    const s = buildStatSeries();
+    const color1 = 'var(--celadon)', color2 = 'var(--info)', color3 = 'var(--warning)';
+    let html = '';
+    const blocks = [
+      { title: '每日完成待办数', labels: s.labels, data: s.dailyCompleted, color: color1 },
+      { title: '累计完成数', labels: s.labels, data: s.cumulative, color: color2 },
+      { title: '学习时长(秒)', labels: s.labels, data: s.duration, color: color3 }
+    ];
+    blocks.forEach(b => {
+      html += `<div class="mb-16">
+        <div class="text-sm text-muted mb-8">${b.title}</div>
+        <div class="stat-chart-block" data-title="${b.title}"></div>
+      </div>`;
+    });
+    el.innerHTML = html;
+    blocks.forEach(b => {
+      const blockEl = el.querySelector(`.stat-chart-block[data-title="${b.title}"]`);
+      if (statType === 'bar') App.barChart(blockEl, { labels: b.labels, data: b.data, color: b.color });
+      else App.lineChart(blockEl, { labels: b.labels, series: [{ name: b.title, color: b.color, data: b.data }] });
+    });
+  }
+
+  // ============ 事件 ============
   function bindEvents() {
     document.getElementById('addStudyTodoBtn').addEventListener('click', function () {
       App.modal('新增待学任务', `
@@ -4219,59 +4904,48 @@ const Study = (function () {
         </div>
       `, [
         { label: '取消' },
-        {
-          label: '添加',
-          primary: true,
-          onClick: function (body) {
+        { label: '添加', primary: true, onClick: function (body) {
             const name = body.querySelector('#newTodoName').value.trim();
-            if (!name) {
-              App.toast('请输入任务名称', 'warning');
-              return false;
-            }
-            Store.addStudyTodo({
-              name: name,
-              deadline: body.querySelector('#newTodoDeadline').value,
-              priority: body.querySelector('#newTodoPriority').value
-            });
-            renderTodoList();
-            App.toast('任务已添加', 'success');
-          }
-        }
+            if (!name) { App.toast('请输入任务名称', 'warning'); return false; }
+            Store.addStudyTodo({ name, deadline: body.querySelector('#newTodoDeadline').value, priority: body.querySelector('#newTodoPriority').value });
+            renderTodoList(); App.toast('任务已添加', 'success');
+          } }
       ]);
     });
 
     document.getElementById('addStudyCategoryBtn').addEventListener('click', function () {
       App.modal('新增笔记目录', `
-        <div class="mb-12">
-          <label class="text-sm text-muted mb-8" style="display:block;">目录名称</label>
-          <input type="text" class="input" id="newCatName" placeholder="如：前端开发">
-        </div>
+        <div class="mb-12"><input type="text" class="input" id="newCatName" placeholder="如：前端开发"></div>
       `, [
         { label: '取消' },
-        {
-          label: '添加',
-          primary: true,
-          onClick: function (body) {
+        { label: '添加', primary: true, onClick: function (body) {
             const name = body.querySelector('#newCatName').value.trim();
-            if (!name) {
-              App.toast('请输入目录名称', 'warning');
-              return false;
-            }
-            Store.addStudyCategory(name);
-            renderCategories();
-            App.toast('目录已添加', 'success');
-          }
-        }
+            if (!name) { App.toast('请输入目录名称', 'warning'); return false; }
+            Store.addStudyCategory(name); renderNotesDir(); App.toast('目录已添加', 'success');
+          } }
       ]);
     });
 
     document.getElementById('addStudyNoteBtn').addEventListener('click', function () {
-      const categories = Store.getStudyCategories();
-      if (categories.length === 0) {
-        App.toast('请先创建一个笔记目录', 'warning');
-        return;
-      }
-      showEditNoteModal(null);
+      if (Store.getStudyCategories().length === 0) { App.toast('请先创建笔记目录', 'warning'); return; }
+      renderNoteEditor(null);
+    });
+
+    document.querySelectorAll('.chart-type-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        statType = this.dataset.type;
+        document.querySelectorAll('.chart-type-btn').forEach(b => b.classList.remove('btn-primary'));
+        this.classList.add('btn-primary');
+        renderStats();
+      });
+    });
+    document.querySelectorAll('.stat-period-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        statPeriod = this.dataset.period;
+        document.querySelectorAll('.stat-period-btn').forEach(b => b.classList.remove('btn-primary'));
+        this.classList.add('btn-primary');
+        renderStats();
+      });
     });
   }
 
@@ -4281,8 +4955,8 @@ const Study = (function () {
 
 /* ===== checklist.js ===== */
 /* ============================================
- * checklist.js - 每日清单模块
- * 四象限看板 · 跨象限拖拽 · 循环任务 · 归档
+ * checklist.js - 每日清单模块（重构）
+ * 直接展示四象限 · 象限内联添加任务 · 完成/编辑/删除
  * ============================================ */
 
 const Checklist = (function () {
@@ -4295,21 +4969,19 @@ const Checklist = (function () {
   ];
 
   let draggedTaskId = null;
+  let addingQuadrant = null; // 当前正在内联添加的象限
 
   function render(container) {
     const date = Store.getCurrentDate();
     container.innerHTML = `
       <div class="module-header">
         <h2>📋 每日清单</h2>
-        <div class="module-subtitle">四象限看板 · 拖拽排序 · 循环任务 · ${App.formatDate(date)}</div>
+        <div class="module-subtitle">四象限看板 · 象限内直接添加 · ${App.formatDate(date)}</div>
       </div>
 
       <div class="flex-between mb-16">
-        <div class="flex-row">
-          <button class="btn btn-primary" id="addChecklistTaskBtn">+ 新增任务</button>
-          <button class="btn" id="showArchivedBtn">查看已完成</button>
-        </div>
         <div class="text-sm text-muted" id="checklistSummary"></div>
+        <button class="btn" id="showArchivedBtn">查看已完成</button>
       </div>
 
       <div class="quadrant-board" id="quadrantBoard">
@@ -4321,8 +4993,8 @@ const Checklist = (function () {
               <span class="quadrant-count" id="qCount_${q.id}">0</span>
             </div>
             <div class="quadrant-desc text-xs text-muted">${q.desc}</div>
-            <div class="quadrant-drop-zone" data-quadrant="${q.id}" id="qZone_${q.id}">
-            </div>
+            <div class="quadrant-drop-zone" data-quadrant="${q.id}" id="qZone_${q.id}"></div>
+            <button class="quadrant-add-btn" data-quadrant="${q.id}">＋ 添加任务</button>
           </div>
         `).join('')}
       </div>
@@ -4335,22 +5007,19 @@ const Checklist = (function () {
   function renderTasks() {
     const date = Store.getCurrentDate();
     const tasks = Store.getChecklistTasks(date);
-
-    let total = tasks.length;
-    let completed = Store.getArchivedTasks(date).length;
-
-    document.getElementById('checklistSummary').textContent = `今日 ${total} 项待办，已完成 ${completed} 项`;
+    const completed = Store.getArchivedTasks(date).length;
+    document.getElementById('checklistSummary').textContent = `今日 ${tasks.length} 项待办，已完成 ${completed} 项`;
 
     QUADRANTS.forEach(q => {
       const zone = document.getElementById('qZone_' + q.id);
       const qTasks = tasks.filter(t => t.quadrant === q.id);
-
       document.getElementById('qCount_' + q.id).textContent = qTasks.length;
 
-      if (qTasks.length === 0) {
-        zone.innerHTML = '<div class="quadrant-empty text-xs text-muted">拖拽任务到此象限</div>';
+      let html = '';
+      if (qTasks.length === 0 && addingQuadrant !== q.id) {
+        html = '<div class="quadrant-empty text-xs text-muted">点击下方「＋ 添加任务」</div>';
       } else {
-        zone.innerHTML = qTasks.map(t => {
+        html = qTasks.map(t => {
           const recurringLabel = t.recurring === 'daily' ? '每日' : (t.recurring === 'weekly' ? '每周' : '');
           return `
             <div class="task-card" draggable="true" data-id="${t.id}" data-quadrant="${t.quadrant}">
@@ -4359,53 +5028,59 @@ const Checklist = (function () {
                 <span class="task-text">${App.escapeHtml(t.text)}</span>
               </div>
               <div class="flex-between mt-8">
-                <div>
-                  ${recurringLabel ? `<span class="tag" style="font-size:10px;cursor:default;">🔁 ${recurringLabel}</span>` : ''}
-                </div>
+                <div>${recurringLabel ? `<span class="tag" style="font-size:10px;cursor:default;">🔁 ${recurringLabel}</span>` : ''}</div>
                 <div class="flex-row">
                   <button class="btn-text edit-task-btn" data-id="${t.id}" style="font-size:12px;">编辑</button>
                   <button class="btn-text danger delete-task-btn" data-id="${t.id}" style="font-size:12px;">删除</button>
                 </div>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
       }
 
-      // 绑定拖放
-      zone.addEventListener('dragover', function (e) {
-        e.preventDefault();
-        zone.classList.add('drag-over');
-      });
-      zone.addEventListener('dragleave', function () {
-        zone.classList.remove('drag-over');
-      });
+      // 内联添加表单
+      if (addingQuadrant === q.id) {
+        html += `
+          <div class="inline-add">
+            <input type="text" class="input inline-add-input" placeholder="输入任务内容，回车保存" data-quadrant="${q.id}">
+            <div class="flex-row mt-8" style="gap:6px;">
+              <select class="select inline-add-recurring" style="flex:1;">
+                <option value="none">不循环</option>
+                <option value="daily">每日重复</option>
+                <option value="weekly">每周重复</option>
+              </select>
+              <button class="btn btn-sm btn-primary inline-add-save" data-quadrant="${q.id}">保存</button>
+              <button class="btn btn-sm inline-add-cancel">取消</button>
+            </div>
+          </div>`;
+      }
+
+      zone.innerHTML = html;
+
+      // 拖放
+      zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('drag-over'); });
+      zone.addEventListener('dragleave', function () { zone.classList.remove('drag-over'); });
       zone.addEventListener('drop', function (e) {
         e.preventDefault();
         zone.classList.remove('drag-over');
         if (draggedTaskId) {
-          const newQuadrant = parseInt(this.dataset.quadrant);
-          Store.updateChecklistTask(draggedTaskId, { quadrant: newQuadrant });
-          App.toast('已移动到「' + QUADRANTS[newQuadrant].name + '」', 'success');
+          Store.updateChecklistTask(draggedTaskId, { quadrant: parseInt(this.dataset.quadrant) });
+          App.toast('已移动到「' + QUADRANTS[parseInt(this.dataset.quadrant)].name + '」', 'success');
           draggedTaskId = null;
           renderTasks();
         }
       });
     });
 
-    // 绑定拖拽
+    // 拖拽
     document.querySelectorAll('.task-card').forEach(card => {
       card.addEventListener('dragstart', function (e) {
-        draggedTaskId = this.dataset.id;
-        this.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
+        draggedTaskId = this.dataset.id; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move';
       });
-      card.addEventListener('dragend', function () {
-        this.classList.remove('dragging');
-      });
+      card.addEventListener('dragend', function () { this.classList.remove('dragging'); });
     });
 
-    // 绑定完成
+    // 完成
     document.querySelectorAll('.task-complete-btn').forEach(btn => {
       btn.addEventListener('click', function () {
         Store.updateChecklistTask(this.dataset.id, { completed: true });
@@ -4413,31 +5088,54 @@ const Checklist = (function () {
         renderTasks();
       });
     });
+    // 编辑
+    document.querySelectorAll('.edit-task-btn').forEach(btn => btn.addEventListener('click', function () { showEditTaskModal(this.dataset.id); }));
+    // 删除
+    document.querySelectorAll('.delete-task-btn').forEach(btn => btn.addEventListener('click', function () {
+      if (confirm('确定删除该任务？')) { Store.deleteChecklistTask(this.dataset.id); App.toast('已删除', 'success'); renderTasks(); }
+    }));
+    // 内联添加交互
+    bindInlineAdd();
+  }
 
-    // 绑定编辑
-    document.querySelectorAll('.edit-task-btn').forEach(btn => {
+  function bindInlineAdd() {
+    document.querySelectorAll('.quadrant-add-btn').forEach(btn => {
       btn.addEventListener('click', function () {
-        showEditTaskModal(this.dataset.id);
+        addingQuadrant = parseInt(this.dataset.quadrant);
+        renderTasks();
+        const input = document.querySelector('.inline-add-input[data-quadrant="' + this.dataset.quadrant + '"]');
+        if (input) input.focus();
       });
     });
-
-    // 绑定删除
-    document.querySelectorAll('.delete-task-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        if (confirm('确定删除该任务？')) {
-          Store.deleteChecklistTask(this.dataset.id);
-          App.toast('已删除', 'success');
-          renderTasks();
-        }
+    document.querySelectorAll('.inline-add-cancel').forEach(btn => {
+      btn.addEventListener('click', function () { addingQuadrant = null; renderTasks(); });
+    });
+    document.querySelectorAll('.inline-add-save').forEach(btn => {
+      btn.addEventListener('click', function () { commitInlineAdd(parseInt(this.dataset.quadrant)); });
+    });
+    document.querySelectorAll('.inline-add-input').forEach(input => {
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { commitInlineAdd(parseInt(this.dataset.quadrant)); }
+        else if (e.key === 'Escape') { addingQuadrant = null; renderTasks(); }
       });
     });
+  }
+
+  function commitInlineAdd(quadrant) {
+    const input = document.querySelector('.inline-add-input[data-quadrant="' + quadrant + '"]');
+    const recurringSel = document.querySelector('.inline-add-recurring');
+    const text = input ? input.value.trim() : '';
+    if (!text) { App.toast('请输入任务内容', 'warning'); return; }
+    Store.addChecklistTask({ text, quadrant, recurring: recurringSel ? recurringSel.value : 'none' });
+    addingQuadrant = null;
+    App.toast('已添加', 'success');
+    renderTasks();
   }
 
   function showEditTaskModal(id) {
     const tasks = Store.getChecklistTasks(Store.getCurrentDate());
     const task = id ? tasks.find(t => t.id === id) : null;
-
-    App.modal(task ? '编辑任务' : '新增任务', `
+    App.modal('编辑任务', `
       <div class="mb-12">
         <label class="text-sm text-muted mb-8" style="display:block;">任务内容</label>
         <input type="text" class="input" id="taskText" value="${task ? App.escapeHtml(task.text) : ''}" placeholder="输入任务内容">
@@ -4458,36 +5156,23 @@ const Checklist = (function () {
       </div>
     `, [
       { label: '取消' },
-      {
-        label: '保存',
-        primary: true,
-        onClick: function (body) {
+      { label: '保存', primary: true, onClick: function (body) {
           const text = body.querySelector('#taskText').value.trim();
-          if (!text) {
-            App.toast('请输入任务内容', 'warning');
-            return false;
-          }
-          const data = {
-            text: text,
+          if (!text) { App.toast('请输入任务内容', 'warning'); return false; }
+          Store.updateChecklistTask(id, {
+            text,
             quadrant: parseInt(body.querySelector('#taskQuadrant').value),
             recurring: body.querySelector('#taskRecurring').value
-          };
-          if (task) {
-            Store.updateChecklistTask(id, data);
-          } else {
-            Store.addChecklistTask(data);
-          }
+          });
           App.toast('已保存', 'success');
           renderTasks();
-        }
-      }
+        } }
     ]);
   }
 
   function showArchivedModal() {
     const date = Store.getCurrentDate();
     const archived = Store.getArchivedTasks(date);
-
     App.modal(`已完成任务 · ${App.formatDate(date)}`, `
       ${archived.length === 0
         ? '<div class="empty-state"><div class="empty-state-icon">✓</div>今日暂无已完成任务</div>'
@@ -4496,17 +5181,12 @@ const Checklist = (function () {
               <div class="checkbox checked" style="cursor:default;"></div>
               <span style="flex:1;text-decoration:line-through;color:var(--ink-light);">${App.escapeHtml(t.text)}</span>
               <span class="text-xs text-muted">${QUADRANTS[t.quadrant].name}</span>
-            </div>
-          `).join('')
+            </div>`).join('')
       }
     `, [{ label: '关闭' }]);
   }
 
   function bindEvents() {
-    document.getElementById('addChecklistTaskBtn').addEventListener('click', function () {
-      showEditTaskModal(null);
-    });
-
     document.getElementById('showArchivedBtn').addEventListener('click', showArchivedModal);
   }
 
@@ -5053,377 +5733,395 @@ const Accounting = (function () {
 
 /* ===== records.js ===== */
 /* ============================================
- * records.js - 日常记录模块
- * 随笔 · 心情 · 图片 · 习惯打卡 · 自定义板块
+ * records.js - 日常记录模块（重构）
+ * 板块目录 → 按日期列表 → 富文本编辑页（contenteditable + 工具栏 + 涂鸦）
  * ============================================ */
 
 const Records = (function () {
 
   const MOOD_OPTIONS = ['开心', '平淡', '疲惫', '焦虑', '兴奋', '低落', '感恩', '愤怒'];
+  let savedRange = null; // 富文本选区保存
 
   function render(container) {
     const date = Store.getCurrentDate();
     container.innerHTML = `
       <div class="module-header">
         <h2>✏️ 日常记录</h2>
-        <div class="module-subtitle">随笔 · 心情 · 图片 · 习惯打卡 · ${App.formatDate(date)}</div>
+        <div class="module-subtitle">随笔 · 心情 · 图片 · 习惯 · ${App.formatDate(date)}</div>
       </div>
 
       <div class="flex-between mb-16">
-        <div class="flex-row">
-          <button class="btn btn-primary" id="addRecordEntryBtn">+ 新增记录</button>
-          <button class="btn" id="addRecordBoardBtn">+ 新增板块</button>
-        </div>
+        <div class="text-muted text-sm">选择一个板块查看记录</div>
+        <button class="btn" id="addRecordBoardBtn">+ 新增板块</button>
       </div>
 
-      <div id="recordsBoardsContainer"></div>
+      <div id="recordsBoardsContainer" class="dir-list"></div>
     `;
-
     renderBoards();
     bindEvents();
-    App.bindCollapsible(container);
   }
 
   function renderBoards() {
     const container = document.getElementById('recordsBoardsContainer');
     const boards = Store.getRecordBoards();
-    const date = Store.getCurrentDate();
-
     if (boards.length === 0) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✏️</div>暂无板块，点击上方按钮创建</div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✏️</div>暂无板块，点击右上角创建</div>';
       return;
     }
-
-    let html = '';
-    boards.forEach(board => {
-      const entries = Store.getRecordEntries(board.id, date);
-
-      html += `
-        <div class="section-block collapsible" data-board-id="${board.id}">
-          <div class="section-title">
-            <span class="section-title-icon">${getBoardIcon(board.type)}</span>
-            ${App.escapeHtml(board.name)}
-            <span class="text-xs text-muted" style="margin-left:4px;">(${getBoardTypeLabel(board.type)})</span>
-            <div style="margin-left:auto;display:flex;gap:4px;">
-              <button class="btn-text edit-board-btn" data-id="${board.id}" style="font-size:12px;">重命名</button>
-              <button class="btn-text danger delete-board-btn" data-id="${board.id}" style="font-size:12px;">删除</button>
-            </div>
-          </div>
-          <div id="boardEntries_${board.id}">
-            ${renderBoardEntries(board, entries)}
-          </div>
-        </div>
-      `;
-    });
-
-    container.innerHTML = html;
-
-    // 绑定事件
-    container.querySelectorAll('.edit-board-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        showEditBoardModal(this.dataset.id);
-      });
-    });
-
-    container.querySelectorAll('.delete-board-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        if (confirm('删除板块将同时删除该板块下所有记录，确定？')) {
-          Store.deleteRecordBoard(this.dataset.id);
-          renderBoards();
-          App.toast('已删除板块', 'success');
-        }
-      });
-    });
-
-    container.querySelectorAll('.delete-entry-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        if (confirm('确定删除该记录？')) {
-          Store.deleteRecordEntry(this.dataset.id);
-          renderBoards();
-          App.toast('已删除', 'success');
-        }
-      });
-    });
-
-    // 习惯打卡
-    container.querySelectorAll('.habit-check-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        handleHabitCheck(this.dataset.id);
-      });
-    });
-
-    // 图片预览
-    container.querySelectorAll('.record-image').forEach(img => {
-      img.addEventListener('click', function () {
-        showImagePreview(this.src);
-      });
-    });
-
-    // 绑定折叠
-    App.bindCollapsible(container);
-  }
-
-  function renderBoardEntries(board, entries) {
-    if (entries.length === 0) {
-      return '<div class="empty-state"><div class="empty-state-icon">' + getBoardIcon(board.type) + '</div>今日暂无记录</div>';
-    }
-
-    const sorted = [...entries].sort((a, b) => b.createdAt - a.createdAt);
-
-    return sorted.map(e => {
-      let html = '<div class="list-item record-entry" style="flex-direction:column;align-items:stretch;">';
-      html += '<div class="flex-between">';
-
-      // 根据类型显示不同内容
-      if (board.type === 'mood') {
-        html += `<div class="flex-row"><span class="mood-tag-display">${getMoodIcon(e.mood)} ${App.escapeHtml(e.mood || '')}</span></div>`;
-      } else if (board.type === 'habit') {
-        const isCheckedToday = e.lastCheckDate === Store.getCurrentDate();
-        html += `<div class="flex-row">
-          <button class="btn ${isCheckedToday ? 'btn-primary' : ''} habit-check-btn" data-id="${e.id}">
-            ${isCheckedToday ? '✓ 今日已打卡' : '打卡'}
-          </button>
-          <span class="fw-600">${App.escapeHtml(e.content)}</span>
-          <span class="tag" style="cursor:default;">🔥 连续 ${e.habitStreak || 0} 天</span>
-          <span class="text-xs text-muted">${e.habitPeriod === 'daily' ? '每日' : '每周'}</span>
+    container.innerHTML = boards.map(b => {
+      const count = Store.getRecordEntries(b.id).length;
+      return `
+        <div class="dir-item board-dir-item" data-id="${b.id}">
+          <span class="dir-item-icon">${getBoardIcon(b.type)}</span>
+          <span class="dir-item-main">
+            <span class="dir-item-title">${App.escapeHtml(b.name)}</span>
+            <span class="dir-item-sub">${getBoardTypeLabel(b.type)} · ${count} 条记录</span>
+          </span>
+          <span class="dir-item-actions">
+            <button class="btn-text edit-board-btn" data-id="${b.id}" style="font-size:12px;">重命名</button>
+            <button class="btn-text danger delete-board-btn" data-id="${b.id}" style="font-size:12px;">删除</button>
+          </span>
+          <span class="dir-item-arrow">›</span>
         </div>`;
-      } else {
-        html += `<span>${App.escapeHtml(e.content).replace(/\n/g, '<br>')}</span>`;
-      }
-
-      html += `<div class="flex-row">
-        <span class="text-xs text-muted">${e.date}</span>
-        <button class="btn-text danger delete-entry-btn" data-id="${e.id}">删除</button>
-      </div>`;
-      html += '</div>';
-
-      // 图片展示
-      if (board.type === 'image' && e.images && e.images.length > 0) {
-        html += '<div class="record-images mt-8">';
-        e.images.forEach(src => {
-          html += `<img src="${src}" class="record-image" alt="记录图片">`;
-        });
-        html += '</div>';
-        if (e.content) {
-          html += `<div class="text-sm text-muted mt-8">${App.escapeHtml(e.content).replace(/\n/g, '<br>')}</div>`;
-        }
-      }
-
-      html += '</div>';
-      return html;
     }).join('');
-  }
 
-  function handleHabitCheck(entryId) {
-    const allEntries = Store.getRecordEntries();
-    const habit = allEntries.find(e => e.id === entryId);
-    if (!habit) return;
-
-    const today = Store.getCurrentDate();
-    if (habit.lastCheckDate === today) {
-      App.toast('今日已打卡', 'warning');
-      return;
-    }
-
-    // 计算连续天数
-    let newStreak = 1;
-    if (habit.lastCheckDate) {
-      const lastDate = new Date(habit.lastCheckDate);
-      const todayDate = new Date(today);
-      const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
-      if (habit.habitPeriod === 'daily' && diffDays === 1) {
-        newStreak = (habit.habitStreak || 0) + 1;
-      } else if (habit.habitPeriod === 'weekly' && diffDays <= 7) {
-        newStreak = (habit.habitStreak || 0) + 1;
-      } else {
-        newStreak = 1; // 断了，重新开始
-      }
-    }
-
-    Store.updateRecordEntry(entryId, {
-      lastCheckDate: today,
-      habitStreak: newStreak
+    container.querySelectorAll('.board-dir-item').forEach(el => {
+      el.addEventListener('click', function (e) {
+        if (e.target.closest('.edit-board-btn') || e.target.closest('.delete-board-btn')) return;
+        renderBoardPage(this.dataset.id);
+      });
     });
-    App.toast(`打卡成功！连续 ${newStreak} 天 🔥`, 'success');
-    renderBoards();
+    container.querySelectorAll('.edit-board-btn').forEach(btn => btn.addEventListener('click', function () { showEditBoardModal(this.dataset.id); }));
+    container.querySelectorAll('.delete-board-btn').forEach(btn => btn.addEventListener('click', function () {
+      if (confirm('删除板块将同时删除该板块下所有记录，确定？')) { Store.deleteRecordBoard(this.dataset.id); renderBoards(); App.toast('已删除板块', 'success'); }
+    }));
   }
 
-  function showAddEntryModal() {
-    const boards = Store.getRecordBoards();
-    if (boards.length === 0) {
-      App.toast('请先创建一个板块', 'warning');
-      return;
+  // 板块下一页：按日期排列的记录列表
+  function renderBoardPage(boardId) {
+    const board = Store.getRecordBoards().find(b => b.id === boardId);
+    if (!board) return;
+    const entries = Store.getRecordEntries(boardId).slice().sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+
+    // 按日期分组
+    const groups = {};
+    entries.forEach(e => { (groups[e.date] = groups[e.date] || []).push(e); });
+
+    const container = document.getElementById('contentArea');
+    container.innerHTML = `
+      <div class="module-header">
+        <button class="btn-text" id="boardBackBtn">← 返回</button>
+        <span style="margin-left:8px;">${getBoardIcon(board.type)} ${App.escapeHtml(board.name)}</span>
+      </div>
+      <div class="flex-between mb-16">
+        <div class="text-muted text-sm">共 ${entries.length} 条记录</div>
+        <button class="btn btn-primary btn-sm" id="newEntryBtn">+ 新建记录</button>
+      </div>
+      <div id="boardEntriesList"></div>
+    `;
+
+    const listEl = container.querySelector('#boardEntriesList');
+    if (entries.length === 0) {
+      listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">' + getBoardIcon(board.type) + '</div>暂无记录，点击「新建记录」</div>';
+    } else {
+      listEl.innerHTML = Object.keys(groups).sort((a, b) => b.localeCompare(a)).map(date => {
+        const items = groups[date].slice().sort((a, b) => b.createdAt - a.createdAt);
+        return `
+          <div class="record-date-group">
+            <div class="record-date-label">${App.formatDate(date)} <span class="text-xs text-muted">(${items.length})</span></div>
+            ${items.map(e => renderEntryRow(board, e)).join('')}
+          </div>`;
+      }).join('');
     }
 
-    App.modal('新增记录', `
-      <div class="mb-12">
-        <label class="text-sm text-muted mb-8" style="display:block;">选择板块</label>
-        <select class="select" id="entryBoard">
-          ${boards.map(b => `<option value="${b.id}" data-type="${b.type}">${getBoardIcon(b.type)} ${App.escapeHtml(b.name)} (${getBoardTypeLabel(b.type)})</option>`).join('')}
-        </select>
+    container.querySelector('#boardBackBtn').addEventListener('click', function () { render(container); });
+    container.querySelector('#newEntryBtn').addEventListener('click', function () { renderEditor(null, boardId); });
+    listEl.querySelectorAll('.entry-row').forEach(row => {
+      row.addEventListener('click', function () { renderEditor(this.dataset.id, boardId); });
+    });
+    listEl.querySelectorAll('.entry-del-btn').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (confirm('确定删除该记录？')) { Store.deleteRecordEntry(this.dataset.id); App.toast('已删除', 'success'); renderBoardPage(boardId); }
+      });
+    });
+  }
+
+  function renderEntryRow(board, e) {
+    let preview = '';
+    if (board.type === 'mood') {
+      preview = `<span class="mood-tag-display">${getMoodIcon(e.mood)} ${App.escapeHtml(e.mood || '')}</span>`;
+    } else if (board.type === 'habit') {
+      preview = `<span class="fw-600">${App.escapeHtml(e.content)}</span> <span class="tag" style="cursor:default;">🔥 ${e.habitStreak || 0} 天</span>`;
+    } else if (board.type === 'image') {
+      const firstImg = (e.images && e.images[0]) ? `<img src="${e.images[0]}" class="entry-thumb">` : '';
+      preview = firstImg + `<span class="text-sm text-muted">${App.escapeHtml(e.content || '').slice(0, 30) || '图片记录'}</span>`;
+    } else {
+      const text = e.content ? e.content.replace(/<[^>]+>/g, '').slice(0, 40) : '';
+      preview = `<span class="text-sm">${App.escapeHtml(text) || '<span class="text-muted">空</span>'}</span>`;
+    }
+    return `
+      <div class="list-item entry-row" data-id="${e.id}" style="cursor:pointer;">
+        <div class="flex-1">${preview}</div>
+        <span class="text-xs text-muted">${e.date}</span>
+        <button class="btn-text danger entry-del-btn" data-id="${e.id}" style="margin-left:6px;">删除</button>
+      </div>`;
+  }
+
+  // 富文本编辑页
+  function renderEditor(id, boardId) {
+    const board = Store.getRecordBoards().find(b => b.id === boardId);
+    const entry = id ? Store.getRecordEntries(boardId).find(e => e.id === id) : null;
+    const container = document.getElementById('contentArea');
+
+    container.innerHTML = `
+      <div class="module-header">
+        <button class="btn-text" id="editorBackBtn">← 返回</button>
+        <span style="margin-left:8px;">${entry ? '编辑记录' : '新建记录'}</span>
       </div>
-      <div id="entryDynamicFields"></div>
-    `, [
-      { label: '取消' },
-      {
-        label: '保存',
-        primary: true,
-        onClick: function (body) {
-          const boardId = body.querySelector('#entryBoard').value;
-          const board = boards.find(b => b.id === boardId);
-          if (!board) return false;
 
-          const data = { boardId: boardId };
-
-          if (board.type === 'mood') {
-            data.mood = body.querySelector('#entryMood') ? body.querySelector('#entryMood .mood-tag.selected')?.dataset.mood : '';
-            if (!data.mood) {
-              App.toast('请选择心情', 'warning');
-              return false;
-            }
-            data.content = body.querySelector('#entryContent') ? body.querySelector('#entryContent').value : '';
-          } else if (board.type === 'habit') {
-            data.content = body.querySelector('#habitName').value.trim();
-            if (!data.content) {
-              App.toast('请输入习惯名称', 'warning');
-              return false;
-            }
-            data.habitPeriod = body.querySelector('#habitPeriod').value;
-            data.habitStreak = 0;
-          } else if (board.type === 'image') {
-            data.content = body.querySelector('#entryContent') ? body.querySelector('#entryContent').value : '';
-            const fileInput = body.querySelector('#entryImages');
-            if (fileInput.files.length > 0) {
-              // 读取图片为base64
-              const promises = Array.from(fileInput.files).slice(0, 5).map(file => {
-                return new Promise(resolve => {
-                  const reader = new FileReader();
-                  reader.onload = e => resolve(e.target.result);
-                  reader.readAsDataURL(file);
-                });
-              });
-              Promise.all(promises).then(images => {
-                data.images = images;
-                Store.addRecordEntry(data);
-                App.toast('记录已保存', 'success');
-                renderBoards();
-                App.closeModal();
-              });
-              return false; // 阻止关闭，由promise处理
-            }
-            data.images = [];
-          } else {
-            data.content = body.querySelector('#entryContent').value;
-            if (!data.content.trim()) {
-              App.toast('请输入内容', 'warning');
-              return false;
-            }
-          }
-
-          Store.addRecordEntry(data);
-          App.toast('记录已保存', 'success');
-          renderBoards();
-        }
-      }
-    ]);
-
-    // 动态渲染字段
-    function updateFields() {
-      const select = document.getElementById('entryBoard');
-      const selectedOption = select.options[select.selectedIndex];
-      const type = selectedOption.dataset.type;
-      const fieldsContainer = document.getElementById('entryDynamicFields');
-
-      let html = '';
-      if (type === 'mood') {
-        html = `
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">选择心情</label>
-            <div class="flex-row flex-wrap" id="entryMood">
-              ${MOOD_OPTIONS.map(m => `<span class="tag mood-tag" data-mood="${m}">${getMoodIcon(m)} ${m}</span>`).join('')}
-            </div>
+      ${board.type === 'mood' ? `
+        <div class="mb-12">
+          <label class="text-sm text-muted mb-8" style="display:block;">心情</label>
+          <div class="flex-row flex-wrap mood-picker" id="moodPicker">
+            ${MOOD_OPTIONS.map(m => `<span class="tag mood-tag ${entry && entry.mood === m ? 'selected' : ''}" data-mood="${m}">${getMoodIcon(m)} ${m}</span>`).join('')}
           </div>
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">心情描述（可选）</label>
-            <textarea class="textarea" id="entryContent" rows="3" placeholder记录此刻的心情…"></textarea>
-          </div>
-        `;
-      } else if (type === 'habit') {
-        html = `
-          <div class="mb-12">
+        </div>` : ''}
+
+      ${board.type === 'habit' ? `
+        <div class="grid-2 mb-12">
+          <div>
             <label class="text-sm text-muted mb-8" style="display:block;">习惯名称</label>
-            <input type="text" class="input" id="habitName" placeholder="如：早起喝杯水">
+            <input type="text" class="input" id="habitName" value="${entry ? App.escapeHtml(entry.content) : ''}" placeholder="如：早起喝水">
           </div>
-          <div class="mb-12">
+          <div>
             <label class="text-sm text-muted mb-8" style="display:block;">重复周期</label>
             <select class="select" id="habitPeriod">
-              <option value="daily">每日</option>
-              <option value="weekly">每周</option>
+              <option value="daily" ${(entry && entry.habitPeriod === 'daily') || !entry ? 'selected' : ''}>每日</option>
+              <option value="weekly" ${entry && entry.habitPeriod === 'weekly' ? 'selected' : ''}>每周</option>
             </select>
           </div>
-        `;
-      } else if (type === 'image') {
-        html = `
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">上传图片（最多5张）</label>
-            <input type="file" class="input" id="entryImages" accept="image/*" multiple>
-          </div>
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">图片描述（可选）</label>
-            <textarea class="textarea" id="entryContent" rows="2" placeholder="为图片添加文字说明…"></textarea>
-          </div>
-        `;
-      } else {
-        html = `
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">内容</label>
-            <textarea class="textarea" id="entryContent" rows="6" placeholder="写下你的想法…"></textarea>
-          </div>
-        `;
-      }
-      fieldsContainer.innerHTML = html;
+        </div>` : ''}
 
-      // 心情标签选择
-      const moodContainer = document.getElementById('entryMood');
-      if (moodContainer) {
-        moodContainer.querySelectorAll('.mood-tag').forEach(tag => {
-          tag.addEventListener('click', function () {
-            moodContainer.querySelectorAll('.mood-tag').forEach(t => t.classList.remove('selected'));
-            this.classList.add('selected');
-          });
-        });
-      }
-    }
+      <div class="rich-editor-toolbar">
+        <button class="re-tool" data-cmd="fontSmall" title="减小字号">A-</button>
+        <button class="re-tool" data-cmd="fontLarge" title="增大字号">A+</button>
+        <span class="re-divider"></span>
+        <input type="color" class="re-color" id="reColor" value="#2C3E3A" title="文字颜色">
+        <button class="re-tool" data-cmd="bold" title="加粗"><b>B</b></button>
+        <button class="re-tool" data-cmd="italic" title="斜体"><i>I</i></button>
+        <button class="re-tool" data-cmd="underline" title="下划线"><u>U</u></button>
+        <button class="re-tool" data-cmd="strikeThrough" title="删除线"><s>S</s></button>
+        <span class="re-divider"></span>
+        <button class="re-tool" data-cmd="justifyLeft" title="左对齐">⬅</button>
+        <button class="re-tool" data-cmd="justifyCenter" title="居中">⬌</button>
+        <button class="re-tool" data-cmd="justifyRight" title="右对齐">➡</button>
+        <span class="re-divider"></span>
+        <button class="re-tool" data-cmd="insertUnorderedList" title="无序列表">•≡</button>
+        <button class="re-tool" data-cmd="insertOrderedList" title="有序列表">1≡</button>
+        <span class="re-divider"></span>
+        <button class="re-tool" data-cmd="insertImage" title="插入图片">🖼</button>
+        <button class="re-tool" data-cmd="doodle" title="涂鸦">✎</button>
+      </div>
 
-    document.getElementById('entryBoard').addEventListener('change', updateFields);
-    updateFields();
+      <div class="rich-editor" id="richEditor" contenteditable="true" style="${entry && entry.color ? 'color:' + App.escapeHtml(entry.color) + ';' : ''}${entry && entry.fontSize ? 'font-size:' + App.escapeHtml(entry.fontSize) + ';' : ''}${entry && entry.fontFamily ? 'font-family:' + App.escapeHtml(entry.fontFamily) + ';' : ''}">${entry ? entry.content : ''}</div>
+
+      <div class="doodle-area" id="doodleArea" style="display:none;">
+        <canvas id="doodleCanvas" width="320" height="180" class="doodle-canvas"></canvas>
+        <div class="flex-row mt-8" style="gap:8px;">
+          <button class="btn btn-sm" id="doodleClear">清除</button>
+          <button class="btn btn-sm btn-primary" id="doodleInsert">插入到正文</button>
+        </div>
+      </div>
+
+      <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+
+      <div class="flex-row mt-16" style="gap:8px;justify-content:flex-end;">
+        <button class="btn" id="editorCancelBtn">取消</button>
+        <button class="btn btn-primary" id="editorSaveBtn">保存</button>
+      </div>
+    `;
+
+    bindEditor(container, board, entry);
   }
 
+  function bindEditor(container, board, entry) {
+    const editor = container.querySelector('#richEditor');
+    const colorInput = container.querySelector('#reColor');
+
+    function saveSel() {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) savedRange = sel.getRangeAt(0).cloneRange();
+    }
+    function restoreSel() {
+      editor.focus();
+      if (savedRange) {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedRange);
+      }
+    }
+    editor.addEventListener('keyup', saveSel);
+    editor.addEventListener('mouseup', saveSel);
+
+    // 工具栏命令
+    container.querySelectorAll('.re-tool').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const cmd = this.dataset.cmd;
+        restoreSel();
+        if (cmd === 'fontSmall' || cmd === 'fontLarge') {
+          // 调整整段或选区字号
+          const cur = parseInt(getComputedStyle(editor).fontSize) || 14;
+          const next = cmd === 'fontLarge' ? cur + 2 : Math.max(10, cur - 2);
+          document.execCommand('fontSize', false, '7');
+          // fontSize 7 是最大，需替换字体大小为具体 px
+          const fonts = editor.querySelectorAll('font[size]');
+          fonts.forEach(f => {
+            f.removeAttribute('size');
+            f.style.fontSize = next + 'px';
+          });
+        } else if (cmd === 'insertImage') {
+          container.querySelector('#imageFileInput').click();
+        } else if (cmd === 'doodle') {
+          const da = container.querySelector('#doodleArea');
+          da.style.display = da.style.display === 'none' ? 'block' : 'none';
+          if (da.style.display === 'block') initDoodle(container);
+        } else {
+          document.execCommand(cmd, false, null);
+        }
+        saveSel();
+      });
+    });
+
+    // 颜色
+    colorInput.addEventListener('input', function () {
+      restoreSel();
+      document.execCommand('foreColor', false, this.value);
+      saveSel();
+    });
+
+    // 插入图片
+    container.querySelector('#imageFileInput').addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        restoreSel();
+        document.execCommand('insertImage', false, ev.target.result);
+        saveSel();
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    // 涂鸦
+    function initDoodle(c) {
+      const canvas = c.querySelector('#doodleCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#2C3E3A';
+      ctx.lineWidth = 2;
+      let drawing = false;
+      const pos = e => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        return { x: x * scaleX, y: y * scaleY };
+      };
+      const start = e => { drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+      const move = e => { if (!drawing) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+      const end = () => { drawing = false; };
+      canvas.onmousedown = start; canvas.onmousemove = move; canvas.onmouseup = end; canvas.onmouseleave = end;
+      canvas.ontouchstart = start; canvas.ontouchmove = move; canvas.ontouchend = end;
+      c.querySelector('#doodleClear').onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+      c.querySelector('#doodleInsert').onclick = () => {
+        const dataUrl = canvas.toDataURL('image/png');
+        restoreSel();
+        document.execCommand('insertImage', false, dataUrl);
+        c.querySelector('#doodleArea').style.display = 'none';
+        saveSel();
+      };
+    }
+
+    // 心情选择
+    const moodPicker = container.querySelector('#moodPicker');
+    if (moodPicker) {
+      moodPicker.querySelectorAll('.mood-tag').forEach(tag => {
+        tag.addEventListener('click', function () {
+          moodPicker.querySelectorAll('.mood-tag').forEach(t => t.classList.remove('selected'));
+          this.classList.add('selected');
+        });
+      });
+    }
+
+    // 保存
+    container.querySelector('#editorSaveBtn').addEventListener('click', function () {
+      const content = editor.innerHTML.trim();
+      if (!content && board.type !== 'habit' && board.type !== 'mood') {
+        App.toast('请输入内容', 'warning'); return;
+      }
+      // 提取图片
+      const imgs = [];
+      editor.querySelectorAll('img').forEach(img => { if (img.src) imgs.push(img.src); });
+      const fontSize = editor.style.fontSize || '';
+      const fontFamily = editor.style.fontFamily || '';
+      const color = editor.style.color || '';
+
+      const data = { boardId: board.id, content, images: imgs, fontSize, fontFamily, color };
+
+      if (board.type === 'mood') {
+        const sel = moodPicker ? moodPicker.querySelector('.mood-tag.selected') : null;
+        if (!sel) { App.toast('请选择心情', 'warning'); return; }
+        data.mood = sel.dataset.mood;
+      } else if (board.type === 'habit') {
+        const name = container.querySelector('#habitName').value.trim();
+        if (!name) { App.toast('请输入习惯名称', 'warning'); return; }
+        data.content = name;
+        data.habitPeriod = container.querySelector('#habitPeriod').value;
+        const streak = computeHabitStreak(board.id, name, entry ? entry.id : null);
+        data.habitStreak = streak;
+      }
+
+      if (entry) Store.updateRecordEntry(entry.id, data);
+      else Store.addRecordEntry(data);
+      App.toast('已保存', 'success');
+      renderBoardPage(board.id);
+    });
+
+    container.querySelector('#editorCancelBtn').addEventListener('click', function () { renderBoardPage(board.id); });
+    container.querySelector('#editorBackBtn').addEventListener('click', function () { renderBoardPage(board.id); });
+  }
+
+  function computeHabitStreak(boardId, name, excludeId) {
+    const today = Store.getCurrentDate();
+    const others = Store.getRecordEntries(boardId).filter(e => e.id !== excludeId && e.content === name);
+    if (others.length === 0) return 1;
+    const latest = others.sort((a, b) => b.date.localeCompare(a.date))[0];
+    if (latest.lastCheckDate === today) return latest.habitStreak || 1;
+    const lastDate = new Date(latest.lastCheckDate);
+    const todayDate = new Date(today);
+    const diffDays = Math.round((todayDate - lastDate) / 86400000);
+    if ((latest.habitPeriod || 'daily') === 'daily' && diffDays === 1) return (latest.habitStreak || 0) + 1;
+    if ((latest.habitPeriod || 'daily') === 'weekly' && diffDays <= 7) return (latest.habitStreak || 0) + 1;
+    return 1;
+  }
+
+  // ============ 弹窗 ============
   function showEditBoardModal(id) {
     const board = Store.getRecordBoards().find(b => b.id === id);
     if (!board) return;
-
     App.modal('重命名板块', `
-      <div class="mb-12">
-        <label class="text-sm text-muted mb-8" style="display:block;">板块名称</label>
-        <input type="text" class="input" id="boardName" value="${App.escapeHtml(board.name)}">
-      </div>
+      <div class="mb-12"><input type="text" class="input" id="boardName" value="${App.escapeHtml(board.name)}"></div>
     `, [
       { label: '取消' },
-      {
-        label: '保存',
-        primary: true,
-        onClick: function (body) {
+      { label: '保存', primary: true, onClick: function (body) {
           const name = body.querySelector('#boardName').value.trim();
-          if (!name) {
-            App.toast('请输入名称', 'warning');
-            return false;
-          }
-          Store.updateRecordBoard(id, { name: name });
-          renderBoards();
-          App.toast('已更新', 'success');
-        }
-      }
+          if (!name) { App.toast('请输入名称', 'warning'); return false; }
+          Store.updateRecordBoard(id, { name });
+          renderBoards(); App.toast('已更新', 'success');
+        } }
     ]);
   }
 
@@ -5444,53 +6142,295 @@ const Records = (function () {
       </div>
     `, [
       { label: '取消' },
-      {
-        label: '创建',
-        primary: true,
-        onClick: function (body) {
+      { label: '创建', primary: true, onClick: function (body) {
           const name = body.querySelector('#newBoardName').value.trim();
-          if (!name) {
-            App.toast('请输入板块名称', 'warning');
-            return false;
-          }
-          const type = body.querySelector('#newBoardType').value;
-          Store.addRecordBoard(name, type);
-          renderBoards();
-          App.toast('板块已创建', 'success');
-        }
-      }
+          if (!name) { App.toast('请输入板块名称', 'warning'); return false; }
+          Store.addRecordBoard(name, body.querySelector('#newBoardType').value);
+          renderBoards(); App.toast('板块已创建', 'success');
+        } }
     ]);
   }
 
-  function showImagePreview(src) {
-    App.modal('图片预览', `<img src="${src}" style="width:100%;border-radius:10px;">`, [{ label: '关闭' }]);
+  function bindEvents() {
+    document.getElementById('addRecordBoardBtn').addEventListener('click', showAddBoardModal);
   }
 
   function getBoardIcon(type) {
     const icons = { note: '📝', mood: '😊', image: '📷', habit: '🔁' };
     return icons[type] || '📝';
   }
-
   function getBoardTypeLabel(type) {
     const labels = { note: '随笔', mood: '心情', image: '图片', habit: '习惯' };
     return labels[type] || '随笔';
   }
-
   function getMoodIcon(mood) {
-    const icons = {
-      '开心': '😄', '平淡': '😐', '疲惫': '😵', '焦虑': '😰',
-      '兴奋': '🤩', '低落': '😢', '感恩': '🙏', '愤怒': '😡'
-    };
+    const icons = { '开心': '😄', '平淡': '😐', '疲惫': '😵', '焦虑': '😰', '兴奋': '🤩', '低落': '😢', '感恩': '🙏', '愤怒': '😡' };
     return icons[mood] || '😐';
   }
 
-  function bindEvents() {
-    document.getElementById('addRecordEntryBtn').addEventListener('click', function () {
-      showAddEntryModal();
-    });
+  return { render };
+})();
 
-    document.getElementById('addRecordBoardBtn').addEventListener('click', function () {
-      showAddBoardModal();
+
+/* ===== countdown.js ===== */
+/* ============================================
+ * countdown.js - 倒数日模块（Days Matter 风格）
+ * 卡片网格 · 天数计算 · 详情页 · 背景色/图 · 布局切换
+ * ============================================ */
+
+const Countdown = (function () {
+
+  // 纯色背景选项（至少 6 色）
+  const BG_COLORS = [
+    '#6B9B95', '#C9786E', '#C9A24E', '#7BA0B8',
+    '#9DBF9E', '#B07CC9', '#D4855E', '#5A8079'
+  ];
+
+  // 当前布局：'two' | 'one'
+  let layout = 'two';
+
+  function diffDays(dateStr) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(dateStr + 'T00:00:00');
+    const diff = Math.round((target - today) / 86400000);
+    return diff; // >=0 表示未来（倒数），<0 表示已过去
+  }
+
+  function render(container) {
+    const list = Store.getCountdowns().slice().sort((a, b) => a.date.localeCompare(b.date));
+    if (list.length > 0) layout = list[0].layout || 'two';
+
+    container.innerHTML = `
+      <div class="module-header flex-between" style="display:flex;align-items:center;">
+        <div>
+          <h2>⏳ 倒数日</h2>
+          <div class="module-subtitle">重要日子的倒数与累计</div>
+        </div>
+        <div class="flex-row" style="gap:8px;">
+          <button class="btn btn-sm" id="layoutToggleBtn" title="切换布局">${layout === 'two' ? '▦' : '▤'}</button>
+          <button class="btn btn-primary btn-sm" id="addCountdownBtn">+ 添加</button>
+        </div>
+      </div>
+
+      <div id="countdownListArea" class="${layout === 'two' ? 'countdown-grid grid-2' : 'countdown-grid countdown-grid-one'}">
+        ${list.length === 0 ? '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">⏳</div>还没有倒数日，点击右上角添加</div>' : list.map(c => renderCard(c)).join('')}
+      </div>
+    `;
+
+    bindEvents();
+  }
+
+  function renderCard(c) {
+    const diff = diffDays(c.date);
+    const isFuture = diff >= 0;
+    const bg = c.bg || BG_COLORS[0];
+    const isImage = bg && (bg.startsWith('data:') || bg.startsWith('http'));
+    const style = isImage
+      ? `background-image:url('${bg}');background-size:cover;background-position:center;`
+      : `background:${bg};`;
+
+    return `
+      <div class="countdown-card" data-id="${c.id}" style="${style}">
+        <div class="countdown-card-overlay">
+          <div class="countdown-bar">${App.escapeHtml(c.title)}</div>
+          <div class="countdown-body">
+            <div class="countdown-days">${Math.abs(diff)}</div>
+            <div class="countdown-label">${isFuture ? '距离 ' + App.escapeHtml(c.title) + ' 还有' : App.escapeHtml(c.title) + ' 已经'}</div>
+            <div class="countdown-date">${c.date}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindEvents() {
+    document.getElementById('addCountdownBtn').addEventListener('click', function () {
+      showEditModal(null);
+    });
+    document.getElementById('layoutToggleBtn').addEventListener('click', function () {
+      layout = layout === 'two' ? 'one' : 'two';
+      // 同步到第一条记录（用于持久化布局偏好）
+      const list = Store.getCountdowns();
+      if (list.length > 0) Store.updateCountdown(list[0].id, { layout: layout });
+      render(document.getElementById('contentArea'));
+    });
+    document.querySelectorAll('.countdown-card').forEach(card => {
+      card.addEventListener('click', function () {
+        openDetail(this.dataset.id);
+      });
+    });
+  }
+
+  // 详情页
+  function openDetail(id) {
+    const c = Store.getCountdown(id);
+    if (!c) return;
+    const diff = diffDays(c.date);
+    const isFuture = diff >= 0;
+    const bg = c.bg || BG_COLORS[0];
+    const isImage = bg && (bg.startsWith('data:') || bg.startsWith('http'));
+    const style = isImage
+      ? `background-image:url('${bg}');background-size:cover;background-position:center;`
+      : `background:${bg};`;
+
+    const container = document.getElementById('contentArea');
+    container.innerHTML = `
+      <div class="module-header">
+        <button class="btn-text" id="backBtn">← 返回</button>
+      </div>
+      <div class="countdown-detail" style="${style}">
+        <div class="countdown-detail-overlay">
+          <div class="countdown-detail-days">${Math.abs(diff)}</div>
+          <div class="countdown-detail-title">${App.escapeHtml(c.title)}</div>
+          <div class="countdown-detail-sub">${isFuture ? '距离今天还有' : '已经过去'} · ${c.date}</div>
+          ${c.detail ? `<div class="countdown-detail-desc">${App.escapeHtml(c.detail)}</div>` : ''}
+          <div class="countdown-detail-actions">
+            <button class="btn countdown-act-btn" id="shareBtn">📤 分享</button>
+            <button class="btn countdown-act-btn" id="saveImgBtn">🖼 存为图片</button>
+            <button class="btn countdown-act-btn" id="bgBtn">🎨 背景</button>
+            <button class="btn countdown-act-btn" id="editBtn">✏️ 编辑</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.querySelector('#backBtn').addEventListener('click', function () {
+      render(container);
+    });
+    container.querySelector('#editBtn').addEventListener('click', function () {
+      showEditModal(id, function () { render(container); });
+    });
+    container.querySelector('#bgBtn').addEventListener('click', function () {
+      showBgModal(id, function () { openDetail(id); });
+    });
+    container.querySelector('#shareBtn').addEventListener('click', function () {
+      App.toast('分享功能：可长按上方卡片截图分享', 'info');
+    });
+    container.querySelector('#saveImgBtn').addEventListener('click', function () {
+      App.toast('存为图片：可长按或截图保存卡片', 'info');
+    });
+  }
+
+  // 新增/编辑弹窗
+  function showEditModal(id, onSaved) {
+    const c = id ? Store.getCountdown(id) : null;
+    App.modal(id ? '编辑倒数日' : '新增倒数日', `
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">事件标题</label>
+        <input type="text" class="input" id="cdTitle" value="${c ? App.escapeHtml(c.title) : ''}" placeholder="如：考研倒计时">
+      </div>
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">目标日期</label>
+        <input type="date" class="input" id="cdDate" value="${c ? c.date : Store.getCurrentDate()}">
+      </div>
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">详情描述（可选）</label>
+        <textarea class="textarea" id="cdDetail" rows="3" placeholder="备注说明…">${c ? App.escapeHtml(c.detail || '') : ''}</textarea>
+      </div>
+      ${c ? `
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">背景</label>
+        <div class="flex-row flex-wrap" style="gap:6px;">
+          ${BG_COLORS.map(col => `<span class="cd-color-swatch" data-color="${col}" style="background:${col};${c.bg === col ? 'outline:2px solid var(--celadon-dark);outline-offset:2px;' : ''}"></span>`).join('')}
+          ${c.bg && c.bg.startsWith('data:') ? '<span class="text-sm text-muted">已设置图片背景</span>' : ''}
+        </div>
+      </div>` : ''}
+    `, [
+      { label: '取消' },
+      {
+        label: id ? '保存' : '添加',
+        primary: true,
+        onClick: function (body) {
+          const title = body.querySelector('#cdTitle').value.trim();
+          if (!title) { App.toast('请输入标题', 'warning'); return false; }
+          const date = body.querySelector('#cdDate').value;
+          if (!date) { App.toast('请选择日期', 'warning'); return false; }
+          const detail = body.querySelector('#cdDetail').value;
+          const swatch = body.querySelector('.cd-color-swatch.selected');
+          let bg = c ? c.bg : BG_COLORS[0];
+          if (id && swatch) bg = swatch.dataset.color;
+
+          if (id) {
+            Store.updateCountdown(id, { title, date, detail, bg, layout });
+          } else {
+            Store.addCountdown({ title, date, detail, bg, layout });
+          }
+          App.toast(id ? '已更新' : '已添加', 'success');
+          if (onSaved) onSaved(); else render(document.getElementById('contentArea'));
+        }
+      },
+      ...(id ? [{ label: '删除', onClick: function () {
+          if (confirm('确定删除这个倒数日？')) {
+            Store.deleteCountdown(id);
+            App.toast('已删除', 'success');
+            render(document.getElementById('contentArea'));
+          }
+        } }] : [])
+    ]);
+
+    const modalBody = document.getElementById('dynamicModalBody');
+    if (modalBody && id) {
+      modalBody.querySelectorAll('.cd-color-swatch').forEach(sw => {
+        sw.addEventListener('click', function () {
+          modalBody.querySelectorAll('.cd-color-swatch').forEach(s => s.classList.remove('selected'));
+          this.classList.add('selected');
+        });
+      });
+    }
+  }
+
+  // 背景设置弹窗（纯色 + 图片）
+  function showBgModal(id, onSaved) {
+    const c = Store.getCountdown(id);
+    App.modal('设置背景', `
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">纯色背景</label>
+        <div class="flex-row flex-wrap" style="gap:6px;" id="bgColorRow">
+          ${BG_COLORS.map(col => `<span class="cd-color-swatch" data-color="${col}" style="background:${col};${c.bg === col ? 'outline:2px solid var(--celadon-dark);outline-offset:2px;' : ''}"></span>`).join('')}
+        </div>
+      </div>
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">自定义图片背景</label>
+        <input type="file" class="input" id="bgImageInput" accept="image/*">
+        <div class="text-xs text-muted mt-8">选择图片后会转为 base64 存储（建议尺寸适中）。</div>
+      </div>
+    `, [
+      { label: '取消' },
+      {
+        label: '保存',
+        primary: true,
+        onClick: function (body) {
+          const swatch = body.querySelector('.cd-color-swatch.selected');
+          const fileInput = body.querySelector('#bgImageInput');
+          if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              Store.updateCountdown(id, { bg: e.target.result });
+              App.toast('背景已更新', 'success');
+              if (onSaved) onSaved();
+            };
+            reader.readAsDataURL(file);
+            return false; // 等待异步
+          } else if (swatch) {
+            Store.updateCountdown(id, { bg: swatch.dataset.color });
+            App.toast('背景已更新', 'success');
+            if (onSaved) onSaved();
+          } else {
+            App.toast('请选择颜色或图片', 'warning');
+            return false;
+          }
+        }
+      }
+    ]);
+
+    const modalBody = document.getElementById('dynamicModalBody');
+    modalBody.querySelectorAll('.cd-color-swatch').forEach(sw => {
+      sw.addEventListener('click', function () {
+        modalBody.querySelectorAll('.cd-color-swatch').forEach(s => s.classList.remove('selected'));
+        this.classList.add('selected');
+      });
     });
   }
 
@@ -5595,6 +6535,12 @@ const App = (function () {
         break;
       case 'records':
         Records.render(contentArea);
+        break;
+      case 'timer':
+        Timer.render(contentArea);
+        break;
+      case 'countdown':
+        Countdown.render(contentArea);
         break;
       default:
         // 自定义模块
@@ -6237,6 +7183,101 @@ const App = (function () {
     };
   }
 
+  // ============ SVG 图表工具（不依赖外部库） ============
+
+  // 折线图：opts = { labels:[], series:[{name,color,data:[]}], height, unit }
+  function lineChart(container, opts) {
+    const labels = opts.labels || [];
+    const series = opts.series || [];
+    const height = opts.height || 220;
+    const unit = opts.unit || '';
+    let allVals = [];
+    series.forEach(s => { allVals = allVals.concat(s.data); });
+    if (allVals.length === 0 || labels.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📈</div>暂无统计数据</div>';
+      return;
+    }
+    const max = Math.max(...allVals, 1);
+    const min = Math.min(...allVals, 0);
+    const w = 360, padL = 38, padR = 14, padT = 16, padB = 30;
+    const plotW = w - padL - padR;
+    const plotH = height - padT - padB;
+    const n = labels.length;
+    const xStep = n > 1 ? plotW / (n - 1) : 0;
+    const xOf = i => padL + (n > 1 ? i * xStep : plotW / 2);
+    const yOf = v => padT + plotH - ((v - min) / ((max - min) || 1)) * plotH;
+    const gridN = 4;
+    let svg = `<svg viewBox="0 0 ${w} ${height}" width="100%" preserveAspectRatio="none" style="display:block;">`;
+    // 网格线 + Y轴刻度
+    for (let g = 0; g <= gridN; g++) {
+      const val = min + (max - min) * (g / gridN);
+      const y = yOf(val);
+      svg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}" stroke="var(--divider)" stroke-width="1"/>`;
+      svg += `<text x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--ink-light)">${Math.round(val)}</text>`;
+    }
+    // X轴标签
+    labels.forEach((lb, i) => {
+      const show = n <= 10 || i % Math.ceil(n / 10) === 0;
+      if (show) {
+        svg += `<text x="${xOf(i).toFixed(1)}" y="${height - 10}" text-anchor="middle" font-size="9" fill="var(--ink-light)">${escapeHtml(String(lb))}</text>`;
+      }
+    });
+    // 各折线
+    series.forEach(s => {
+      const pts = s.data.map((v, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+      svg += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+      s.data.forEach((v, i) => {
+        svg += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="2.6" fill="${s.color}"/>`;
+      });
+    });
+    svg += '</svg>';
+    // 图例
+    let legend = '';
+    if (series.length > 1) {
+      legend = '<div class="chart-legend">' + series.map(s =>
+        `<span class="chart-legend-item"><span class="chart-legend-dot" style="background:${s.color};"></span>${escapeHtml(s.name)}</span>`
+      ).join('') + '</div>';
+    }
+    container.innerHTML = svg + legend;
+  }
+
+  // 柱状图：opts = { labels:[], data:[], color, height, unit }
+  function barChart(container, opts) {
+    const labels = opts.labels || [];
+    const data = opts.data || [];
+    const color = opts.color || 'var(--celadon)';
+    const height = opts.height || 220;
+    if (data.length === 0 || labels.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div>暂无统计数据</div>';
+      return;
+    }
+    const max = Math.max(...data, 1);
+    const w = 360, padL = 38, padR = 14, padT = 16, padB = 30;
+    const plotW = w - padL - padR;
+    const plotH = height - padT - padB;
+    const n = data.length;
+    const slot = plotW / n;
+    const barW = Math.min(slot * 0.6, 40);
+    const yOf = v => padT + plotH - (v / max) * plotH;
+    let svg = `<svg viewBox="0 0 ${w} ${height}" width="100%" preserveAspectRatio="none" style="display:block;">`;
+    for (let g = 0; g <= 4; g++) {
+      const val = max * (g / 4);
+      const y = yOf(val);
+      svg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}" stroke="var(--divider)" stroke-width="1"/>`;
+      svg += `<text x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--ink-light)">${Math.round(val)}</text>`;
+    }
+    data.forEach((v, i) => {
+      const x = padL + slot * i + (slot - barW) / 2;
+      const y = yOf(v);
+      const h = padT + plotH - y;
+      svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(0, h).toFixed(1)}" rx="3" fill="${color}"/>`;
+      svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${(y - 4).toFixed(1)}" text-anchor="middle" font-size="9" fill="var(--ink-medium)">${v}</text>`;
+      svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${height - 10}" text-anchor="middle" font-size="9" fill="var(--ink-light)">${escapeHtml(String(labels[i]))}</text>`;
+    });
+    svg += '</svg>';
+    container.innerHTML = svg;
+  }
+
   // 绑定折叠组件：让 .section-block.collapsible 的标题可点击展开/收起
   function bindCollapsible(container, defaultCollapsed) {
     var blocks = container.querySelectorAll('.section-block.collapsible');
@@ -6271,6 +7312,8 @@ const App = (function () {
     formatMoney,
     getMonthRange,
     bindCollapsible,
+    lineChart,
+    barChart,
     getCurrentDate: () => Store.getCurrentDate()
   };
 })();

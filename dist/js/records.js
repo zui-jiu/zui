@@ -1,375 +1,393 @@
 /* ============================================
- * records.js - 日常记录模块
- * 随笔 · 心情 · 图片 · 习惯打卡 · 自定义板块
+ * records.js - 日常记录模块（重构）
+ * 板块目录 → 按日期列表 → 富文本编辑页（contenteditable + 工具栏 + 涂鸦）
  * ============================================ */
 
 const Records = (function () {
 
   const MOOD_OPTIONS = ['开心', '平淡', '疲惫', '焦虑', '兴奋', '低落', '感恩', '愤怒'];
+  let savedRange = null; // 富文本选区保存
 
   function render(container) {
     const date = Store.getCurrentDate();
     container.innerHTML = `
       <div class="module-header">
         <h2>✏️ 日常记录</h2>
-        <div class="module-subtitle">随笔 · 心情 · 图片 · 习惯打卡 · ${App.formatDate(date)}</div>
+        <div class="module-subtitle">随笔 · 心情 · 图片 · 习惯 · ${App.formatDate(date)}</div>
       </div>
 
       <div class="flex-between mb-16">
-        <div class="flex-row">
-          <button class="btn btn-primary" id="addRecordEntryBtn">+ 新增记录</button>
-          <button class="btn" id="addRecordBoardBtn">+ 新增板块</button>
-        </div>
+        <div class="text-muted text-sm">选择一个板块查看记录</div>
+        <button class="btn" id="addRecordBoardBtn">+ 新增板块</button>
       </div>
 
-      <div id="recordsBoardsContainer"></div>
+      <div id="recordsBoardsContainer" class="dir-list"></div>
     `;
-
     renderBoards();
     bindEvents();
-    App.bindCollapsible(container);
   }
 
   function renderBoards() {
     const container = document.getElementById('recordsBoardsContainer');
     const boards = Store.getRecordBoards();
-    const date = Store.getCurrentDate();
-
     if (boards.length === 0) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✏️</div>暂无板块，点击上方按钮创建</div>';
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✏️</div>暂无板块，点击右上角创建</div>';
       return;
     }
-
-    let html = '';
-    boards.forEach(board => {
-      const entries = Store.getRecordEntries(board.id, date);
-
-      html += `
-        <div class="section-block collapsible" data-board-id="${board.id}">
-          <div class="section-title">
-            <span class="section-title-icon">${getBoardIcon(board.type)}</span>
-            ${App.escapeHtml(board.name)}
-            <span class="text-xs text-muted" style="margin-left:4px;">(${getBoardTypeLabel(board.type)})</span>
-            <div style="margin-left:auto;display:flex;gap:4px;">
-              <button class="btn-text edit-board-btn" data-id="${board.id}" style="font-size:12px;">重命名</button>
-              <button class="btn-text danger delete-board-btn" data-id="${board.id}" style="font-size:12px;">删除</button>
-            </div>
-          </div>
-          <div id="boardEntries_${board.id}">
-            ${renderBoardEntries(board, entries)}
-          </div>
-        </div>
-      `;
-    });
-
-    container.innerHTML = html;
-
-    // 绑定事件
-    container.querySelectorAll('.edit-board-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        showEditBoardModal(this.dataset.id);
-      });
-    });
-
-    container.querySelectorAll('.delete-board-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        if (confirm('删除板块将同时删除该板块下所有记录，确定？')) {
-          Store.deleteRecordBoard(this.dataset.id);
-          renderBoards();
-          App.toast('已删除板块', 'success');
-        }
-      });
-    });
-
-    container.querySelectorAll('.delete-entry-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        if (confirm('确定删除该记录？')) {
-          Store.deleteRecordEntry(this.dataset.id);
-          renderBoards();
-          App.toast('已删除', 'success');
-        }
-      });
-    });
-
-    // 习惯打卡
-    container.querySelectorAll('.habit-check-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        handleHabitCheck(this.dataset.id);
-      });
-    });
-
-    // 图片预览
-    container.querySelectorAll('.record-image').forEach(img => {
-      img.addEventListener('click', function () {
-        showImagePreview(this.src);
-      });
-    });
-
-    // 绑定折叠
-    App.bindCollapsible(container);
-  }
-
-  function renderBoardEntries(board, entries) {
-    if (entries.length === 0) {
-      return '<div class="empty-state"><div class="empty-state-icon">' + getBoardIcon(board.type) + '</div>今日暂无记录</div>';
-    }
-
-    const sorted = [...entries].sort((a, b) => b.createdAt - a.createdAt);
-
-    return sorted.map(e => {
-      let html = '<div class="list-item record-entry" style="flex-direction:column;align-items:stretch;">';
-      html += '<div class="flex-between">';
-
-      // 根据类型显示不同内容
-      if (board.type === 'mood') {
-        html += `<div class="flex-row"><span class="mood-tag-display">${getMoodIcon(e.mood)} ${App.escapeHtml(e.mood || '')}</span></div>`;
-      } else if (board.type === 'habit') {
-        const isCheckedToday = e.lastCheckDate === Store.getCurrentDate();
-        html += `<div class="flex-row">
-          <button class="btn ${isCheckedToday ? 'btn-primary' : ''} habit-check-btn" data-id="${e.id}">
-            ${isCheckedToday ? '✓ 今日已打卡' : '打卡'}
-          </button>
-          <span class="fw-600">${App.escapeHtml(e.content)}</span>
-          <span class="tag" style="cursor:default;">🔥 连续 ${e.habitStreak || 0} 天</span>
-          <span class="text-xs text-muted">${e.habitPeriod === 'daily' ? '每日' : '每周'}</span>
+    container.innerHTML = boards.map(b => {
+      const count = Store.getRecordEntries(b.id).length;
+      return `
+        <div class="dir-item board-dir-item" data-id="${b.id}">
+          <span class="dir-item-icon">${getBoardIcon(b.type)}</span>
+          <span class="dir-item-main">
+            <span class="dir-item-title">${App.escapeHtml(b.name)}</span>
+            <span class="dir-item-sub">${getBoardTypeLabel(b.type)} · ${count} 条记录</span>
+          </span>
+          <span class="dir-item-actions">
+            <button class="btn-text edit-board-btn" data-id="${b.id}" style="font-size:12px;">重命名</button>
+            <button class="btn-text danger delete-board-btn" data-id="${b.id}" style="font-size:12px;">删除</button>
+          </span>
+          <span class="dir-item-arrow">›</span>
         </div>`;
-      } else {
-        html += `<span>${App.escapeHtml(e.content).replace(/\n/g, '<br>')}</span>`;
-      }
-
-      html += `<div class="flex-row">
-        <span class="text-xs text-muted">${e.date}</span>
-        <button class="btn-text danger delete-entry-btn" data-id="${e.id}">删除</button>
-      </div>`;
-      html += '</div>';
-
-      // 图片展示
-      if (board.type === 'image' && e.images && e.images.length > 0) {
-        html += '<div class="record-images mt-8">';
-        e.images.forEach(src => {
-          html += `<img src="${src}" class="record-image" alt="记录图片">`;
-        });
-        html += '</div>';
-        if (e.content) {
-          html += `<div class="text-sm text-muted mt-8">${App.escapeHtml(e.content).replace(/\n/g, '<br>')}</div>`;
-        }
-      }
-
-      html += '</div>';
-      return html;
     }).join('');
-  }
 
-  function handleHabitCheck(entryId) {
-    const allEntries = Store.getRecordEntries();
-    const habit = allEntries.find(e => e.id === entryId);
-    if (!habit) return;
-
-    const today = Store.getCurrentDate();
-    if (habit.lastCheckDate === today) {
-      App.toast('今日已打卡', 'warning');
-      return;
-    }
-
-    // 计算连续天数
-    let newStreak = 1;
-    if (habit.lastCheckDate) {
-      const lastDate = new Date(habit.lastCheckDate);
-      const todayDate = new Date(today);
-      const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
-      if (habit.habitPeriod === 'daily' && diffDays === 1) {
-        newStreak = (habit.habitStreak || 0) + 1;
-      } else if (habit.habitPeriod === 'weekly' && diffDays <= 7) {
-        newStreak = (habit.habitStreak || 0) + 1;
-      } else {
-        newStreak = 1; // 断了，重新开始
-      }
-    }
-
-    Store.updateRecordEntry(entryId, {
-      lastCheckDate: today,
-      habitStreak: newStreak
+    container.querySelectorAll('.board-dir-item').forEach(el => {
+      el.addEventListener('click', function (e) {
+        if (e.target.closest('.edit-board-btn') || e.target.closest('.delete-board-btn')) return;
+        renderBoardPage(this.dataset.id);
+      });
     });
-    App.toast(`打卡成功！连续 ${newStreak} 天 🔥`, 'success');
-    renderBoards();
+    container.querySelectorAll('.edit-board-btn').forEach(btn => btn.addEventListener('click', function () { showEditBoardModal(this.dataset.id); }));
+    container.querySelectorAll('.delete-board-btn').forEach(btn => btn.addEventListener('click', function () {
+      if (confirm('删除板块将同时删除该板块下所有记录，确定？')) { Store.deleteRecordBoard(this.dataset.id); renderBoards(); App.toast('已删除板块', 'success'); }
+    }));
   }
 
-  function showAddEntryModal() {
-    const boards = Store.getRecordBoards();
-    if (boards.length === 0) {
-      App.toast('请先创建一个板块', 'warning');
-      return;
+  // 板块下一页：按日期排列的记录列表
+  function renderBoardPage(boardId) {
+    const board = Store.getRecordBoards().find(b => b.id === boardId);
+    if (!board) return;
+    const entries = Store.getRecordEntries(boardId).slice().sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt);
+
+    // 按日期分组
+    const groups = {};
+    entries.forEach(e => { (groups[e.date] = groups[e.date] || []).push(e); });
+
+    const container = document.getElementById('contentArea');
+    container.innerHTML = `
+      <div class="module-header">
+        <button class="btn-text" id="boardBackBtn">← 返回</button>
+        <span style="margin-left:8px;">${getBoardIcon(board.type)} ${App.escapeHtml(board.name)}</span>
+      </div>
+      <div class="flex-between mb-16">
+        <div class="text-muted text-sm">共 ${entries.length} 条记录</div>
+        <button class="btn btn-primary btn-sm" id="newEntryBtn">+ 新建记录</button>
+      </div>
+      <div id="boardEntriesList"></div>
+    `;
+
+    const listEl = container.querySelector('#boardEntriesList');
+    if (entries.length === 0) {
+      listEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">' + getBoardIcon(board.type) + '</div>暂无记录，点击「新建记录」</div>';
+    } else {
+      listEl.innerHTML = Object.keys(groups).sort((a, b) => b.localeCompare(a)).map(date => {
+        const items = groups[date].slice().sort((a, b) => b.createdAt - a.createdAt);
+        return `
+          <div class="record-date-group">
+            <div class="record-date-label">${App.formatDate(date)} <span class="text-xs text-muted">(${items.length})</span></div>
+            ${items.map(e => renderEntryRow(board, e)).join('')}
+          </div>`;
+      }).join('');
     }
 
-    App.modal('新增记录', `
-      <div class="mb-12">
-        <label class="text-sm text-muted mb-8" style="display:block;">选择板块</label>
-        <select class="select" id="entryBoard">
-          ${boards.map(b => `<option value="${b.id}" data-type="${b.type}">${getBoardIcon(b.type)} ${App.escapeHtml(b.name)} (${getBoardTypeLabel(b.type)})</option>`).join('')}
-        </select>
+    container.querySelector('#boardBackBtn').addEventListener('click', function () { render(container); });
+    container.querySelector('#newEntryBtn').addEventListener('click', function () { renderEditor(null, boardId); });
+    listEl.querySelectorAll('.entry-row').forEach(row => {
+      row.addEventListener('click', function () { renderEditor(this.dataset.id, boardId); });
+    });
+    listEl.querySelectorAll('.entry-del-btn').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (confirm('确定删除该记录？')) { Store.deleteRecordEntry(this.dataset.id); App.toast('已删除', 'success'); renderBoardPage(boardId); }
+      });
+    });
+  }
+
+  function renderEntryRow(board, e) {
+    let preview = '';
+    if (board.type === 'mood') {
+      preview = `<span class="mood-tag-display">${getMoodIcon(e.mood)} ${App.escapeHtml(e.mood || '')}</span>`;
+    } else if (board.type === 'habit') {
+      preview = `<span class="fw-600">${App.escapeHtml(e.content)}</span> <span class="tag" style="cursor:default;">🔥 ${e.habitStreak || 0} 天</span>`;
+    } else if (board.type === 'image') {
+      const firstImg = (e.images && e.images[0]) ? `<img src="${e.images[0]}" class="entry-thumb">` : '';
+      preview = firstImg + `<span class="text-sm text-muted">${App.escapeHtml(e.content || '').slice(0, 30) || '图片记录'}</span>`;
+    } else {
+      const text = e.content ? e.content.replace(/<[^>]+>/g, '').slice(0, 40) : '';
+      preview = `<span class="text-sm">${App.escapeHtml(text) || '<span class="text-muted">空</span>'}</span>`;
+    }
+    return `
+      <div class="list-item entry-row" data-id="${e.id}" style="cursor:pointer;">
+        <div class="flex-1">${preview}</div>
+        <span class="text-xs text-muted">${e.date}</span>
+        <button class="btn-text danger entry-del-btn" data-id="${e.id}" style="margin-left:6px;">删除</button>
+      </div>`;
+  }
+
+  // 富文本编辑页
+  function renderEditor(id, boardId) {
+    const board = Store.getRecordBoards().find(b => b.id === boardId);
+    const entry = id ? Store.getRecordEntries(boardId).find(e => e.id === id) : null;
+    const container = document.getElementById('contentArea');
+
+    container.innerHTML = `
+      <div class="module-header">
+        <button class="btn-text" id="editorBackBtn">← 返回</button>
+        <span style="margin-left:8px;">${entry ? '编辑记录' : '新建记录'}</span>
       </div>
-      <div id="entryDynamicFields"></div>
-    `, [
-      { label: '取消' },
-      {
-        label: '保存',
-        primary: true,
-        onClick: function (body) {
-          const boardId = body.querySelector('#entryBoard').value;
-          const board = boards.find(b => b.id === boardId);
-          if (!board) return false;
 
-          const data = { boardId: boardId };
-
-          if (board.type === 'mood') {
-            data.mood = body.querySelector('#entryMood') ? body.querySelector('#entryMood .mood-tag.selected')?.dataset.mood : '';
-            if (!data.mood) {
-              App.toast('请选择心情', 'warning');
-              return false;
-            }
-            data.content = body.querySelector('#entryContent') ? body.querySelector('#entryContent').value : '';
-          } else if (board.type === 'habit') {
-            data.content = body.querySelector('#habitName').value.trim();
-            if (!data.content) {
-              App.toast('请输入习惯名称', 'warning');
-              return false;
-            }
-            data.habitPeriod = body.querySelector('#habitPeriod').value;
-            data.habitStreak = 0;
-          } else if (board.type === 'image') {
-            data.content = body.querySelector('#entryContent') ? body.querySelector('#entryContent').value : '';
-            const fileInput = body.querySelector('#entryImages');
-            if (fileInput.files.length > 0) {
-              // 读取图片为base64
-              const promises = Array.from(fileInput.files).slice(0, 5).map(file => {
-                return new Promise(resolve => {
-                  const reader = new FileReader();
-                  reader.onload = e => resolve(e.target.result);
-                  reader.readAsDataURL(file);
-                });
-              });
-              Promise.all(promises).then(images => {
-                data.images = images;
-                Store.addRecordEntry(data);
-                App.toast('记录已保存', 'success');
-                renderBoards();
-                App.closeModal();
-              });
-              return false; // 阻止关闭，由promise处理
-            }
-            data.images = [];
-          } else {
-            data.content = body.querySelector('#entryContent').value;
-            if (!data.content.trim()) {
-              App.toast('请输入内容', 'warning');
-              return false;
-            }
-          }
-
-          Store.addRecordEntry(data);
-          App.toast('记录已保存', 'success');
-          renderBoards();
-        }
-      }
-    ]);
-
-    // 动态渲染字段
-    function updateFields() {
-      const select = document.getElementById('entryBoard');
-      const selectedOption = select.options[select.selectedIndex];
-      const type = selectedOption.dataset.type;
-      const fieldsContainer = document.getElementById('entryDynamicFields');
-
-      let html = '';
-      if (type === 'mood') {
-        html = `
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">选择心情</label>
-            <div class="flex-row flex-wrap" id="entryMood">
-              ${MOOD_OPTIONS.map(m => `<span class="tag mood-tag" data-mood="${m}">${getMoodIcon(m)} ${m}</span>`).join('')}
-            </div>
+      ${board.type === 'mood' ? `
+        <div class="mb-12">
+          <label class="text-sm text-muted mb-8" style="display:block;">心情</label>
+          <div class="flex-row flex-wrap mood-picker" id="moodPicker">
+            ${MOOD_OPTIONS.map(m => `<span class="tag mood-tag ${entry && entry.mood === m ? 'selected' : ''}" data-mood="${m}">${getMoodIcon(m)} ${m}</span>`).join('')}
           </div>
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">心情描述（可选）</label>
-            <textarea class="textarea" id="entryContent" rows="3" placeholder记录此刻的心情…"></textarea>
-          </div>
-        `;
-      } else if (type === 'habit') {
-        html = `
-          <div class="mb-12">
+        </div>` : ''}
+
+      ${board.type === 'habit' ? `
+        <div class="grid-2 mb-12">
+          <div>
             <label class="text-sm text-muted mb-8" style="display:block;">习惯名称</label>
-            <input type="text" class="input" id="habitName" placeholder="如：早起喝杯水">
+            <input type="text" class="input" id="habitName" value="${entry ? App.escapeHtml(entry.content) : ''}" placeholder="如：早起喝水">
           </div>
-          <div class="mb-12">
+          <div>
             <label class="text-sm text-muted mb-8" style="display:block;">重复周期</label>
             <select class="select" id="habitPeriod">
-              <option value="daily">每日</option>
-              <option value="weekly">每周</option>
+              <option value="daily" ${(entry && entry.habitPeriod === 'daily') || !entry ? 'selected' : ''}>每日</option>
+              <option value="weekly" ${entry && entry.habitPeriod === 'weekly' ? 'selected' : ''}>每周</option>
             </select>
           </div>
-        `;
-      } else if (type === 'image') {
-        html = `
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">上传图片（最多5张）</label>
-            <input type="file" class="input" id="entryImages" accept="image/*" multiple>
-          </div>
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">图片描述（可选）</label>
-            <textarea class="textarea" id="entryContent" rows="2" placeholder="为图片添加文字说明…"></textarea>
-          </div>
-        `;
-      } else {
-        html = `
-          <div class="mb-12">
-            <label class="text-sm text-muted mb-8" style="display:block;">内容</label>
-            <textarea class="textarea" id="entryContent" rows="6" placeholder="写下你的想法…"></textarea>
-          </div>
-        `;
-      }
-      fieldsContainer.innerHTML = html;
+        </div>` : ''}
 
-      // 心情标签选择
-      const moodContainer = document.getElementById('entryMood');
-      if (moodContainer) {
-        moodContainer.querySelectorAll('.mood-tag').forEach(tag => {
-          tag.addEventListener('click', function () {
-            moodContainer.querySelectorAll('.mood-tag').forEach(t => t.classList.remove('selected'));
-            this.classList.add('selected');
-          });
-        });
-      }
-    }
+      <div class="rich-editor-toolbar">
+        <button class="re-tool" data-cmd="fontSmall" title="减小字号">A-</button>
+        <button class="re-tool" data-cmd="fontLarge" title="增大字号">A+</button>
+        <span class="re-divider"></span>
+        <input type="color" class="re-color" id="reColor" value="#2C3E3A" title="文字颜色">
+        <button class="re-tool" data-cmd="bold" title="加粗"><b>B</b></button>
+        <button class="re-tool" data-cmd="italic" title="斜体"><i>I</i></button>
+        <button class="re-tool" data-cmd="underline" title="下划线"><u>U</u></button>
+        <button class="re-tool" data-cmd="strikeThrough" title="删除线"><s>S</s></button>
+        <span class="re-divider"></span>
+        <button class="re-tool" data-cmd="justifyLeft" title="左对齐">⬅</button>
+        <button class="re-tool" data-cmd="justifyCenter" title="居中">⬌</button>
+        <button class="re-tool" data-cmd="justifyRight" title="右对齐">➡</button>
+        <span class="re-divider"></span>
+        <button class="re-tool" data-cmd="insertUnorderedList" title="无序列表">•≡</button>
+        <button class="re-tool" data-cmd="insertOrderedList" title="有序列表">1≡</button>
+        <span class="re-divider"></span>
+        <button class="re-tool" data-cmd="insertImage" title="插入图片">🖼</button>
+        <button class="re-tool" data-cmd="doodle" title="涂鸦">✎</button>
+      </div>
 
-    document.getElementById('entryBoard').addEventListener('change', updateFields);
-    updateFields();
+      <div class="rich-editor" id="richEditor" contenteditable="true" style="${entry && entry.color ? 'color:' + App.escapeHtml(entry.color) + ';' : ''}${entry && entry.fontSize ? 'font-size:' + App.escapeHtml(entry.fontSize) + ';' : ''}${entry && entry.fontFamily ? 'font-family:' + App.escapeHtml(entry.fontFamily) + ';' : ''}">${entry ? entry.content : ''}</div>
+
+      <div class="doodle-area" id="doodleArea" style="display:none;">
+        <canvas id="doodleCanvas" width="320" height="180" class="doodle-canvas"></canvas>
+        <div class="flex-row mt-8" style="gap:8px;">
+          <button class="btn btn-sm" id="doodleClear">清除</button>
+          <button class="btn btn-sm btn-primary" id="doodleInsert">插入到正文</button>
+        </div>
+      </div>
+
+      <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+
+      <div class="flex-row mt-16" style="gap:8px;justify-content:flex-end;">
+        <button class="btn" id="editorCancelBtn">取消</button>
+        <button class="btn btn-primary" id="editorSaveBtn">保存</button>
+      </div>
+    `;
+
+    bindEditor(container, board, entry);
   }
 
+  function bindEditor(container, board, entry) {
+    const editor = container.querySelector('#richEditor');
+    const colorInput = container.querySelector('#reColor');
+
+    function saveSel() {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) savedRange = sel.getRangeAt(0).cloneRange();
+    }
+    function restoreSel() {
+      editor.focus();
+      if (savedRange) {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedRange);
+      }
+    }
+    editor.addEventListener('keyup', saveSel);
+    editor.addEventListener('mouseup', saveSel);
+
+    // 工具栏命令
+    container.querySelectorAll('.re-tool').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const cmd = this.dataset.cmd;
+        restoreSel();
+        if (cmd === 'fontSmall' || cmd === 'fontLarge') {
+          // 调整整段或选区字号
+          const cur = parseInt(getComputedStyle(editor).fontSize) || 14;
+          const next = cmd === 'fontLarge' ? cur + 2 : Math.max(10, cur - 2);
+          document.execCommand('fontSize', false, '7');
+          // fontSize 7 是最大，需替换字体大小为具体 px
+          const fonts = editor.querySelectorAll('font[size]');
+          fonts.forEach(f => {
+            f.removeAttribute('size');
+            f.style.fontSize = next + 'px';
+          });
+        } else if (cmd === 'insertImage') {
+          container.querySelector('#imageFileInput').click();
+        } else if (cmd === 'doodle') {
+          const da = container.querySelector('#doodleArea');
+          da.style.display = da.style.display === 'none' ? 'block' : 'none';
+          if (da.style.display === 'block') initDoodle(container);
+        } else {
+          document.execCommand(cmd, false, null);
+        }
+        saveSel();
+      });
+    });
+
+    // 颜色
+    colorInput.addEventListener('input', function () {
+      restoreSel();
+      document.execCommand('foreColor', false, this.value);
+      saveSel();
+    });
+
+    // 插入图片
+    container.querySelector('#imageFileInput').addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        restoreSel();
+        document.execCommand('insertImage', false, ev.target.result);
+        saveSel();
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    // 涂鸦
+    function initDoodle(c) {
+      const canvas = c.querySelector('#doodleCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#2C3E3A';
+      ctx.lineWidth = 2;
+      let drawing = false;
+      const pos = e => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        return { x: x * scaleX, y: y * scaleY };
+      };
+      const start = e => { drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+      const move = e => { if (!drawing) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+      const end = () => { drawing = false; };
+      canvas.onmousedown = start; canvas.onmousemove = move; canvas.onmouseup = end; canvas.onmouseleave = end;
+      canvas.ontouchstart = start; canvas.ontouchmove = move; canvas.ontouchend = end;
+      c.querySelector('#doodleClear').onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+      c.querySelector('#doodleInsert').onclick = () => {
+        const dataUrl = canvas.toDataURL('image/png');
+        restoreSel();
+        document.execCommand('insertImage', false, dataUrl);
+        c.querySelector('#doodleArea').style.display = 'none';
+        saveSel();
+      };
+    }
+
+    // 心情选择
+    const moodPicker = container.querySelector('#moodPicker');
+    if (moodPicker) {
+      moodPicker.querySelectorAll('.mood-tag').forEach(tag => {
+        tag.addEventListener('click', function () {
+          moodPicker.querySelectorAll('.mood-tag').forEach(t => t.classList.remove('selected'));
+          this.classList.add('selected');
+        });
+      });
+    }
+
+    // 保存
+    container.querySelector('#editorSaveBtn').addEventListener('click', function () {
+      const content = editor.innerHTML.trim();
+      if (!content && board.type !== 'habit' && board.type !== 'mood') {
+        App.toast('请输入内容', 'warning'); return;
+      }
+      // 提取图片
+      const imgs = [];
+      editor.querySelectorAll('img').forEach(img => { if (img.src) imgs.push(img.src); });
+      const fontSize = editor.style.fontSize || '';
+      const fontFamily = editor.style.fontFamily || '';
+      const color = editor.style.color || '';
+
+      const data = { boardId: board.id, content, images: imgs, fontSize, fontFamily, color };
+
+      if (board.type === 'mood') {
+        const sel = moodPicker ? moodPicker.querySelector('.mood-tag.selected') : null;
+        if (!sel) { App.toast('请选择心情', 'warning'); return; }
+        data.mood = sel.dataset.mood;
+      } else if (board.type === 'habit') {
+        const name = container.querySelector('#habitName').value.trim();
+        if (!name) { App.toast('请输入习惯名称', 'warning'); return; }
+        data.content = name;
+        data.habitPeriod = container.querySelector('#habitPeriod').value;
+        const streak = computeHabitStreak(board.id, name, entry ? entry.id : null);
+        data.habitStreak = streak;
+      }
+
+      if (entry) Store.updateRecordEntry(entry.id, data);
+      else Store.addRecordEntry(data);
+      App.toast('已保存', 'success');
+      renderBoardPage(board.id);
+    });
+
+    container.querySelector('#editorCancelBtn').addEventListener('click', function () { renderBoardPage(board.id); });
+    container.querySelector('#editorBackBtn').addEventListener('click', function () { renderBoardPage(board.id); });
+  }
+
+  function computeHabitStreak(boardId, name, excludeId) {
+    const today = Store.getCurrentDate();
+    const others = Store.getRecordEntries(boardId).filter(e => e.id !== excludeId && e.content === name);
+    if (others.length === 0) return 1;
+    const latest = others.sort((a, b) => b.date.localeCompare(a.date))[0];
+    if (latest.lastCheckDate === today) return latest.habitStreak || 1;
+    const lastDate = new Date(latest.lastCheckDate);
+    const todayDate = new Date(today);
+    const diffDays = Math.round((todayDate - lastDate) / 86400000);
+    if ((latest.habitPeriod || 'daily') === 'daily' && diffDays === 1) return (latest.habitStreak || 0) + 1;
+    if ((latest.habitPeriod || 'daily') === 'weekly' && diffDays <= 7) return (latest.habitStreak || 0) + 1;
+    return 1;
+  }
+
+  // ============ 弹窗 ============
   function showEditBoardModal(id) {
     const board = Store.getRecordBoards().find(b => b.id === id);
     if (!board) return;
-
     App.modal('重命名板块', `
-      <div class="mb-12">
-        <label class="text-sm text-muted mb-8" style="display:block;">板块名称</label>
-        <input type="text" class="input" id="boardName" value="${App.escapeHtml(board.name)}">
-      </div>
+      <div class="mb-12"><input type="text" class="input" id="boardName" value="${App.escapeHtml(board.name)}"></div>
     `, [
       { label: '取消' },
-      {
-        label: '保存',
-        primary: true,
-        onClick: function (body) {
+      { label: '保存', primary: true, onClick: function (body) {
           const name = body.querySelector('#boardName').value.trim();
-          if (!name) {
-            App.toast('请输入名称', 'warning');
-            return false;
-          }
-          Store.updateRecordBoard(id, { name: name });
-          renderBoards();
-          App.toast('已更新', 'success');
-        }
-      }
+          if (!name) { App.toast('请输入名称', 'warning'); return false; }
+          Store.updateRecordBoard(id, { name });
+          renderBoards(); App.toast('已更新', 'success');
+        } }
     ]);
   }
 
@@ -390,54 +408,30 @@ const Records = (function () {
       </div>
     `, [
       { label: '取消' },
-      {
-        label: '创建',
-        primary: true,
-        onClick: function (body) {
+      { label: '创建', primary: true, onClick: function (body) {
           const name = body.querySelector('#newBoardName').value.trim();
-          if (!name) {
-            App.toast('请输入板块名称', 'warning');
-            return false;
-          }
-          const type = body.querySelector('#newBoardType').value;
-          Store.addRecordBoard(name, type);
-          renderBoards();
-          App.toast('板块已创建', 'success');
-        }
-      }
+          if (!name) { App.toast('请输入板块名称', 'warning'); return false; }
+          Store.addRecordBoard(name, body.querySelector('#newBoardType').value);
+          renderBoards(); App.toast('板块已创建', 'success');
+        } }
     ]);
   }
 
-  function showImagePreview(src) {
-    App.modal('图片预览', `<img src="${src}" style="width:100%;border-radius:10px;">`, [{ label: '关闭' }]);
+  function bindEvents() {
+    document.getElementById('addRecordBoardBtn').addEventListener('click', showAddBoardModal);
   }
 
   function getBoardIcon(type) {
     const icons = { note: '📝', mood: '😊', image: '📷', habit: '🔁' };
     return icons[type] || '📝';
   }
-
   function getBoardTypeLabel(type) {
     const labels = { note: '随笔', mood: '心情', image: '图片', habit: '习惯' };
     return labels[type] || '随笔';
   }
-
   function getMoodIcon(mood) {
-    const icons = {
-      '开心': '😄', '平淡': '😐', '疲惫': '😵', '焦虑': '😰',
-      '兴奋': '🤩', '低落': '😢', '感恩': '🙏', '愤怒': '😡'
-    };
+    const icons = { '开心': '😄', '平淡': '😐', '疲惫': '😵', '焦虑': '😰', '兴奋': '🤩', '低落': '😢', '感恩': '🙏', '愤怒': '😡' };
     return icons[mood] || '😐';
-  }
-
-  function bindEvents() {
-    document.getElementById('addRecordEntryBtn').addEventListener('click', function () {
-      showAddEntryModal();
-    });
-
-    document.getElementById('addRecordBoardBtn').addEventListener('click', function () {
-      showAddBoardModal();
-    });
   }
 
   return { render };

@@ -97,6 +97,61 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* ---------- 背景主题层（中国青色意境） ---------- */
+#bgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: transparent;
+  transition: opacity 0.35s ease, background 0.35s ease;
+}
+
+/* 让内容区与布局容器透出背景层 */
+.main-layout,
+.content-area {
+  background: transparent !important;
+}
+
+/* 侧边栏与顶栏轻微透出背景，保持整体青色意境 */
+.sidebar {
+  background: color-mix(in srgb, var(--bg-card) 90%, transparent) !important;
+  backdrop-filter: blur(2px);
+}
+.top-bar {
+  background: color-mix(in srgb, var(--bg-card) 90%, transparent) !important;
+  backdrop-filter: blur(2px);
+}
+
+/* 背景设置弹窗 */
+.bg-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.bg-swatch {
+  aspect-ratio: 1.6 / 1;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: var(--ink-medium);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease;
+}
+.bg-swatch:hover { transform: translateY(-2px); }
+.bg-swatch.selected {
+  border-color: var(--celadon-dark);
+  box-shadow: 0 0 0 2px var(--celadon);
+}
+.bg-opacity-slider {
+  width: 100%;
+  accent-color: var(--celadon);
+  cursor: pointer;
+}
+
 /* ---------- 顶栏 ---------- */
 .top-bar {
   height: var(--topbar-height);
@@ -1607,6 +1662,597 @@ body {
   transform: translateY(-2px);
 }
 
+/* ============================================
+   重构新增样式
+   ============================================ */
+
+/* ---------- 月历组件 ---------- */
+.calendar {
+  background: var(--celadon-paler);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.calendar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--celadon-dark);
+  min-width: 110px;
+  text-align: center;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-light);
+  padding: 4px 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+  transition: background 0.15s;
+  background: var(--bg-card);
+}
+
+.cal-cell:hover {
+  background: var(--celadon-tint);
+}
+
+.cal-cell-empty {
+  background: transparent;
+  cursor: default;
+}
+
+.cal-cell.cal-today .cal-num {
+  color: var(--celadon-dark);
+  font-weight: 700;
+}
+
+.cal-cell.cal-today {
+  box-shadow: inset 0 0 0 2px var(--celadon);
+}
+
+.cal-cell.cal-selected {
+  background: var(--celadon);
+  color: var(--white);
+}
+
+.cal-cell.cal-selected.cal-today {
+  box-shadow: inset 0 0 0 2px var(--white);
+}
+
+.cal-note-dot {
+  position: absolute;
+  bottom: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--warning);
+}
+
+/* ---------- 今日动态 ---------- */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.today-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.today-summary-card {
+  background: var(--celadon-paler);
+}
+
+/* ---------- 倒数日 ---------- */
+.countdown-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.countdown-grid.grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.countdown-grid-one {
+  grid-template-columns: 1fr;
+}
+
+.countdown-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 140px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.countdown-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.countdown-card-overlay {
+  background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.25));
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  padding: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+
+.countdown-bar {
+  background: rgba(0,0,0,0.28);
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.countdown-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.countdown-days {
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.countdown-date {
+  font-size: 11px;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+
+.cd-color-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.cd-color-swatch.selected {
+  outline: 2px solid var(--celadon-dark);
+  outline-offset: 2px;
+}
+
+.countdown-detail {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 60vh;
+  box-shadow: var(--shadow-sm);
+}
+
+.countdown-detail-overlay {
+  background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  padding: 24px;
+}
+
+.countdown-detail-days {
+  font-size: 88px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-detail-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.countdown-detail-sub {
+  font-size: 14px;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
+.countdown-detail-desc {
+  font-size: 13px;
+  margin-top: 14px;
+  max-width: 320px;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.countdown-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.countdown-act-btn {
+  background: rgba(255,255,255,0.92);
+  color: var(--ink);
+  border: none;
+}
+
+/* ---------- 目录式列表（通用） ---------- */
+.dir-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dir-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--celadon-paler);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.dir-item:hover {
+  background: var(--celadon-pale);
+  border-color: var(--celadon-light);
+}
+
+.dir-item-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.dir-item-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dir-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dir-item-sub {
+  font-size: 12px;
+  color: var(--ink-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dir-item-arrow {
+  font-size: 20px;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.dir-item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ---------- 锻炼：打卡状态方框 ---------- */
+.checkin-status-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: var(--celadon-pale);
+  border: 1px solid var(--celadon-tint);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkin-status-box:hover {
+  background: var(--celadon-tint);
+}
+
+.checkin-status-box.checked {
+  background: var(--celadon-pale);
+  border-color: var(--celadon-light);
+}
+
+.checkin-status-date {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--celadon-dark);
+}
+
+.checkin-status-text {
+  font-size: 13px;
+  color: var(--ink-medium);
+  margin-top: 2px;
+}
+
+.checkin-mini {
+  cursor: pointer;
+}
+
+/* ---------- 学习：紧凑待办行 ---------- */
+.study-todo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--celadon-paler);
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+  transition: background 0.15s;
+}
+
+.study-todo-row:hover {
+  background: var(--celadon-pale);
+}
+
+.note-cat-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.note-cat-chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: var(--celadon-pale);
+  color: var(--ink-medium);
+  cursor: pointer;
+  border: 1px solid var(--celadon-tint);
+  transition: all 0.2s;
+}
+
+.note-cat-chip.active {
+  background: var(--celadon);
+  color: var(--white);
+  border-color: var(--celadon);
+}
+
+.stat-chart-block {
+  background: var(--celadon-paler);
+  border-radius: var(--radius-md);
+  padding: 8px;
+}
+
+/* ---------- 清单：象限内联添加 ---------- */
+.quadrant-add-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px dashed var(--celadon-light);
+  background: transparent;
+  color: var(--celadon-dark);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.quadrant-add-btn:hover {
+  background: var(--celadon-pale);
+}
+
+.inline-add {
+  background: var(--bg-card);
+  border: 1px solid var(--celadon-light);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  margin-bottom: 6px;
+}
+
+.inline-add-input {
+  width: 100%;
+}
+
+/* ---------- 日常记录：编辑页 ---------- */
+.board-dir-item {
+  background: var(--celadon-paler);
+}
+
+.record-date-group {
+  margin-bottom: 14px;
+}
+
+.record-date-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--celadon-dark);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.entry-row {
+  background: var(--celadon-paler);
+}
+
+.entry-thumb {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-right: 8px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* 富文本编辑器 */
+.rich-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: var(--celadon-pale);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.re-tool {
+  min-width: 32px;
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid var(--divider);
+  background: var(--bg-card);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.re-tool:hover {
+  background: var(--celadon-tint);
+}
+
+.re-tool.active {
+  background: var(--celadon);
+  color: var(--white);
+  border-color: var(--celadon);
+}
+
+.re-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--divider);
+  margin: 0 2px;
+}
+
+.re-color {
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+}
+
+.rich-editor {
+  min-height: 220px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid var(--divider);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: var(--bg-card);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.7;
+  outline: none;
+}
+
+.rich-editor:focus {
+  border-color: var(--celadon-light);
+}
+
+.rich-editor img {
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  margin: 4px 0;
+}
+
+.doodle-area {
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--celadon-paler);
+  border-radius: var(--radius-md);
+}
+
+.doodle-canvas {
+  width: 100%;
+  max-width: 320px;
+  height: 180px;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--divider);
+  touch-action: none;
+}
+
+/* 图表图例 */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-medium);
+}
+
+.chart-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 /* ---------- 响应式补充 ---------- */
 @media (max-width: 768px) {
   .quadrant-board {
@@ -1639,5 +2285,35 @@ body {
 
   .timer-display {
     font-size: 36px;
+  }
+
+  /* 重构组件移动端适配 */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .today-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .countdown-grid.grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .countdown-grid-one {
+    grid-template-columns: 1fr;
+  }
+
+  .cal-cell {
+    font-size: 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .countdown-days {
+    font-size: 38px;
+  }
+
+  .countdown-detail-days {
+    font-size: 64px;
   }
 }

@@ -261,9 +261,45 @@ const Timer = (function () {
     return div.innerHTML;
   }
 
+  // 独立计时器页面
+  function render(container) {
+    container.innerHTML = `
+      <div class="module-header">
+        <h2>⏱ 计时器</h2>
+        <div class="module-subtitle">正计时 / 倒计时 · 记录自动存入全局计时仓库</div>
+      </div>
+
+      <div class="section-block">
+        <div id="timerMainWidget"></div>
+      </div>
+
+      <div class="section-block collapsible">
+        <div class="section-title">
+          <span class="section-title-icon">📜</span>
+          计时记录
+          <span class="text-xs text-muted" style="margin-left:4px;">（来源：计时器）</span>
+        </div>
+        <div id="timerRecordsList" style="max-height:320px;overflow-y:auto;"></div>
+      </div>
+    `;
+
+    createTimerWidget('timerMainWidget', 'timer', function () {
+      renderRecords();
+    });
+    renderRecords();
+    App.bindCollapsible(container);
+  }
+
+  function renderRecords() {
+    const el = document.getElementById('timerRecordsList');
+    if (!el) return;
+    renderTimerRepo('timerRecordsList', function (t) { return t.source === 'timer'; }, null);
+  }
+
   return {
     createTimerWidget,
     renderTimerRepo,
-    formatTime
+    formatTime,
+    render
   };
 })();

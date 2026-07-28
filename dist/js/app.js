@@ -6,6 +6,7 @@
 const App = (function () {
 
   let currentModule = 'dashboard';
+  let _pendingBgImage = null; // 背景设置弹窗中暂存的自定义图片 base64
 
   // 获取可见导航项
   function getNavItems() {
@@ -18,6 +19,9 @@ const App = (function () {
 
     // 应用主题
     applyTheme(Store.getTheme());
+
+    // 应用背景主题
+    applyBackground();
 
     // 设置日期
     document.getElementById('currentDate').value = Store.getCurrentDate();
@@ -94,6 +98,12 @@ const App = (function () {
         break;
       case 'records':
         Records.render(contentArea);
+        break;
+      case 'timer':
+        Timer.render(contentArea);
+        break;
+      case 'countdown':
+        Countdown.render(contentArea);
         break;
       default:
         // 自定义模块
@@ -356,6 +366,12 @@ const App = (function () {
     const manageBtn = document.getElementById('manageModulesBtn');
     if (manageBtn) {
       manageBtn.addEventListener('click', showManageModulesModal);
+    }
+
+    // 背景设置
+    const bgSettingBtn = document.getElementById('bgSettingBtn');
+    if (bgSettingBtn) {
+      bgSettingBtn.addEventListener('click', showBgSettingModal);
     }
 
     // 导入数据（从数据管理弹窗触发）
@@ -645,6 +661,113 @@ const App = (function () {
     document.body.classList.toggle('dark-mode', theme === 'dark');
   }
 
+  // 中国青色系 · 中国画意境背景预设
+  const BG_PRESETS = [
+    { id: 'none', name: '默认', css: 'transparent' },
+    { id: 'qingshan', name: '青绿山水', css: 'linear-gradient(160deg, #cfe3dd 0%, #a8c8c0 45%, #6b9b95 100%)' },
+    { id: 'xuanzhi', name: '米色宣纸', css: 'repeating-linear-gradient(0deg, #efe7d6, #efe7d6 38px, #e7dcc4 39px, #efe7d6 40px), linear-gradient(135deg, #f4eddd, #e7d9bd)' },
+    { id: 'daicang', name: '黛青远山', css: 'linear-gradient(180deg, #2f4a45 0%, #3f5e58 55%, #6b9b95 100%)' },
+    { id: 'qiuxiang', name: '秋香色', css: 'linear-gradient(135deg, #d8c9a3 0%, #c2b182 100%)' },
+    { id: 'yuebai', name: '月白条纹', css: 'repeating-linear-gradient(90deg, #eef3f1, #eef3f1 24px, #e2ece9 24px, #e2ece9 26px), linear-gradient(180deg, #f4f8f6, #e8f0ed)' },
+    { id: 'shiqing', name: '石青斜纹', css: 'repeating-linear-gradient(45deg, #b8d8d4, #b8d8d4 18px, #a3cdc7 18px, #a3cdc7 20px), linear-gradient(135deg, #cfe3df, #9ec3bc)' },
+    { id: 'chaha', name: '茶褐', css: 'linear-gradient(135deg, #8a6f52 0%, #b89968 100%)' },
+    { id: 'zhuyin', name: '竹影', css: 'repeating-linear-gradient(125deg, rgba(107,155,149,0.14) 0 2px, transparent 2px 22px), linear-gradient(160deg, #eef3f0, #dbe7e2)' },
+    { id: 'qinghua', name: '青花', css: 'radial-gradient(circle at 20% 30%, rgba(123,160,184,0.25) 0 8px, transparent 8px), radial-gradient(circle at 70% 60%, rgba(123,160,184,0.2) 0 6px, transparent 6px), linear-gradient(135deg, #f2f6f8, #dce9ef)' }
+  ];
+
+  // 应用背景主题
+  function applyBackground() {
+    const bg = Store.getBackground();
+    const layer = document.getElementById('bgLayer');
+    if (!layer) return;
+    if (bg.type === 'image' && bg.image) {
+      layer.style.background = `url('${bg.image}') center/cover no-repeat fixed`;
+    } else if (bg.type === 'preset' && bg.preset && bg.preset !== 'none') {
+      const preset = BG_PRESETS.find(p => p.id === bg.preset);
+      layer.style.background = preset ? preset.css : 'transparent';
+    } else {
+      layer.style.background = 'transparent';
+    }
+    layer.style.opacity = (bg.opacity != null && bg.opacity !== '') ? bg.opacity : 1;
+  }
+
+  // 背景设置弹窗
+  function showBgSettingModal() {
+    App._pendingBgImage = null; // 每次打开清空暂存图片，避免残留
+    const cur = Store.getBackground();
+    const swatches = BG_PRESETS.map(p =>
+      `<div class="bg-swatch ${cur.type === 'preset' && cur.preset === p.id ? 'selected' : ''}" data-preset="${p.id}" title="${p.name}" style="background:${p.css === 'transparent' ? 'var(--celadon-pale)' : p.css};">${p.id === 'none' ? '✕' : ''}</div>`
+    ).join('');
+
+    App.modal('背景设置', `
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">青色意境预设（中国画 / 青色景色配色）</label>
+        <div class="bg-swatch-grid" id="bgSwatchGrid">${swatches}</div>
+      </div>
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:flex;justify-content:space-between;">
+          <span>背景透明度</span><span id="bgOpacityLabel">${Math.round((cur.opacity != null ? cur.opacity : 1) * 100)}%</span>
+        </label>
+        <input type="range" min="0" max="100" value="${Math.round((cur.opacity != null ? cur.opacity : 1) * 100)}" class="bg-opacity-slider" id="bgOpacitySlider">
+        <div class="text-xs text-muted mt-8">透明度越低，越能透出底层青色；越高则背景越实。</div>
+      </div>
+      <div class="mb-12">
+        <label class="text-sm text-muted mb-8" style="display:block;">自定义图片背景</label>
+        <button class="btn btn-sm" id="bgUploadBtn">📁 从相册/本地选择图片</button>
+        ${cur.type === 'image' && cur.image ? '<span class="text-sm text-muted ml-8">当前：自定义图片</span>' : ''}
+      </div>
+    `, [
+      { label: '取消' },
+      { label: '保存', primary: true, onClick: function (body) {
+          const sel = body.querySelector('.bg-swatch.selected');
+          const preset = sel ? sel.dataset.preset : 'none';
+          const opacity = parseInt(body.querySelector('#bgOpacitySlider').value) / 100;
+          let bg = { type: 'preset', preset: preset, opacity: opacity, image: '' };
+          // 图片已在上传时暂存到 App._pendingBgImage
+          if (App._pendingBgImage) {
+            bg = { type: 'image', preset: 'none', opacity: opacity, image: App._pendingBgImage };
+            App._pendingBgImage = null;
+          }
+          Store.setBackground(bg);
+          applyBackground();
+          App.toast('背景已更新', 'success');
+        } }
+    ]);
+
+    // 预设选择
+    const grid = document.getElementById('bgSwatchGrid');
+    grid.querySelectorAll('.bg-swatch').forEach(sw => {
+      sw.addEventListener('click', function () {
+        App._pendingBgImage = null;
+        grid.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+    });
+
+    // 透明度
+    const slider = document.getElementById('bgOpacitySlider');
+    slider.addEventListener('input', function () {
+      document.getElementById('bgOpacityLabel').textContent = this.value + '%';
+    });
+
+    // 上传图片
+    document.getElementById('bgUploadBtn').addEventListener('click', function () {
+      document.getElementById('bgImageInput').click();
+    });
+    document.getElementById('bgImageInput').addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        App._pendingBgImage = ev.target.result;
+        grid.querySelectorAll('.bg-swatch').forEach(s => s.classList.remove('selected'));
+        App.toast('已选择图片，点击保存生效', 'success');
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+  }
+
   // 更新计时仓库计数
   function updateTimerRepoCount() {
     const count = Store.getTimers().length;
@@ -736,6 +859,101 @@ const App = (function () {
     };
   }
 
+  // ============ SVG 图表工具（不依赖外部库） ============
+
+  // 折线图：opts = { labels:[], series:[{name,color,data:[]}], height, unit }
+  function lineChart(container, opts) {
+    const labels = opts.labels || [];
+    const series = opts.series || [];
+    const height = opts.height || 220;
+    const unit = opts.unit || '';
+    let allVals = [];
+    series.forEach(s => { allVals = allVals.concat(s.data); });
+    if (allVals.length === 0 || labels.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📈</div>暂无统计数据</div>';
+      return;
+    }
+    const max = Math.max(...allVals, 1);
+    const min = Math.min(...allVals, 0);
+    const w = 360, padL = 38, padR = 14, padT = 16, padB = 30;
+    const plotW = w - padL - padR;
+    const plotH = height - padT - padB;
+    const n = labels.length;
+    const xStep = n > 1 ? plotW / (n - 1) : 0;
+    const xOf = i => padL + (n > 1 ? i * xStep : plotW / 2);
+    const yOf = v => padT + plotH - ((v - min) / ((max - min) || 1)) * plotH;
+    const gridN = 4;
+    let svg = `<svg viewBox="0 0 ${w} ${height}" width="100%" preserveAspectRatio="none" style="display:block;">`;
+    // 网格线 + Y轴刻度
+    for (let g = 0; g <= gridN; g++) {
+      const val = min + (max - min) * (g / gridN);
+      const y = yOf(val);
+      svg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}" stroke="var(--divider)" stroke-width="1"/>`;
+      svg += `<text x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--ink-light)">${Math.round(val)}</text>`;
+    }
+    // X轴标签
+    labels.forEach((lb, i) => {
+      const show = n <= 10 || i % Math.ceil(n / 10) === 0;
+      if (show) {
+        svg += `<text x="${xOf(i).toFixed(1)}" y="${height - 10}" text-anchor="middle" font-size="9" fill="var(--ink-light)">${escapeHtml(String(lb))}</text>`;
+      }
+    });
+    // 各折线
+    series.forEach(s => {
+      const pts = s.data.map((v, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+      svg += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+      s.data.forEach((v, i) => {
+        svg += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="2.6" fill="${s.color}"/>`;
+      });
+    });
+    svg += '</svg>';
+    // 图例
+    let legend = '';
+    if (series.length > 1) {
+      legend = '<div class="chart-legend">' + series.map(s =>
+        `<span class="chart-legend-item"><span class="chart-legend-dot" style="background:${s.color};"></span>${escapeHtml(s.name)}</span>`
+      ).join('') + '</div>';
+    }
+    container.innerHTML = svg + legend;
+  }
+
+  // 柱状图：opts = { labels:[], data:[], color, height, unit }
+  function barChart(container, opts) {
+    const labels = opts.labels || [];
+    const data = opts.data || [];
+    const color = opts.color || 'var(--celadon)';
+    const height = opts.height || 220;
+    if (data.length === 0 || labels.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div>暂无统计数据</div>';
+      return;
+    }
+    const max = Math.max(...data, 1);
+    const w = 360, padL = 38, padR = 14, padT = 16, padB = 30;
+    const plotW = w - padL - padR;
+    const plotH = height - padT - padB;
+    const n = data.length;
+    const slot = plotW / n;
+    const barW = Math.min(slot * 0.6, 40);
+    const yOf = v => padT + plotH - (v / max) * plotH;
+    let svg = `<svg viewBox="0 0 ${w} ${height}" width="100%" preserveAspectRatio="none" style="display:block;">`;
+    for (let g = 0; g <= 4; g++) {
+      const val = max * (g / 4);
+      const y = yOf(val);
+      svg += `<line x1="${padL}" y1="${y.toFixed(1)}" x2="${w - padR}" y2="${y.toFixed(1)}" stroke="var(--divider)" stroke-width="1"/>`;
+      svg += `<text x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--ink-light)">${Math.round(val)}</text>`;
+    }
+    data.forEach((v, i) => {
+      const x = padL + slot * i + (slot - barW) / 2;
+      const y = yOf(v);
+      const h = padT + plotH - y;
+      svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(0, h).toFixed(1)}" rx="3" fill="${color}"/>`;
+      svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${(y - 4).toFixed(1)}" text-anchor="middle" font-size="9" fill="var(--ink-medium)">${v}</text>`;
+      svg += `<text x="${(x + barW / 2).toFixed(1)}" y="${height - 10}" text-anchor="middle" font-size="9" fill="var(--ink-light)">${escapeHtml(String(labels[i]))}</text>`;
+    });
+    svg += '</svg>';
+    container.innerHTML = svg;
+  }
+
   // 绑定折叠组件：让 .section-block.collapsible 的标题可点击展开/收起
   function bindCollapsible(container, defaultCollapsed) {
     var blocks = container.querySelectorAll('.section-block.collapsible');
@@ -770,6 +988,8 @@ const App = (function () {
     formatMoney,
     getMonthRange,
     bindCollapsible,
+    lineChart,
+    barChart,
     getCurrentDate: () => Store.getCurrentDate()
   };
 })();

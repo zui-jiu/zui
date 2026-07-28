@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <div id="bgLayer"></div>
   <div id="app">
     <!-- 顶栏 -->
     <header class="top-bar">
@@ -55,6 +56,8 @@
             <span class="mini-timer-count" id="timerRepoCount">0 条记录</span>
           </div>
           <button class="manage-modules-btn" id="manageModulesBtn">⚙ 管理目录</button>
+          <button class="manage-modules-btn" id="bgSettingBtn">🎨 背景</button>
+          <input type="file" id="bgImageInput" accept="image/*" style="display:none;">
           <input type="file" id="importFileInput" accept=".json" style="display:none;">
         </div>
       </nav>
@@ -81,6 +84,7 @@
   <script src="js/checklist.js"></script>
   <script src="js/accounting.js"></script>
   <script src="js/records.js"></script>
+  <script src="js/countdown.js"></script>
   <script src="js/app.js"></script>
   <script>
     // 注册 Service Worker，支持PWA离线访问和安装到主屏幕

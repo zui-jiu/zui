@@ -58,8 +58,12 @@ const Store = (function () {
           { id: uid(), name: '图片记录', type: 'image' },
           { id: uid(), name: '习惯打卡', type: 'habit' }
         ],
-        entries: [] // {id, boardId, date, content, mood, images:[base64], habitStreak, lastCheckDate}
+        // entry.content 可存储 HTML 富文本字符串；可选样式字段 fontSize/fontFamily/color
+        entries: [] // {id, boardId, date, content, mood, images:[base64], habitStreak, lastCheckDate,
+                     //  fontSize, fontFamily, color, habitPeriod, createdAt}
       },
+      countdowns: [], // 倒数日事件：{id, title, date, bg, detail, layout, createdAt}
+      dailyNotes: {}, // 日期一句话备注：{ 'YYYY-MM-DD': '备注内容' }
       goals: {
         exercise: { monthlyMinutes: 0, label: '月度运动目标(分钟)' },
         reading: { monthlyMinutes: 0, label: '月度阅读目标(分钟)' },
@@ -71,11 +75,14 @@ const Store = (function () {
         { id: 'study', name: '学习计划', icon: '📚', builtin: true, visible: true },
         { id: 'checklist', name: '每日清单', icon: '📋', builtin: true, visible: true },
         { id: 'accounting', name: '每日记账', icon: '💰', builtin: true, visible: true },
-        { id: 'records', name: '日常记录', icon: '✏️', builtin: true, visible: true }
+        { id: 'records', name: '日常记录', icon: '✏️', builtin: true, visible: true },
+        { id: 'timer', name: '计时器', icon: '⏱', builtin: true, visible: true },
+        { id: 'countdown', name: '倒数日', icon: '⏳', builtin: true, visible: true }
       ],
       customPages: {}, // { pageId: [{ id, date, content, sectionId, createdAt }] }
       customSections: {}, // { pageId: [{ id, name }] }
-      theme: 'light'
+      theme: 'light',
+      background: { type: 'preset', preset: 'none', opacity: 1, image: '' } // 背景主题设置
     };
   }
 
@@ -553,6 +560,10 @@ const Store = (function () {
       habitStreak: entry.habitStreak || 0,
       lastCheckDate: entry.lastCheckDate || null,
       habitPeriod: entry.habitPeriod || 'daily',
+      // 富文本样式字段（可选）
+      fontSize: entry.fontSize || '',
+      fontFamily: entry.fontFamily || '',
+      color: entry.color || '',
       createdAt: Date.now()
     };
     data.records.entries.push(e);
@@ -569,6 +580,67 @@ const Store = (function () {
   function deleteRecordEntry(id) {
     data.records.entries = data.records.entries.filter(e => e.id !== id);
     save();
+  }
+
+  // ============ 倒数日 ============
+  function getCountdowns() {
+    return data.countdowns || [];
+  }
+
+  function getCountdown(id) {
+    return (data.countdowns || []).find(c => c.id === id);
+  }
+
+  function addCountdown(item) {
+    const c = {
+      id: uid(),
+      title: item.title || '未命名倒数日',
+      date: item.date || data.currentDate,
+      bg: item.bg || '',
+      detail: item.detail || '',
+      layout: item.layout || 'two',
+      createdAt: Date.now()
+    };
+    if (!data.countdowns) data.countdowns = [];
+    data.countdowns.push(c);
+    save();
+    return c;
+  }
+
+  function updateCountdown(id, updates) {
+    const c = (data.countdowns || []).find(c => c.id === id);
+    if (c) {
+      Object.assign(c, updates);
+      save();
+    }
+    return c;
+  }
+
+  function deleteCountdown(id) {
+    data.countdowns = (data.countdowns || []).filter(c => c.id !== id);
+    save();
+  }
+
+  // ============ 日期一句话备注 ============
+  function getDailyNote(date) {
+    return (data.dailyNotes && data.dailyNotes[date]) || '';
+  }
+
+  function setDailyNote(date, note) {
+    if (!data.dailyNotes) data.dailyNotes = {};
+    if (note && note.trim()) {
+      data.dailyNotes[date] = note.trim();
+    } else {
+      delete data.dailyNotes[date];
+    }
+    save();
+  }
+
+  function deleteDailyNote(date) {
+    if (data.dailyNotes) {
+      delete data.dailyNotes[date];
+      save();
+    }
   }
 
   // ============ 目标管理 ============
@@ -588,6 +660,16 @@ const Store = (function () {
 
   function setTheme(theme) {
     data.theme = theme;
+    save();
+  }
+
+  // ============ 背景主题 ============
+  function getBackground() {
+    return data.background || { type: 'preset', preset: 'none', opacity: 1, image: '' };
+  }
+
+  function setBackground(bg) {
+    data.background = Object.assign({ type: 'preset', preset: 'none', opacity: 1, image: '' }, bg);
     save();
   }
 
@@ -978,12 +1060,25 @@ const Store = (function () {
     addRecordEntry,
     updateRecordEntry,
     deleteRecordEntry,
+    // 倒数日
+    getCountdowns,
+    getCountdown,
+    addCountdown,
+    updateCountdown,
+    deleteCountdown,
+    // 日期备注
+    getDailyNote,
+    setDailyNote,
+    deleteDailyNote,
     // 目标
     getGoals,
     updateGoals,
     // 主题
     getTheme,
     setTheme,
+    // 背景
+    getBackground,
+    setBackground,
     // 模块管理
     getModules,
     updateModule,
