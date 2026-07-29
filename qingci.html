@@ -270,7 +270,7 @@ img{-webkit-touch-callout:none;}
 .near-hi{background:var(--accent-soft)!important;}
 .cd-item.past{background:var(--accent-soft);}
 .cd-item.past .li-title{color:var(--accent);}
-.cd-item.dragging{box-shadow:0 6px 18px rgba(0,0,0,.14);background:var(--card);}
+.cd-item.dragging{box-shadow:0 6px 18px rgba(0,0,0,.14);background:var(--card);touch-action:none;}
 
 /* 时间索引条（PC） */
 .time-index{width:84px;flex:none;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 0;display:flex;flex-direction:column;align-items:center;}
@@ -658,10 +658,10 @@ const state={
   cdFilter:"all", cdBatch:false, cdSel:[], cdQ:"", cdPage:0,
   todoFilter:"all",
   memoTag:"all", memoTime:"all", memoQ:"", memoStar:false, memoPage:0, memoArchived:false, memoBatch:false, memoSel:[],
-  workoutDate:todayStr(), studyDate:todayStr(), studyView:"all", stQ:"", stBatch:false, stSel:[], studyPanels:{tasks:true,notes:true,stats:true}, todoView:"all", trashSel:[],
+  workoutDate:todayStr(), studyDate:todayStr(), studyView:"all", stQ:"", stBatch:false, stSel:[], studyPanels:{tasks:false,notes:false,stats:false}, todoView:"all", trashSel:[],
   acctDate:todayStr(), acctType:"out", acctCat:"", acctPeriod:"week",
   acctGroup:"trend", acctExpMode:"bar", acctBalMode:"bar",
-  acctPanels:{add:true,bills:false,accounts:false,autotpl:false,cats:true},
+  acctPanels:{add:false,bills:false,accounts:false,autotpl:false,cats:false},
   wkEdit:false,               // 历史日期打卡临时编辑模式
   wkPeriod:"week",            // 锻炼统计周期：week/month/year
   stPeriod:"week",            // 学习统计周期：week/month/year
@@ -904,8 +904,14 @@ document.addEventListener("pointerdown",e=>{
   const t=e.target; if(!t||typeof t.closest!=="function")return;
   if(t.closest(".li-acts")||t.closest(".chk")||t.closest("input")||t.closest("a"))return;
   const item=t.closest(".cd-item"); if(!item||!item.dataset.cdId)return;
-  cdDrag={el:item,started:false,longTimer:null,x:e.clientX,y:e.clientY};
-  cdDrag.longTimer=setTimeout(()=>{ if(cdDrag){cdDrag.started=true;item.classList.add("dragging");item.style.opacity=".55";toast("拖动排序（松手保存）");} },480);
+  cdDrag={el:item,started:false,longTimer:null,x:e.clientX,y:e.clientY,pointerId:e.pointerId};
+  cdDrag.longTimer=setTimeout(()=>{
+    if(cdDrag&&cdDrag.el===item){
+      cdDrag.started=true;item.classList.add("dragging");item.style.opacity=".55";
+      try{item.setPointerCapture(e.pointerId);}catch(_){}
+      toast("拖动排序（松手保存）");
+    }
+  },480);
 });
 document.addEventListener("pointermove",e=>{
   if(!cdDrag)return;
@@ -922,8 +928,8 @@ document.addEventListener("pointermove",e=>{
     const after=(e.clientY-(r.top+r.height/2))>0;
     el.parentNode.insertBefore(el, after?tItem.nextSibling:tItem);
   }
-});
-document.addEventListener("pointerup",()=>{
+},{passive:false});
+function cdEnd(){
   if(!cdDrag)return;
   clearTimeout(cdDrag.longTimer);
   if(cdDrag.started){
@@ -935,7 +941,9 @@ document.addEventListener("pointerup",()=>{
   }
   cdDrag=null;
   if(state.page==="countdown")renderCountdown();
-});
+}
+document.addEventListener("pointerup",cdEnd);
+document.addEventListener("pointercancel",cdEnd);
 
 /* ===================== 日期选择 + 日历弹窗 ===================== */
 function curDate(){if(state.page==="account")return state.acctDate;return state.page==="workout"?state.workoutDate:state.studyDate;}
@@ -1179,7 +1187,7 @@ function wkPanel(id,title,ico,summary,body){
   </div>`;
 }
 function stPanel(id,title,ico,summary,body){
-  const open=state.studyPanels[id]!==false;
+  const open=state.studyPanels[id]===true;
   return `<div class="wk-panel st-panel">
     <div class="wk-panel-head" data-action="st-panel" data-id="${id}">
       <svg class="wp-ico" viewBox="0 0 24 24">${ico}</svg>
@@ -2369,7 +2377,7 @@ function tplRow(t){
   </div>`;
 }
 function acctPanel(id,title,ico,summary,body){
-  const open=state.acctPanels[id]!==false;
+  const open=state.acctPanels[id]===true;
   return `<div class="wk-panel acct-panel">
     <div class="wk-panel-head" data-action="acct-panel" data-id="${id}">
       <svg class="wp-ico" viewBox="0 0 24 24">${ico}</svg>
