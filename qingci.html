@@ -48,7 +48,7 @@ svg{display:block;}
 img{-webkit-touch-callout:none;}
 
 /* ===== 布局 ===== */
-.app{display:flex;min-height:100vh;min-height:100dvh;}
+.app{display:flex;height:100vh;height:100dvh;min-height:100dvh;}
 .sidebar{width:224px;flex:none;background:var(--card);border-right:1px solid var(--line);
   padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;height:100dvh;}
 .logo{font-size:21px;font-weight:700;margin-bottom:18px;padding:0 10px;letter-spacing:1px;}
@@ -60,7 +60,7 @@ img{-webkit-touch-callout:none;}
 .side-item.active{background:var(--accent-soft);color:var(--accent);font-weight:600;}
 .side-foot{margin-top:auto;font-size:11px;color:var(--sub);display:flex;align-items:center;gap:6px;padding:10px;}
 
-.main{flex:1;display:flex;flex-direction:column;min-width:0;}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;height:100%;}
 .header{display:flex;align-items:center;gap:12px;padding:15px 22px;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:10;}
 .header h1{font-size:18px;font-weight:600;}
 .spacer{flex:1;}
@@ -126,7 +126,7 @@ img{-webkit-touch-callout:none;}
 .cal-legend{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--sub);margin-top:10px;}
 .cal-dot{width:11px;height:11px;border-radius:4px;background:var(--accent);display:inline-block;}
 
-.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:22px;max-width:1080px;width:100%;margin:0 auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;}
+.content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:22px;max-width:1080px;width:100%;margin:0 auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;}
 .content::-webkit-scrollbar{width:8px;}
 .content::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
 
@@ -348,7 +348,7 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
 .side-mask.show{display:block;animation:fadeIn .2s;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @media(max-width:768px){
-  .sidebar{position:fixed;top:0;left:0;bottom:0;height:100dvh;z-index:50;transform:translateX(-100%);transition:transform .26s ease;box-shadow:0 10px 40px rgba(0,0,0,.18);}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;height:100dvh;z-index:50;display:flex;transform:translateX(-100%);transition:transform .26s ease;box-shadow:0 10px 40px rgba(0,0,0,.18);}
   .sidebar.open{transform:none;}
   .menu-btn{display:flex;}
   .tabbar{display:none;}            /* 底部 Tab 完全移除，改用汉堡抽屉 */
@@ -403,6 +403,16 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
 .acct-panel .acct-list-item{display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--line);}
 .acct-panel .acct-list-item:last-child{border-bottom:none;}
 .acct-name{flex:1;font-size:14px;font-weight:600;color:var(--text);}
+/* 环形饼图（支出分类 / 账户分布） */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:6px 0;}
+.donut{display:block;max-width:60%;height:auto;}
+.donut path{cursor:pointer;touch-action:manipulation;transition:opacity .15s;}
+.donut path:hover{opacity:.82;}
+.donut-legend{width:100%;display:flex;flex-direction:column;gap:7px;}
+.donut-lg{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text);}
+.donut-lg i{width:11px;height:11px;border-radius:3px;flex:none;}
+.donut-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.donut-val{font-variant-numeric:tabular-nums;font-weight:600;}
 .acct-bal{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;min-width:90px;text-align:right;}
 .acct-bal.neg{color:#C97B6E;}
 .acct-tpl{display:flex;align-items:center;gap:10px;padding:12px 4px;border-bottom:1px solid var(--line);}
@@ -585,6 +595,7 @@ const state={
   memoTag:"all", memoTime:"all", memoQ:"", memoStar:false, memoPage:0, memoArchived:false,
   workoutDate:todayStr(), studyDate:todayStr(),
   acctDate:todayStr(), acctType:"out", acctCat:"", acctPeriod:"week",
+  acctGroup:"trend", acctExpMode:"bar", acctBalMode:"bar",
   acctPanels:{form:true,accounts:false,autotpl:false},
   wkEdit:false,               // 历史日期打卡临时编辑模式
   wkPeriod:"week",            // 锻炼统计周期：week/month/year
@@ -897,6 +908,28 @@ function segHtml(action,current){return `<span class="seg" style="margin-left:au
   <span class="${current==="month"?"on":""}" data-action="${action}" data-p="month">月</span>
   <span class="${current==="year"?"on":""}" data-action="${action}" data-p="year">年</span>
 </span>`;}
+/* 通用分段控件：items=[{p,label}]，用于记账图表分组切换与条形/饼图切换 */
+function segHtmlG(action,current,items){return `<span class="seg" style="margin-left:auto;">${items.map(it=>`<span class="${current===it.p?"on":""}" data-action="${action}" data-p="${it.p}">${it.label}</span>`).join("")}</span>`;}
+/* 青瓷风配色（深浅模式均可读） */
+const ACCT_PALETTE=["#6F8F88","#C2A878","#B57B6E","#7E9CB8","#9DB7A0","#D6C7A1","#8FA98C","#C98F7A","#A88BB0","#6E8FA8"];
+/* 环形饼图：entries=[{name,value}]（value 可为负，扇形面积取绝对值，图例显示真实正负） */
+function donutChartHtml(entries,emptyText){
+  const list=entries.filter(e=>e.value!==0);
+  if(!list.length)return `<div class="chart-empty">${emptyText}</div>`;
+  const total=list.reduce((a,e)=>a+Math.abs(e.value),0)||1;
+  const cx=80,cy=80,rO=72,rI=44;
+  let ang=-Math.PI/2, paths="";
+  list.forEach((e,i)=>{
+    const frac=Math.abs(e.value)/total, a2=ang+frac*Math.PI*2;
+    const large=(a2-ang)>Math.PI?1:0;
+    const p=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
+    const [x1,y1]=p(rO,ang),[x2,y2]=p(rO,a2),[x3,y3]=p(rI,a2),[x4,y4]=p(rI,ang);
+    paths+=`<path d="M${x1.toFixed(2)} ${y1.toFixed(2)} A${rO} ${rO} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${rI} ${rI} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z" fill="${ACCT_PALETTE[i%ACCT_PALETTE.length]}" data-tip="${esc(e.name)} · ${fmtMoney(e.value)}"></path>`;
+    ang=a2;
+  });
+  const legend=list.map((e,i)=>`<div class="donut-lg"><i style="background:${ACCT_PALETTE[i%ACCT_PALETTE.length]}"></i><span class="donut-name">${esc(e.name)}</span><span class="donut-val" style="color:${e.value<0?'#C97B6E':'var(--accent)'}">${fmtMoney(e.value)}</span></div>`).join("");
+  return `<div class="donut-wrap"><svg class="donut" viewBox="0 0 160 160" width="160" height="160">${paths}</svg><div class="donut-legend">${legend}</div></div>`;
+}
 
 /* Tooltip */
 function ensureTip(){
@@ -1561,6 +1594,9 @@ document.addEventListener("click",e=>{
   if(a==="ac-type"){const am=document.getElementById("acAmount");if(am)state.acctAmount=am.value;state.acctType=el.dataset.t;state.acctCat="";render();return;}
   if(a==="ac-cat"){const am=document.getElementById("acAmount");if(am)state.acctAmount=am.value;state.acctCat=el.dataset.c;render();return;}
   if(a==="acct-period"){state.acctPeriod=el.dataset.p;render();return;}
+  if(a==="acct-group"){state.acctGroup=el.dataset.p;render();return;}
+  if(a==="acct-exp-mode"){state.acctExpMode=el.dataset.p;render();return;}
+  if(a==="acct-bal-mode"){state.acctBalMode=el.dataset.p;render();return;}
   if(a==="ac-save"){
     const amount=parseFloat($("#acAmount")?$("#acAmount").value:"");
     if(!(amount>0)){toast("请输入有效金额");return;}
@@ -1971,6 +2007,19 @@ function renderAccount(){
     <div class="tiny" style="margin:10px 0 6px;color:var(--sub);">${mdLabel(d)} 收支记录（${dayBills.length} 条）</div>
     ${dayBills.length?dayBills.map(billRow).join(""):`<div class="empty" style="padding:14px 0;">当日暂无账单，添加第一笔吧</div>`}`;
   const expMap={};rangeBills.filter(b=>b.type==="out").forEach(b=>{expMap[b.cat]=(expMap[b.cat]||0)+b.amount;});
+  const expList=Object.entries(expMap).filter(e=>e[1]>0).map(([name,value])=>({name,value}));
+  const balList=store.accounts.map(a=>({name:a.name,value:store.bills.filter(b=>b.account===a.id).reduce((s,b)=>s+(b.type==="in"?b.amount:-b.amount),0)}));
+  const group=state.acctGroup||"trend";
+  const groupSeg=segHtmlG("acct-group",group,[{p:"trend",label:"收支趋势"},{p:"exp",label:"支出分类"},{p:"balance",label:"账户分布"}]);
+  let groupHtml="";
+  if(group==="trend"){groupHtml=acctTrendChart(d,period);}
+  else if(group==="exp"){
+    const m=state.acctExpMode||"bar";
+    groupHtml=`<div class="row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 8px;"><div class="tiny" style="font-weight:600;">支出分类占比</div>${segHtmlG("acct-exp-mode",m,[{p:"bar",label:"条形"},{p:"pie",label:"饼图"}])}</div>`+(m==="pie"?donutChartHtml(expList,"暂无支出数据"):moneyRatio(expMap,"暂无支出数据"));
+  }else{
+    const m=state.acctBalMode||"bar";
+    groupHtml=`<div class="row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 8px;"><div class="tiny" style="font-weight:600;">各账户收支占比</div>${segHtmlG("acct-bal-mode",m,[{p:"bar",label:"条形"},{p:"pie",label:"饼图"}])}</div>`+(m==="pie"?donutChartHtml(balList,"暂无账户数据"):acctBalanceRatio());
+  }
   const statsBody=`
     <div class="row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;"><div class="tiny" style="font-weight:600;">${periodName(period)}统计</div>${segHtml("acct-period",period)}</div>
     <div class="ac-stat-row">
@@ -1978,10 +2027,8 @@ function renderAccount(){
       <div class="ac-stat"><b style="color:#C97B6E">${fmtMoney(sumOut)}</b><i>总支出</i></div>
       <div class="ac-stat bal"><b>${fmtMoney(bal)}</b><i>本期结余</i></div>
     </div>
-    <div style="margin-top:8px;"><div class="tiny" style="margin-bottom:8px;">支出分类占比</div>${moneyRatio(expMap,"暂无支出数据")}</div>
-    ${acctTrendChart(d,period)}
-    <div class="tiny" style="margin-top:14px;margin-bottom:8px;">各账户收支占比</div>
-    ${acctBalanceRatio()}`;
+    <div class="row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 4px;"><div class="tiny" style="font-weight:600;">图表分组</div>${groupSeg}</div>
+    ${groupHtml}`;
   const acctBody=`
     <div class="acct-panel">
       ${store.accounts.map(a=>{const b=accountBalance(a.id);return `<div class="acct-list-item"><div class="acct-name">${esc(a.name)}</div><div class="acct-bal ${b<0?'neg':''}">${fmtMoney(b)}</div><div class="bill-acts"><span class="act edt" data-action="acct-edit" data-id="${a.id}"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span><span class="act del" data-action="acct-del" data-id="${a.id}"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span></div></div>`;}).join("")}
@@ -2012,6 +2059,7 @@ function openBillModal(id){
     <div class="field"><label>金额</label><div class="input"><input id="bmAmount" type="number" inputmode="decimal" value="${amt}" placeholder="0.00"></div></div>
     <div class="field"><label>分类</label><div class="ac-cats" id="bmCats">${drawCats()}</div></div>
     <div class="field"><label>账户</label><div class="input"><select id="bmAccount" style="border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%;"><option value="">未选账户</option>${store.accounts.map(a=>`<option value="${a.id}" ${a.id===acct?"selected":""}>${esc(a.name)}</option>`).join("")}</select></div></div>
+    <div class="field"><label>日期</label>${dateFieldHtml("bmDate",b?b.date:state.acctDate)}</div>
     <div class="field"><label>备注</label><div class="input"><input id="bmNote" value="${esc(note)}" placeholder="可选"></div></div>
     <div class="modal-actions"><div class="btn btn-text" data-action="close">取消</div><div class="btn btn-solid" id="bmOk" data-id="${id||""}">保存</div></div>`);
   const syncType=()=>{$("#bmIn").classList.toggle("on",type==="in");$("#bmOut").classList.toggle("on",type==="out");$("#bmCats").innerHTML=drawCats();bindCats();};
@@ -2025,8 +2073,9 @@ function openBillModal(id){
     if(!(amount>0)){toast("请输入有效金额");return;}
     if(!cat){toast("请选择分类");return;}
     const acc=$("#bmAccount").value||null, nt=$("#bmNote").value.trim();
-    if(id){const x=store.bills.find(y=>y.id===id);if(x){x.type=type;x.amount=amount;x.cat=cat;x.account=acc;x.note=x.auto?(nt+"【自动记账】"):nt;}}
-    else store.bills.push({id:uid(),date:state.acctDate,type,amount,cat,account:acc,note:nt,auto:false,tplId:null,ts:Date.now()});
+    const bd=$("#bmDate").value||state.acctDate;
+    if(id){const x=store.bills.find(y=>y.id===id);if(x){x.type=type;x.amount=amount;x.cat=cat;x.account=acc;x.date=bd;x.note=x.auto?(nt+"【自动记账】"):nt;}}
+    else store.bills.push({id:uid(),date:bd,type,amount,cat,account:acc,note:nt,auto:false,tplId:null,ts:Date.now()});
     save();closeModal();render();toast(id?"已更新":"已保存账单");
   };
 }
