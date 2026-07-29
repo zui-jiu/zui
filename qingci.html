@@ -59,6 +59,9 @@ img{-webkit-touch-callout:none;}
 .side-item:hover{background:var(--accent-soft);color:var(--accent);}
 .side-item.active{background:var(--accent-soft);color:var(--accent);font-weight:600;}
 .side-foot{margin-top:auto;font-size:11px;color:var(--sub);display:flex;align-items:center;gap:6px;padding:10px;}
+.side-tool{margin-top:10px;padding-top:12px;border-top:1px solid var(--line);}
+.side-badge{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:#fff;font-size:11px;font-weight:600;line-height:18px;text-align:center;flex:none;}
+.side-badge:empty{display:none;}
 
 .main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;height:100%;}
 .header{display:flex;align-items:center;gap:12px;padding:15px 22px;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:10;}
@@ -199,7 +202,6 @@ img{-webkit-touch-callout:none;}
 
 .tag{font-size:10.5px;padding:2px 8px;border-radius:8px;background:var(--bg);color:var(--sub);border:1px solid var(--line);}
 .tag.qc{background:var(--accent-soft);color:var(--accent);border-color:transparent;}
-
 .group-head{display:flex;align-items:center;gap:8px;padding:12px 2px 7px;position:sticky;top:0;background:var(--card);z-index:5;}
 .group-head::before{content:"";width:4px;height:13px;background:var(--accent);border-radius:2px;opacity:.7;}
 .group-head b{font-size:12.5px;font-weight:600;}
@@ -266,6 +268,9 @@ img{-webkit-touch-callout:none;}
 .pin-card .big{font-size:54px;font-weight:700;color:var(--accent);margin:10px 0 2px;}
 .pin-card .big small{font-size:15px;font-weight:500;color:var(--sub);margin-left:4px;}
 .near-hi{background:var(--accent-soft)!important;}
+.cd-item.past{background:var(--accent-soft);}
+.cd-item.past .li-title{color:var(--accent);}
+.cd-item.dragging{box-shadow:0 6px 18px rgba(0,0,0,.14);background:var(--card);}
 
 /* 时间索引条（PC） */
 .time-index{width:84px;flex:none;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 0;display:flex;flex-direction:column;align-items:center;}
@@ -284,7 +289,9 @@ img{-webkit-touch-callout:none;}
 /* 模态框 */
 .overlay{position:fixed;inset:0;background:rgba(20,30,28,.42);display:none;align-items:flex-end;justify-content:center;z-index:60;}
 .overlay.show{display:flex;}
-@media(min-width:769px){.overlay{align-items:center;}}
+.cal-overlay{position:fixed;inset:0;background:rgba(20,30,28,.42);display:none;align-items:flex-end;justify-content:center;z-index:70;}
+.cal-overlay.show{display:flex;}
+@media(min-width:769px){.overlay{align-items:center;}.cal-overlay{align-items:center;}}
 .modal{background:var(--card);width:100%;max-width:460px;border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.2);max-height:90dvh;overflow-y:auto;}
 @media(min-width:769px){.modal{border-radius:20px;}}
 .modal h3{font-size:17px;margin-bottom:16px;}
@@ -428,6 +435,47 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
 .switch.on{background:var(--accent);}
 .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;}
 .switch.on::after{left:21px;}
+/* 回收站勾选控件 */
+.chk{display:inline-flex;align-items:center;cursor:pointer;user-select:none;}
+.chk input{position:absolute;opacity:0;width:0;height:0;}
+.chk span{width:20px;height:20px;border-radius:7px;border:2px solid var(--bg);background:var(--card);display:inline-block;position:relative;transition:.15s;flex:none;}
+.chk input:checked+span{background:var(--accent);border-color:var(--accent);}
+.chk input:checked+span::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+/* 回收站分组与条目 */
+.trash-group{margin-bottom:14px;}
+.trash-group-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.trash-group-title .cnt{font-size:11px;font-weight:400;color:var(--sub);background:var(--bg);padding:1px 8px;border-radius:10px;}
+.trash-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:14px;margin-bottom:8px;}
+.trash-item .trash-info{flex:1;min-width:0;}
+.trash-item .trash-name{font-size:13.5px;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.trash-item .trash-meta{font-size:11.5px;color:var(--sub);margin-top:2px;}
+.trash-item .trash-acts{display:flex;gap:8px;flex:none;}
+.trash-acts .btn{margin:0;padding:7px 12px;font-size:12.5px;}
+.trash-bar{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--bg);}
+.trash-bar .btn{margin:0;}
+/* 倒数日：置顶标签 / 批量 / 搜索 / 加载更多 */
+.pin-tag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:8px;flex:none;line-height:1;}
+.pin-tag svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.pinned-item{box-shadow:0 0 0 2px var(--pc,var(--accent)) inset;}
+.cd-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.cd-toolbar .search-i{flex:1;margin:0;}
+.search-i{position:relative;display:flex;align-items:center;}
+.search-i svg{width:16px;height:16px;fill:none;stroke:var(--sub);stroke-width:2;margin-left:12px;flex:none;}
+.search-i input{border:none;outline:none;background:transparent;flex:1;padding:11px 12px 11px 8px;color:var(--text);font-size:14px;}
+.list-item .li-title .pin-tag{margin-right:2px;}
+.pin-tag:empty{width:11px;height:11px;padding:0;border-radius:50%;}
+.batch-bar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border-radius:12px;border:1px solid var(--bg);}
+.batch-bar .tiny{color:var(--sub);font-size:12px;}
+.more-btn{text-align:center;padding:13px;margin-top:10px;color:var(--accent);font-size:13px;cursor:pointer;border:1px dashed var(--bg);border-radius:12px;background:var(--card);}
+.more-btn:active{background:var(--bg);}
+.pin-colors{display:flex;gap:10px;flex-wrap:wrap;}
+.cat-pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:2px;}
+.cat-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px 5px 12px;border:1px solid var(--line);border-radius:14px;font-size:12.5px;background:var(--card);color:var(--text);}
+.cat-x{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;font-size:13px;line-height:1;color:var(--sub);cursor:pointer;user-select:none;}
+.cat-x:hover{background:var(--bg);color:#B0736F;}
+.pc-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;box-shadow:0 0 0 1px rgba(0,0,0,.08);transition:.15s;}
+.pc-dot.on{border-color:var(--text);transform:scale(1.08);}
+.action-count{font-size:11px;color:var(--sub);}
 
 </style>
 </head>
@@ -442,6 +490,7 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
     <div class="side-item" data-nav="todo"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>每日清单</div>
     <div class="side-item" data-nav="account"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><circle cx="17" cy="13" r="1.6"/></svg>每日记账</div>
     <div class="side-item" data-nav="memo"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>综合记录</div>
+    <div class="side-item side-tool" data-nav="trash" id="sideTrash"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg>回收站<span class="side-badge" id="sideTrashCount"></span></div>
     <div class="side-foot">
       <svg style="width:14px;height:14px;stroke:var(--sub);fill:none;stroke-width:1.6;stroke-linecap:round;" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       深浅模式 · 数据本地保存
@@ -477,9 +526,18 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
 </div>
 
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+<div class="overlay cal-overlay" id="calOverlay"><div class="modal" id="calModal"></div></div>
 
 <script>
 "use strict";
+/* 运行错误全局捕获：把任何 JS 报错直接显示在页面顶部红条上，
+   这样在本地/手机浏览器复现 bug 时无需打开控制台即可看到具体错误。 */
+window.addEventListener("error",function(e){
+  var msg=(e&&e.error&&e.error.stack)||(e&&e.message)||String(e);
+  var b=document.getElementById("errBanner");
+  if(!b){b=document.createElement("div");b.id="errBanner";b.style.cssText="position:fixed;left:0;right:0;top:0;z-index:99999;background:#c0392b;color:#fff;font:12px/1.5 monospace;padding:8px 12px;white-space:pre-wrap;max-height:42vh;overflow:auto;box-shadow:0 2px 10px rgba(0,0,0,.3);";document.body.appendChild(b);}
+  b.textContent="⚠ 运行错误："+msg;
+});
 /* ===================== 工具 ===================== */
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -517,6 +575,9 @@ const store={
   accounts:DB.get("accounts",null),
   bills:DB.get("bills",null),
   autotpls:DB.get("autotpls",null),
+  incomeCats:DB.get("incomeCats",null),
+  expenseCats:DB.get("expenseCats",null),
+  trash:DB.get("trash",[]),
   settings:DB.get("settings",{theme:"light",prioFilters:"all"})
 };
 function save(){
@@ -524,7 +585,7 @@ function save(){
   DB.set("workouts",store.workouts);DB.set("studies",store.studies);
   DB.set("notes",store.notes);DB.set("todos",store.todos);
   DB.set("memos",store.memos);DB.set("settings",store.settings);
-  DB.set("accounts",store.accounts);DB.set("bills",store.bills);DB.set("autotpls",store.autotpls);
+  DB.set("accounts",store.accounts);DB.set("bills",store.bills);DB.set("autotpls",store.autotpls);DB.set("incomeCats",store.incomeCats);DB.set("expenseCats",store.expenseCats);DB.set("trash",store.trash);
 }
 function seed(){
   const t=todayStr();
@@ -537,28 +598,28 @@ function seed(){
     {id:uid(),name:"冥想放松",mode:"up",duration:900,date:dateKey(Date.now()-17*86400e3),ts:Date.now()-17*86400e3,archived:true,importedBy:[]}
   ];
   store.countdowns=[
-    {id:uid(),title:"考研初试",target:"2026-12-04",category:"考试",pinned:true,yearly:false,note:"政治英语两手抓"},
-    {id:uid(),title:"科目三考试",target:"2026-08-01",category:"考试",pinned:false,yearly:false,note:"预约上午场"},
-    {id:uid(),title:"雅思出分",target:"2026-08-15",category:"目标",pinned:false,yearly:false,note:""},
-    {id:uid(),title:"国庆节",target:"2026-10-01",category:"节日",pinned:false,yearly:true,note:""}
+    {id:uid(),title:"考研初试",target:"2026-12-04",yearly:false,note:"政治英语两手抓"},
+    {id:uid(),title:"科目三考试",target:"2026-08-01",yearly:false,note:"预约上午场"},
+    {id:uid(),title:"雅思出分",target:"2026-08-15",yearly:false,note:""},
+    {id:uid(),title:"国庆节",target:"2026-10-01",yearly:true,note:""}
   ];
   store.workouts=[
     {id:uid(),date:t,tags:["力量训练","练背"],timerId:store.timers[1].id,duration:3150,note:"容量到位，背部发力感好",summary:"本周第二次力量，状态稳定",weight:68.5,bodyFat:18.2}
   ];
   store.studies=[
-    {id:uid(),title:"英语学习",deadline:"2026-08-10",priority:"high",timerId:store.timers[0].id,duration:5420,done:false,date:t},
-    {id:uid(),title:"日常阅读",deadline:"",priority:"mid",timerId:null,duration:0,done:false,date:t},
-    {id:uid(),title:"驾照考取",deadline:"2026-09-01",priority:"low",timerId:null,duration:0,done:false,date:t}
+    {id:uid(),title:"英语学习",deadline:"2026-08-10",priority:"high",timerId:store.timers[0].id,duration:5420,done:false,archived:false,date:t},
+    {id:uid(),title:"日常阅读",deadline:"",priority:"mid",timerId:null,duration:0,done:false,archived:false,date:t},
+    {id:uid(),title:"驾照考取",deadline:"2026-09-01",priority:"low",timerId:null,duration:0,done:false,archived:false,date:t}
   ];
   store.notes=[
     {id:uid(),category:"英语",content:"今天精读了一篇经济学人，积累了 12 个高频词组。",taskId:null,date:t},
     {id:uid(),category:"阅读",content:"《被讨厌的勇气》读到第三夜，课题分离这个概念很受用。",taskId:null,date:t}
   ];
   store.todos=[
-    {id:uid(),title:"回复合作邮件",priority:"high",done:true,recurring:"",date:t,timerId:null,duration:0},
-    {id:uid(),title:"整理周报数据",priority:"mid",done:false,recurring:"weekly",date:t,timerId:null,duration:0},
-    {id:uid(),title:"买周末食材",priority:"low",done:false,recurring:"",date:t,timerId:null,duration:0},
-    {id:uid(),title:"预约体检",priority:"mid",done:false,recurring:"",date:dateKey(Date.now()-86400e3),timerId:null,duration:0}
+    {id:uid(),title:"回复合作邮件",priority:"high",done:true,recurring:"",date:t,timerId:null,duration:0,archived:false},
+    {id:uid(),title:"整理周报数据",priority:"mid",done:false,recurring:"weekly",date:t,timerId:null,duration:0,archived:false},
+    {id:uid(),title:"买周末食材",priority:"low",done:false,recurring:"",date:t,timerId:null,duration:0,archived:false},
+    {id:uid(),title:"预约体检",priority:"mid",done:false,recurring:"",date:dateKey(Date.now()-86400e3),timerId:null,duration:0,archived:false}
   ];
   store.memos=[
     {id:uid(),content:"App 首页可以加一个「今日专注总时长」环形指示，点击直达计时器。",tag:"灵感",star:true,archived:false,date:t,ts:Date.now()-3600e3,images:[]},
@@ -570,6 +631,8 @@ function seed(){
   save();
 }
 if(!store.timers){seed();}
+// 注意：autoPurgeTrash() 在此处调用会因 TRASH_DAYS（const，定义于第 2099 行附近）处于 TDZ 而抛 ReferenceError，导致整段脚本初始化中断。
+// 已在 renderTrash() 内保留运行期调用，故移除此处启动期调用即可消除崩溃，且回收站过期清理功能不受影响。
 // 迁移：补齐日期字段，避免按日期筛选后旧数据丢失
 store.studies.forEach(s=>{if(!s.date)s.date=todayStr();});
 store.notes.forEach(n=>{
@@ -583,24 +646,26 @@ store.timers.forEach(t=>{if(!t.importedBy)t.importedBy=[];});
 if(!store.accounts){const presets=["微信","支付宝","储蓄卡","信用卡","现金","理财"];store.accounts=presets.map(n=>({id:uid(),name:n,init:0}));}
 if(!store.bills)store.bills=[];
 if(!store.autotpls)store.autotpls=[];
+if(!store.incomeCats)store.incomeCats=["工资","兼职","红包","理财","其他收入"];
+if(!store.expenseCats)store.expenseCats=["餐饮","交通","购物","娱乐","学习","医疗","房租","其他支出"];
 if(store.settings.theme==="dark")document.documentElement.classList.add("dark");
 
 /* ===================== 全局状态 ===================== */
 const state={
   page:"timer",
   timer:{running:false,mode:"up",name:"",elapsed:0,last:0,cdMin:25,id:null},
-  histFilter:"all", histPage:0,
-  cdFilter:"all",
+  histFilter:"all", histPage:0, histQ:"", histFold:{}, timerBatch:false, timerSel:[],
+  cdFilter:"all", cdBatch:false, cdSel:[], cdQ:"", cdPage:0,
   todoFilter:"all",
-  memoTag:"all", memoTime:"all", memoQ:"", memoStar:false, memoPage:0, memoArchived:false,
-  workoutDate:todayStr(), studyDate:todayStr(),
+  memoTag:"all", memoTime:"all", memoQ:"", memoStar:false, memoPage:0, memoArchived:false, memoBatch:false, memoSel:[],
+  workoutDate:todayStr(), studyDate:todayStr(), studyView:"all", stQ:"", stBatch:false, stSel:[], studyPanels:{tasks:true,notes:true,stats:true}, todoView:"all", trashSel:[],
   acctDate:todayStr(), acctType:"out", acctCat:"", acctPeriod:"week",
   acctGroup:"trend", acctExpMode:"bar", acctBalMode:"bar",
-  acctPanels:{form:true,accounts:false,autotpl:false},
+  acctPanels:{add:true,bills:false,accounts:false,autotpl:false,cats:true},
   wkEdit:false,               // 历史日期打卡临时编辑模式
   wkPeriod:"week",            // 锻炼统计周期：week/month/year
   stPeriod:"week",            // 学习统计周期：week/month/year
-  noteQ:"", noteCat:"all", notePage:0, noteArchived:false,   // 学习笔记目录
+  noteQ:"", noteCat:"all", notePage:0, noteArchived:false, noteBatch:false, noteSel:[],   // 学习笔记目录
   noteDetailId:null,          // 笔记详情页当前 id（null=新建）
   memoDetailId:null,          // 备忘详情页当前 id
   importCb:null
@@ -659,41 +724,39 @@ function timerControls(){
 }
 function filteredTimers(){
   let list=store.timers.slice().sort((a,b)=>b.ts-a.ts);
-  const f=state.histFilter;
-  if(f==="archived")return list.filter(t=>t.archived);
-  list=list.filter(t=>!t.archived);
-  if(f==="today")return list.filter(t=>dayDiff(t.date)===0);
-  if(f==="week")return list.filter(t=>dayDiff(t.date)>=0&&dayDiff(t.date)<=6);
-  if(f==="earlier")return list.filter(t=>dayDiff(t.date)>6);
+  const f=state.histFilter;const q=(state.histQ||"").trim().toLowerCase();
+  if(f==="archived")list=list.filter(t=>t.archived);else list=list.filter(t=>!t.archived);
+  if(f==="today")list=list.filter(t=>dayDiff(t.date)===0);
+  else if(f==="week")list=list.filter(t=>dayDiff(t.date)>=0&&dayDiff(t.date)<=6);
+  else if(f==="earlier")list=list.filter(t=>dayDiff(t.date)>6);
+  if(q)list=list.filter(t=>(t.name||"").toLowerCase().includes(q)||(t.date||"").includes(q));
   return list;
 }
 function timerItem(t){
   const imp=t.importedBy&&t.importedBy.length?`<span class="tag qc">已导入${t.importedBy.length>1?"×"+t.importedBy.length:""}</span>`:"";
+  const batch=state.timerBatch;
+  const chk=batch?`<label class="chk" style="margin-right:10px;flex:none;"><input type="checkbox" data-action="timer-check" data-id="${t.id}" ${state.timerSel.includes(t.id)?"checked":""}><span></span></label>`:"";
   return `<div class="list-item">
-    <div class="li-main"><div class="li-title">${esc(t.name)}</div>
+    ${chk}<div class="li-main"><div class="li-title">${esc(t.name)}</div>
       <div class="li-sub">${fmt(t.duration)} · ${t.date} ${imp}</div></div>
-    <div class="li-acts">
+    ${!batch?`<div class="li-acts">
       <span class="act ai" data-action="timer-import" data-id="${t.id}" title="导入"><svg><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><i>导入</i></span>
       <span class="act" data-action="timer-edit" data-id="${t.id}" title="编辑"><svg><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><i>编辑</i></span>
       <span class="act" data-action="timer-archive" data-id="${t.id}" title="归档"><svg><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 4h22v4H1z"/><path d="M10 12h4"/></svg><i>归档</i></span>
       <span class="act" data-action="timer-del" data-id="${t.id}" title="删除"><svg><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg><i>删除</i></span>
-    </div>
+    </div>`:""}
   </div>`;
 }
 function renderTimer(){
-  const f=state.histFilter;
-  const total=filteredTimers().length;
-  const shown=Math.min(total,(state.histPage+1)*20);
-  const list=filteredTimers().slice(0,shown);
-  // 分组
-  const groups={};
-  list.forEach(t=>{(groups[groupOf(t.date)]=groups[groupOf(t.date)]||[]).push(t);});
-  const order=["今日","昨天","上周","更早"];
-  let html="";
-  order.forEach(g=>{if(groups[g]){html+=`<div class="group-head"><b>${g}</b><span class="cnt">${groups[g].length} 条</span></div>`+groups[g].map(timerItem).join("");}});
-  if(!list.length)html=`<div class="empty">暂无计时记录</div>`;
-  const hint=shown<total?`<div class="load-hint" data-action="hist-more"><span class="spin"></span>加载中 · 已展示 ${shown} / ${total} 条，点击或滚动加载更多</div>`
-    :`<div class="load-hint">已展示全部 ${total} 条</div>`;
+  const f=state.histFilter;const batch=state.timerBatch;
+  const batchBar=batch?`<div class="batch-bar" style="margin-bottom:12px;">
+    <label class="chk"><input type="checkbox" data-action="timer-all" ${timerSelAllChecked()?"checked":""}><span></span></label>
+    <span class="tiny">已选 ${state.timerSel.length}</span>
+    <div style="flex:1;"></div>
+    <div class="btn btn-line btn-sm" data-action="timer-arc-sel">归档</div>
+    <div class="btn btn-line btn-sm" data-action="timer-del-sel" style="color:#B0736F;border-color:#B0736F;">删除</div>
+    <div class="btn btn-text btn-sm" data-action="timer-batch">完成</div>
+  </div>`:"";
   return `
   <div class="seg" id="timerMode" style="margin-bottom:14px;">
     <span class="${state.timer.mode==="up"?"on":""}" data-mode="up">正计时</span>
@@ -712,6 +775,7 @@ function renderTimer(){
   <div class="pc-flex">
     <div class="card" style="flex:1;">
       <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6"/></svg>计时历史 <span class="more">按时间倒序 · 懒加载</span></div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;"><span class="btn btn-line btn-sm" data-action="timer-batch">${batch?"完成选择":"批量"}</span></div>
       <div class="chips-scroll" id="histFilter" style="margin-bottom:12px;">
         <span class="chip ${f==="all"?"on":""}" data-f="all">全部</span>
         <span class="chip ${f==="today"?"on":""}" data-f="today">今日</span>
@@ -719,8 +783,9 @@ function renderTimer(){
         <span class="chip ${f==="earlier"?"on":""}" data-f="earlier">更早</span>
         <span class="chip ${f==="archived"?"on":""}" data-f="archived">已归档</span>
       </div>
-      <div id="histList">${html}</div>
-      ${hint}
+      <div class="input search-i" style="margin-bottom:12px;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="histSearch" value="${esc(state.histQ||"")}" placeholder="搜索计时名称 / 日期"></div>
+      ${batchBar}
+      <div id="histList">${timerListInner()}</div>
     </div>
     ${timerIndexHtml()}
   </div>`;
@@ -732,6 +797,25 @@ function afterTimer(){
   const sentinel=$('[data-action="hist-more"]');if(sentinel)io.observe(sentinel);
 }
 function histMore(){state.histPage++;render();}
+function timerListInner(){
+  const total=filteredTimers().length;
+  const shown=Math.min(total,(state.histPage+1)*20);
+  const list=filteredTimers().slice(0,shown);
+  const groups={};
+  list.forEach(t=>{(groups[groupOf(t.date)]=groups[groupOf(t.date)]||[]).push(t);});
+  const order=["今日","昨天","上周","更早"];
+  let html="";
+  order.forEach(g=>{if(groups[g]){
+    const folded=state.histFold[g]===undefined?(g!=="今日"):state.histFold[g];
+    html+=`<div class="group-head" data-g="${g}"><b>${g}</b><span class="cnt">${groups[g].length} 条</span><span class="fold" data-action="hist-fold" data-g="${g}">${folded?'<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>':'<svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>'}</span></div>`;
+    if(!folded)html+=groups[g].map(timerItem).join("");
+  }});
+  if(!total)html=`<div class="empty">暂无计时记录</div>`;
+  const hint=shown<total?`<div class="load-hint" data-action="hist-more"><span class="spin"></span>加载中 · 已展示 ${shown} / ${total} 条，点击或滚动加载更多</div>`:`<div class="load-hint">已展示全部 ${total} 条</div>`;
+  return html+hint;
+}
+function renderTimerListOnly(){const el=$("#histList");if(el)el.innerHTML=timerListInner();afterTimer();}
+function timerSelAllChecked(){const total=filteredTimers().length;const shown=Math.min(total,(state.histPage+1)*20);const list=filteredTimers().slice(0,shown);return list.length>0&&list.every(t=>state.timerSel.includes(t.id));}
 function timerIndexHtml(){
   const dates=[...new Set(store.timers.map(t=>t.date))].sort((a,b)=>b.localeCompare(a)).slice(0,7);
   return `<div class="time-index"><div class="ti-title">时间索引</div><div class="ti-rail">`+
@@ -740,43 +824,118 @@ function timerIndexHtml(){
 }
 
 /* ===================== 倒数日 ===================== */
-function renderCountdown(){
-  const list=store.countdowns.slice().sort((a,b)=>{
-    if(a.pinned!==b.pinned)return a.pinned?-1:1;
-    return daysBetween(todayStr(),a.target)-daysBetween(todayStr(),b.target);
-  });
-  const pinned=list.find(c=>c.pinned);
-  const pinHtml=pinned?`<div class="pin-card">
-    <div class="pin-flag"><svg viewBox="0 0 24 24"><path d="M12 17v5M5 9l7-7 7 7-2 6H7z"/></svg>置顶</div>
-    <span class="tag qc" style="position:absolute;right:16px;top:14px;">${esc(pinned.category)}</span>
-    <div style="font-size:15px;font-weight:600;margin-top:6px;">${esc(pinned.title)}</div>
-    <div class="big">${daysBetween(todayStr(),pinned.target)}<small>天</small></div>
-    <div class="tiny">目标日期 ${pinned.target}${pinned.yearly?" · 每年循环":""}${pinned.note?" · "+esc(pinned.note):""}</div>
-  </div>`:`<div class="pin-card"><div class="tiny">暂无置顶事件，点击「新增倒数事件」并设置置顶</div></div>`;
-  const cats=["all","考试","生活","目标","节日"];
-  const chips=cats.map(c=>`<span class="chip ${state.cdFilter===c?"on":""}" data-cf="${c}">${c==="all"?"全部":c}</span>`).join("")+`<span class="chip plus" data-action="cd-add">＋ 自定义</span>`;
-  const items=list.filter(c=>state.cdFilter==="all"||c.category===state.cdFilter).map(c=>{
-    const d=daysBetween(todayStr(),c.target);
-    const near=d>=0&&d<=3;
-    return `<div class="list-item ${near?"near-hi":""}" style="border-radius:12px;${near?"padding:13px;":""}">
-      <div class="li-main"><div class="li-title">${esc(c.title)} ${c.pinned?'<span class="pill">置顶</span>':""} ${c.yearly?'<span class="tag">每年</span>':""}</div>
-        <div class="li-sub">${c.target} · ${esc(c.category)}${c.note?" · "+esc(c.note):""}</div></div>
-      <div style="text-align:right;flex:none;"><b style="font-size:19px;color:${near?'var(--accent)':'var(--text)'};">${d}</b><span class="tiny"> 天</span></div>
-      <div class="li-acts">
-        <span class="act" data-action="cd-pin" data-id="${c.id}" title="置顶"><svg><path d="M12 17v5M5 9l7-7 7 7-2 6H7z"/></svg><i>置顶</i></span>
+/* 倒数日：保留手动排序（拖拽），不自动排序、不去置顶 */
+function cdFiltered(){
+  const q=(state.cdQ||"").trim().toLowerCase();
+  let list=store.countdowns.slice(); // 保留手动排序（拖拽）
+  if(q)list=list.filter(c=>(c.title||"").toLowerCase().includes(q)||(c.note||"").toLowerCase().includes(q));
+  return list;
+}
+function cdView(){
+  const list=cdFiltered();const page=state.cdPage||0,pageSize=20;
+  return {list,view:list.slice(0,Math.min(list.length,(page+1)*pageSize))};
+}
+function secToEndOfDay(dateStr){const end=new Date(dateStr+"T23:59:59");return Math.max(0,Math.floor((end-new Date())/1000));}
+function cdDaysLabel(c){
+  const d=daysBetween(todayStr(),c.target);
+  if(d<0){const past=Math.abs(d)+(c.pastMode?1:0);return {past:true,text:String(past),sub:"已经"};}
+  if(d===0)return {past:false,today:true,text:fmt(secToEndOfDay(todayStr())),tick:true,sub:"今日 · 距结束"};
+  return {past:false,today:false,text:String(d),sub:"距离还有",near:d>=0&&d<=3};
+}
+function cdItemsHtml(){
+  const {list,view}=cdView();
+  const batch=state.cdBatch;
+  const items=view.map(c=>{
+    const L=cdDaysLabel(c);
+    const chk=batch?`<label class="chk" style="margin-right:10px;flex:none;"><input type="checkbox" data-action="cd-check" data-id="${c.id}" ${state.cdSel.includes(c.id)?"checked":""}><span></span></label>`:"";
+    const right=L.past
+      ? `<div style="text-align:right;flex:none;"><b style="font-size:19px;color:var(--accent);">已经${L.text}天</b></div>`
+      : L.today
+        ? `<div style="text-align:right;flex:none;"><b style="font-size:17px;color:var(--accent);" data-cdtick>${L.text}</b><div class="tiny">今日 · 距结束</div></div>`
+        : `<div style="text-align:right;flex:none;"><b style="font-size:19px;color:${L.near?'var(--accent)':'var(--text)'};">${L.text}</b><span class="tiny"> 天</span><div class="tiny">距离还有</div></div>`;
+    return `<div class="list-item cd-item ${L.past?'past':''} ${L.near&&!L.past?'near-hi':''}" data-cd-id="${c.id}" style="border-radius:12px;${L.near&&!L.past?"padding:13px;":""}">
+      ${chk}<div class="li-main" style="${batch?'min-width:0;':''}"><div class="li-title" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${esc(c.title)} ${c.yearly?'<span class="tag">每年</span>':""}</div>
+        <div class="li-sub">${c.target}${c.note?" · "+esc(c.note):""}</div></div>
+      ${right}
+      ${!batch?`<div class="li-acts">
         <span class="act" data-action="cd-ye" data-id="${c.id}" title="循环"><svg><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg><i>循环</i></span>
         <span class="act" data-action="cd-edit" data-id="${c.id}" title="编辑"><svg><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><i>编辑</i></span>
         <span class="act" data-action="cd-del" data-id="${c.id}" title="删除"><svg><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg><i>删除</i></span>
-      </div>
+      </div>`:""}
     </div>`;
   }).join("");
+  const loadMore=(view.length<list.length)?`<div class="more-btn" data-action="cd-more">加载更多（还剩 ${list.length-view.length} 条）</div>`:"";
+  return `<div class="card">${items||`<div class="empty">暂无倒数事件</div>`}</div>${loadMore}`;
+}
+function cdItemsViewAllChecked(){const {view}=cdView();return view.length>0&&view.every(c=>state.cdSel.includes(c.id));}
+function renderCountdown(){
+  const batch=state.cdBatch;
+  const searchHtml=`<div class="cd-toolbar">
+    <div class="input search-i"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="cdSearch" value="${esc(state.cdQ||"")}" placeholder="搜索事件 / 备注"></div>
+    <div class="btn btn-line btn-sm" data-action="cd-batch">${batch?"完成选择":"批量"}</div>
+  </div>`;
+  const batchBar=batch?`<div class="batch-bar" style="margin-bottom:12px;">
+    <label class="chk"><input type="checkbox" data-action="cd-all" ${cdItemsViewAllChecked()?"checked":""}><span></span></label>
+    <span class="tiny">已选 ${state.cdSel.length}</span>
+    <div style="flex:1;"></div>
+    <div class="btn btn-line btn-sm" data-action="cd-del-sel" style="color:#B0736F;border-color:#B0736F;">删除</div>
+    <div class="btn btn-text btn-sm" data-action="cd-batch">完成</div>
+  </div>`:"";
   return `
-  ${pinHtml}
   <div class="btn btn-solid" style="margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:6px;" data-action="cd-add">
     <svg style="width:15px;height:15px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>新增倒数事件</div>
-  <div class="chips-scroll" id="cdFilter" style="margin-bottom:14px;">${chips}</div>
-  <div class="card">${items||`<div class="empty">该分类下暂无事件</div>`}</div>`;
+  ${searchHtml}
+  ${batchBar}
+  <div id="cdList">${cdItemsHtml()}</div>
+  <div class="tiny" style="text-align:center;margin-top:10px;color:var(--sub);">长按卡片可拖动排序 · 过去事件显示「已经N天」</div>`;
 }
+function renderCountdownListOnly(){const el=$("#cdList");if(el)el.innerHTML=cdItemsHtml();}
+let cdTickInt=null;
+function updateCdTick(){const sec=secToEndOfDay(todayStr());document.querySelectorAll("[data-cdtick]").forEach(el=>{el.textContent=fmt(sec);});}
+function afterCountdown(){
+  if(cdTickInt){clearInterval(cdTickInt);cdTickInt=null;}
+  const {view}=cdView();
+  if(view.some(c=>daysBetween(todayStr(),c.target)===0))cdTickInt=setInterval(updateCdTick,1000);
+}
+/* 拖拽排序（长按整张卡片） */
+let cdDrag=null, cdJustDragged=false;
+document.addEventListener("pointerdown",e=>{
+  if(state.cdBatch)return;
+  const t=e.target; if(!t||typeof t.closest!=="function")return;
+  if(t.closest(".li-acts")||t.closest(".chk")||t.closest("input")||t.closest("a"))return;
+  const item=t.closest(".cd-item"); if(!item||!item.dataset.cdId)return;
+  cdDrag={el:item,started:false,longTimer:null,x:e.clientX,y:e.clientY};
+  cdDrag.longTimer=setTimeout(()=>{ if(cdDrag){cdDrag.started=true;item.classList.add("dragging");item.style.opacity=".55";toast("拖动排序（松手保存）");} },480);
+});
+document.addEventListener("pointermove",e=>{
+  if(!cdDrag)return;
+  if(!cdDrag.started){
+    if(Math.abs(e.clientX-cdDrag.x)>8||Math.abs(e.clientY-cdDrag.y)>8){clearTimeout(cdDrag.longTimer);cdDrag=null;}
+    return;
+  }
+  e.preventDefault();
+  const el=cdDrag.el;
+  const under=document.elementFromPoint(e.clientX,e.clientY);
+  const tItem=under&&under.closest?under.closest(".list-item"):null;
+  if(tItem&&tItem!==el&&tItem.dataset.cdId){
+    const r=tItem.getBoundingClientRect();
+    const after=(e.clientY-(r.top+r.height/2))>0;
+    el.parentNode.insertBefore(el, after?tItem.nextSibling:tItem);
+  }
+});
+document.addEventListener("pointerup",()=>{
+  if(!cdDrag)return;
+  clearTimeout(cdDrag.longTimer);
+  if(cdDrag.started){
+    const el=cdDrag.el; el.classList.remove("dragging"); el.style.opacity="";
+    const ids=[...el.parentNode.querySelectorAll(".list-item")].map(n=>n.dataset.cdId);
+    store.countdowns.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id));
+    save();
+    cdJustDragged=true; setTimeout(()=>{cdJustDragged=false;},350);
+  }
+  cdDrag=null;
+  if(state.page==="countdown")renderCountdown();
+});
 
 /* ===================== 日期选择 + 日历弹窗 ===================== */
 function curDate(){if(state.page==="account")return state.acctDate;return state.page==="workout"?state.workoutDate:state.studyDate;}
@@ -784,6 +943,7 @@ function setCurDate(d){if(state.page==="workout"){state.workoutDate=d;state.wkEd
 function shiftDate(n){setCurDate(addDays(curDate(),n));render();}
 let calMonth=null;
 let datePickerTarget=null; // {date,onSelect} 通用日期选择回调
+let pendingDateField=null; // 当前打开日历所关联的日期字段元素（兜底回写用）
 function dateBarHtml(){
   const d=curDate(), wk=weekOf(d);
   const wkChips=wk.map(w=>{
@@ -811,7 +971,7 @@ function openCalendar(dateStr,onSelect){
   const dt=new Date((dateStr||curDate())+"T00:00:00");
   calMonth={y:dt.getFullYear(),m:dt.getMonth()};
   datePickerTarget=onSelect?{date:dateStr||todayStr(),onSelect}:null;
-  openModal(renderCalendar());
+  openCalModal(renderCalendar());
 }
 function renderCalendar(){
   const {y,m}=calMonth;const first=new Date(y,m,1),startDay=first.getDay(),days=new Date(y,m+1,0).getDate();
@@ -831,11 +991,14 @@ function renderCalendar(){
     </div>
   </div>`;
 }
-function refreshCalendar(){const m=$("#modal");if(m)m.innerHTML=renderCalendar();}
+function refreshCalendar(){const m=$("#calModal");if(m)m.innerHTML=renderCalendar();}
+/* 将选中的日期回写到对应的日期字段（兜底：即使回调丢失也能正确落值，杜绝“日期没生效”） */
+function writeDateField(field,ds){if(!field)return;field.dataset.dfdate=ds;const inp=$("#"+field.dataset.dfinput);if(inp)inp.value=ds;const dsp=$("#"+field.dataset.dfdisp);if(dsp){dsp.textContent=ds;dsp.style.color="var(--text)";}}
 
 /* ===================== 统计图表工具函数 ===================== */
 function periodName(p){return {week:"本周",month:"本月",year:"本年"}[p]||"";}
 function rangeBy(dateStr,period){
+  if(period==="day")return [dateStr,dateStr];
   if(period==="week"){const w=weekOf(dateStr);return [w[0],w[6]];}
   if(period==="month")return monthRange(dateStr);
   return yearRange(dateStr);
@@ -881,7 +1044,7 @@ function trendData(dateStr,period,source){
   const title=source==="workout"
     ?(period==="week"?"本周时长趋势":period==="month"?"本月时长趋势":"本年时长趋势")
     :(period==="week"?"本周学习趋势":period==="month"?"本月学习趋势":"本年学习趋势");
-  return {labels,values,tips,title};
+  return {labels,values,tips,xLabels,title};
 }
 function barChartHtml(trend,yUnit,emptyText){
   const hasData=trend.values.some(v=>v>0);
@@ -896,6 +1059,42 @@ function barChartHtml(trend,yUnit,emptyText){
     </div>
     <div class="bar-labels" style="margin-left:30px;">${trend.labels.map(l=>`<span>${esc(l)}</span>`).join("")}</div>
     <div class="tiny" style="margin-top:4px;color:var(--sub);text-align:right;">纵轴：${yUnit}</div>`;
+}
+/* 学习计划「日」维度：24 小时分段专注分布 */
+function segHtmlStudy(current){return `<span class="seg" style="margin-left:auto;">
+  <span class="${current==="day"?"on":""}" data-action="st-period" data-p="day">日</span>
+  <span class="${current==="week"?"on":""}" data-action="st-period" data-p="week">周</span>
+  <span class="${current==="month"?"on":""}" data-action="st-period" data-p="month">月</span>
+  <span class="${current==="year"?"on":""}" data-action="st-period" data-p="year">年</span>
+</span>`;}
+function studyHourData(d){
+  const segs=Array.from({length:8},(_,i)=>({range:[i*3,(i+1)*3],dur:0,tasks:[]}));
+  store.timers.filter(t=>t.date===d&&t.importedBy.includes("study")).forEach(t=>{
+    const h=new Date(t.ts).getHours();
+    const si=Math.min(7,Math.floor(h/3));
+    segs[si].dur+=t.duration;
+    const st=store.studies.find(s=>s.timerId===t.id);
+    if(st&&st.title)segs[si].tasks.push(st.title);
+  });
+  return segs;
+}
+function hourChartHtml(segs){
+  const labels=segs.map(s=>s.range[0]+"-"+s.range[1]);
+  const hasData=segs.some(s=>s.dur>0);
+  if(!hasData)return `<div class="chart-empty">暂无今日学习计时数据</div>`;
+  const maxV=Math.max(...segs.map(s=>s.dur),1);
+  const yMax=Math.ceil(maxV/1800)*1800;
+  const bars=segs.map(s=>{
+    const tip=`${s.range[0]}:00–${s.range[1]}:00 · 专注 ${fmtHours(s.dur)}${s.tasks.length?" · "+[...new Set(s.tasks)].join("、"):""}`;
+    return `<div class="bar-track" data-tip="${esc(tip)}"><div class="bar-fill" style="height:${Math.min(100,Math.round(s.dur/maxV*100))}%;"></div></div>`;
+  }).join("");
+  return `<div class="chart-title">今日 24 小时专注分布</div>
+    <div style="position:relative;">
+      <div class="y-axis"><span>${fmtHours(yMax)}</span><span>${fmtHours(yMax/2)}</span><span>0</span></div>
+      <div class="chart-wrap" style="margin-left:30px;">${bars}</div>
+    </div>
+    <div class="bar-labels" style="margin-left:30px;">${labels.map(l=>`<span>${esc(l)}</span>`).join("")}</div>
+    <div class="tiny" style="margin-top:4px;color:var(--sub);text-align:right;">纵轴：专注时长 (h)</div>`;
 }
 function ratioBars(tagDur,emptyText){
   const entries=Object.entries(tagDur).sort((a,b)=>b[1]-a[1]);
@@ -913,7 +1112,8 @@ function segHtmlG(action,current,items){return `<span class="seg" style="margin-
 /* 青瓷风配色（深浅模式均可读） */
 const ACCT_PALETTE=["#6F8F88","#C2A878","#B57B6E","#7E9CB8","#9DB7A0","#D6C7A1","#8FA98C","#C98F7A","#A88BB0","#6E8FA8"];
 /* 环形饼图：entries=[{name,value}]（value 可为负，扇形面积取绝对值，图例显示真实正负） */
-function donutChartHtml(entries,emptyText){
+function donutChartHtml(entries,emptyText,valFmt){
+  const f=valFmt||fmtMoney;
   const list=entries.filter(e=>e.value!==0);
   if(!list.length)return `<div class="chart-empty">${emptyText}</div>`;
   const total=list.reduce((a,e)=>a+Math.abs(e.value),0)||1;
@@ -924,10 +1124,10 @@ function donutChartHtml(entries,emptyText){
     const large=(a2-ang)>Math.PI?1:0;
     const p=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
     const [x1,y1]=p(rO,ang),[x2,y2]=p(rO,a2),[x3,y3]=p(rI,a2),[x4,y4]=p(rI,ang);
-    paths+=`<path d="M${x1.toFixed(2)} ${y1.toFixed(2)} A${rO} ${rO} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${rI} ${rI} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z" fill="${ACCT_PALETTE[i%ACCT_PALETTE.length]}" data-tip="${esc(e.name)} · ${fmtMoney(e.value)}"></path>`;
+    paths+=`<path d="M${x1.toFixed(2)} ${y1.toFixed(2)} A${rO} ${rO} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)} A${rI} ${rI} 0 ${large} 0 ${x4.toFixed(2)} ${y4.toFixed(2)} Z" fill="${ACCT_PALETTE[i%ACCT_PALETTE.length]}" data-tip="${esc(e.name)} · ${f(e.value)}"></path>`;
     ang=a2;
   });
-  const legend=list.map((e,i)=>`<div class="donut-lg"><i style="background:${ACCT_PALETTE[i%ACCT_PALETTE.length]}"></i><span class="donut-name">${esc(e.name)}</span><span class="donut-val" style="color:${e.value<0?'#C97B6E':'var(--accent)'}">${fmtMoney(e.value)}</span></div>`).join("");
+  const legend=list.map((e,i)=>`<div class="donut-lg"><i style="background:${ACCT_PALETTE[i%ACCT_PALETTE.length]}"></i><span class="donut-name">${esc(e.name)}</span><span class="donut-val" style="color:${e.value<0?'#C97B6E':'var(--accent)'}">${f(e.value)}</span></div>`).join("");
   return `<div class="donut-wrap"><svg class="donut" viewBox="0 0 160 160" width="160" height="160">${paths}</svg><div class="donut-legend">${legend}</div></div>`;
 }
 
@@ -944,10 +1144,11 @@ function showTip(el,text){
   tip.style.left=x+"px";tip.style.top=y+"px";
 }
 function hideTip(){const t=$("#chartTip");if(t)t.classList.remove("show");}
-document.addEventListener("mouseenter",e=>{const tr=e.target.closest("[data-tip]");if(tr)showTip(tr,tr.dataset.tip);},true);
-document.addEventListener("mouseleave",e=>{if(e.target.closest("[data-tip]"))hideTip();},true);
-document.addEventListener("touchstart",e=>{const tr=e.target.closest("[data-tip]");if(tr){showTip(tr,tr.dataset.tip);tr.classList.add("active");}},true);
-document.addEventListener("touchend",e=>{const tr=e.target.closest("[data-tip]");if(tr){setTimeout(hideTip,1200);tr.classList.remove("active");}},true);
+function closestTip(e){return e.target&&typeof e.target.closest==="function"?e.target.closest("[data-tip]"):null;}
+document.addEventListener("mouseenter",e=>{const tr=closestTip(e);if(tr)showTip(tr,tr.dataset.tip);},true);
+document.addEventListener("mouseleave",e=>{if(closestTip(e))hideTip();},true);
+document.addEventListener("touchstart",e=>{const tr=closestTip(e);if(tr){showTip(tr,tr.dataset.tip);tr.classList.add("active");}},true);
+document.addEventListener("touchend",e=>{const tr=closestTip(e);if(tr){setTimeout(hideTip,1200);tr.classList.remove("active");}},true);
 
 /* ===================== 锻炼计划 ===================== */
 const WORK_TAGS=["有氧训练","力量训练","练背","练腿","练臀","练肩","练胸","核心训练","拉伸放松"];
@@ -969,6 +1170,18 @@ function wkPanel(id,title,ico,summary,body){
   const open=wkPanelOpen(id);
   return `<div class="wk-panel">
     <div class="wk-panel-head" data-action="wk-panel" data-id="${id}">
+      <svg class="wp-ico" viewBox="0 0 24 24">${ico}</svg>
+      <span class="wp-title">${title}</span>
+      ${summary?`<span class="wp-sum">${summary}</span>`:""}
+      <svg class="wp-arrow ${open?"open":""}" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="wk-panel-body" style="${open?"":"display:none;"}">${body}</div>
+  </div>`;
+}
+function stPanel(id,title,ico,summary,body){
+  const open=state.studyPanels[id]!==false;
+  return `<div class="wk-panel st-panel">
+    <div class="wk-panel-head" data-action="st-panel" data-id="${id}">
       <svg class="wp-ico" viewBox="0 0 24 24">${ico}</svg>
       <span class="wp-title">${title}</span>
       ${summary?`<span class="wp-sum">${summary}</span>`:""}
@@ -1122,26 +1335,68 @@ function openWorkoutMenu(){
 }
 
 /* ===================== 学习计划 ===================== */
-function renderStudy(){
-  const d=state.studyDate, editable=d===todayStr();
-  const dayDur=store.timers.filter(x=>x.date===d&&x.importedBy.includes("study")).reduce((a,x)=>a+x.duration,0);
-  const tasks=store.studies.filter(s=>s.date===d).slice().sort((a,b)=>{const o={high:0,mid:1,low:2};return (a.done?1:0)-(b.done?1:0)||o[a.priority]-o[b.priority];});
+function filteredStudies(){
+  const sv=state.studyView||"all";
+  let list=store.studies.slice();
+  if(sv==="todo")list=list.filter(s=>!s.archived&&!s.done);
+  else if(sv==="archived")list=list.filter(s=>s.archived);
+  else list=list.filter(s=>!s.archived);
+  if(state.stQ){const q=state.stQ.toLowerCase();list=list.filter(s=>(s.title||"").toLowerCase().includes(q)||(s.deadline||"").includes(q));}
+  return list.sort((a,b)=>{const o={high:0,mid:1,low:2};return (a.done?1:0)-(b.done?1:0)||o[a.priority]-o[b.priority];});
+}
+function studyListInner(){
+  const batch=state.stBatch;
+  const list=filteredStudies();
   const prioDot={high:'<span class="dot dot-h"></span>',mid:'<span class="dot dot-m"></span>',low:'<span class="dot dot-l"></span>'};
   const unbindAct=s=> s.timerId?`<span class="act" data-action="st-unbind" data-id="${s.id}" title="移除计时"><svg><path d="M18 6L6 18M6 6l12 12"/></svg><i>移除</i></span>`:"";
-  const taskActs=s=> editable?`<div class="li-acts">
+  const taskActs=s=>{
+    const ed=s.date===todayStr();
+    const arc=`<span class="act" data-action="st-arc" data-id="${s.id}" title="${s.archived?"恢复待办":"归档"}"><svg><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 4h22v4H1z"/><path d="M10 12h4"/></svg><i>${s.archived?"恢复":"归档"}</i></span>`;
+    if(!ed)return `<div class="li-acts">${unbindAct(s)}${arc}</div>`;
+    return `<div class="li-acts">
       ${unbindAct(s)}
       <span class="act ai" data-action="st-import" data-id="${s.id}" title="导入计时"><svg><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><i>导入</i></span>
       <span class="act" data-action="st-done" data-id="${s.id}" title="${s.done?"取消完成":"完成"}"><svg><path d="M20 6L9 17l-5-5"/></svg><i>${s.done?"取消":"完成"}</i></span>
       <span class="act" data-action="st-edit" data-id="${s.id}" title="编辑"><svg><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><i>编辑</i></span>
+      ${arc}
       <span class="act" data-action="st-del" data-id="${s.id}" title="删除"><svg><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg><i>删除</i></span>
-    </div>`:(s.timerId?`<div class="li-acts">${unbindAct(s)}</div>`:"");
-  const taskHtml=tasks.map(s=>`<div class="list-item" style="${s.done?"opacity:.55;":""}">
-    <div class="li-main"><div class="li-title">${prioDot[s.priority]} ${esc(s.title)} ${s.done?'<span class="pill">已完成</span>':""}</div>
-      <div class="li-sub">${s.deadline?("截止 "+s.deadline):"无截止"}${s.duration?(" · 已学 "+fmt(s.duration)):""}${s.timerId?" · 已关联计时":""}</div></div>
-    ${taskActs(s)}
-  </div>`).join("");
-  const roBanner=editable?"":`<div class="ro-banner"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>历史日期 ${d} · 仅查看，回到「今日」可编辑新增</div>`;
-  // 周期统计（仅统计已导入的学习计时器）
+    </div>`;
+  };
+  const item=s=>{
+    const chk=batch?`<label class="chk" style="margin-right:10px;flex:none;"><input type="checkbox" data-action="st-check" data-id="${s.id}" ${state.stSel.includes(s.id)?"checked":""}><span></span></label>`:"";
+    return `<div class="list-item" style="${s.done?"opacity:.55;":""}">
+      ${chk}<div class="li-main"><div class="li-title">${prioDot[s.priority]} ${esc(s.title)} ${s.done?'<span class="pill">已完成</span>':""}</div>
+        <div class="li-sub">${s.deadline?("截止 "+s.deadline):"无截止"}${s.duration?(" · 已学 "+fmt(s.duration)):""}${s.timerId?" · 已关联计时":""}</div></div>
+      ${taskActs(s)}
+    </div>`;
+  };
+  const batchBar=batch?`<div class="batch-bar" style="margin-bottom:10px;">
+    <label class="chk"><input type="checkbox" data-action="st-all" ${list.length&&list.every(s=>state.stSel.includes(s.id))?"checked":""}><span></span></label>
+    <span class="tiny">已选 ${state.stSel.length}</span>
+    <div style="flex:1;"></div>
+    <div class="btn btn-line btn-sm" data-action="st-arc-sel">${state.studyView==="archived"?"还原":"归档"}</div>
+    <div class="btn btn-line btn-sm" data-action="st-del-sel" style="color:#B0736F;border-color:#B0736F;">删除</div>
+  </div>`:"";
+  if(!list.length)return batchBar+`<div class="empty">${state.stQ?"无匹配任务":"暂无学习任务"}</div>`;
+  return batchBar+list.map(item).join("");
+}
+function renderStudyListOnly(){const el=$("#stList");if(el)el.innerHTML=studyListInner();}
+function renderStudy(){
+  const d=state.studyDate;
+  const dayDur=store.timers.filter(x=>x.date===d&&x.importedBy.includes("study")).reduce((a,x)=>a+x.duration,0);
+  const sv=state.studyView||"all";
+  const list=filteredStudies();
+  // 待学任务面板（学习笔记模式：搜索 + 芯片 + 平铺列表）
+  const chips=[{v:"all",l:"全部"},{v:"todo",l:"待完成"},{v:"archived",l:"已归档"}].map(x=>`<span class="chip ${sv===x.v?"on":""}" data-action="st-view" data-v="${x.v}">${x.l}</span>`).join("");
+  const tasksBody=`
+    <div class="row" style="justify-content:flex-end;gap:8px;margin-bottom:10px;">
+      <span class="btn btn-line btn-sm" data-action="st-batch">${state.stBatch?"完成":"批量"}</span>
+      <span class="btn btn-line btn-sm" data-action="st-add">＋ 新增任务</span>
+    </div>
+    <div class="input" style="margin-bottom:10px;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg><input id="stSearch" placeholder="搜索任务名称 / 截止日期" value="${esc(state.stQ||"")}"></div>
+    <div class="chips-scroll" style="margin-bottom:8px;padding-right:18px;">${chips}</div>
+    <div id="stList">${studyListInner()}</div>`;
+  // 学习统计面板
   const period=state.stPeriod||"week";
   const [rStart,rEnd]=rangeBy(d,period);
   const timers=store.timers.filter(t=>t.date>=rStart&&t.date<=rEnd&&t.importedBy.includes("study"));
@@ -1152,22 +1407,14 @@ function renderStudy(){
     const cat=["英语","阅读","驾照"].find(k=>title.includes(k))||"其他";
     subjDur[cat]=(subjDur[cat]||0)+t.duration;
   });
-  const trend=trendData(d,period,"study");
-  const chart=barChartHtml(trend,"专注时长 (h)","暂无学习计时数据");
-  return `
-  ${roBanner}
-  <div class="card">
-    <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${mdLabel(d)} ${weekdayLabel(d)} 学习总览</div>
-    <div class="stat" style="text-align:left;"><b style="font-size:26px;">${fmt(dayDur)}</b><i>当日专注学习时长（仅导入计时）</i></div>
-  </div>
-  <div class="card">
-    <div class="card-title">待学任务 <span class="more">${editable?"点击「导入计时」关联计时器":"历史日期 · 仅查看"}</span></div>
-    ${editable?`<div class="btn btn-line btn-sm" style="margin-bottom:12px;" data-action="st-add">＋ 新增任务</div>`:""}
-    ${taskHtml||`<div class="empty">该日暂无学习任务</div>`}
-  </div>
-  ${noteDirHtml()}
-  <div class="card">
-    <div class="card-title"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 20V10M12 20V4M18 20v-8"/></svg>学习统计${segHtml("st-period",period)}</div>
+  const tr=trendData(d,period,"study");
+  const chartEntries=tr.xLabels.map((lb,i)=>({name:lb,value:tr.values[i]})).filter(e=>e.value>0);
+  const chart=period==="day"
+    ? `<div class="tiny" style="color:var(--sub);">今日累计专注学习时长（仅导入计时）</div><div class="stat" style="margin-top:8px;"><b style="font-size:26px;">${fmt(dayDur)}</b><i>${dayDur?"今日总学习时长":"今日暂无学习计时"}</i></div>`
+    : period==="week"
+      ? barChartHtml(tr,"专注时长 (h)","暂无学习计时数据")
+      : donutChartHtml(chartEntries,"暂无学习计时数据",fmtHours);
+  const statsBody=`<div class="row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;"><div class="tiny" style="font-weight:600;">${periodName(period)}统计</div>${segHtmlStudy(period)}</div>
     <div class="grid-4" style="grid-template-columns:1fr 1fr;gap:14px;">
       <div class="stat"><b>${fmt(totalDur)}</b><i>${periodName(period)}总专注时长</i></div>
       <div class="stat"><b>${timers.length}</b><i>导入计时次数</i></div>
@@ -1176,8 +1423,16 @@ function renderStudy(){
       <div class="tiny" style="margin-bottom:8px;">科目时长占比</div>
       ${ratioBars(subjDur,"暂无科目数据")}
     </div>
-    ${chart}
-  </div>`;
+    ${chart}`;
+  return `
+  <div class="card">
+    <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${mdLabel(d)} ${weekdayLabel(d)} 学习总览</div>
+    <div class="stat" style="text-align:left;"><b style="font-size:26px;">${fmt(dayDur)}</b><i>当日专注学习时长（仅导入计时）</i></div>
+  </div>
+  ${stPanel("tasks","待学任务",'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', `${list.length} 个任务 · ${sv==="all"?"全部":sv==="todo"?"待完成":"已归档"}`, tasksBody)}
+  ${stPanel("notes","学习笔记 · 目录",'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>', `${filteredNotes().length} 篇笔记`, noteDirHtml())}
+  ${stPanel("stats","学习统计",'<path d="M3 20h18"/><path d="M6 20V10M12 20V4M18 20v-8"/>', `${periodName(period)} · ${fmt(totalDur)}`, statsBody)}
+  `;
 }
 
 /* ===================== 学习笔记目录 + 详情二级页 ===================== */
@@ -1192,36 +1447,50 @@ function filteredNotes(){
   return list;
 }
 function noteListInner(){
+  const batch=state.noteBatch;
   const list=filteredNotes();
   const shown=Math.min(list.length,(state.notePage+1)*20);
   const view=list.slice(0,shown);
   const groups={};view.forEach(n=>{(groups[n.date]=groups[n.date]||[]).push(n);});
   const gkeys=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
-  const item=n=>`<div class="list-item" style="cursor:pointer;" data-action="nt-open" data-id="${n.id}">
-    <div class="li-main"><div class="li-title">${esc(n.title||"未命名笔记")} <span class="tag qc">${esc(n.category)}</span></div>
-      <div class="li-sub">${n.date} · ${esc((n.content||"").replace(/\n/g," ").slice(0,42))}${(n.content||"").length>42?"…":""}</div></div>
-    <div class="li-acts">
+  const item=n=>{
+    const chk=batch?`<label class="chk" style="margin-right:10px;flex:none;"><input type="checkbox" data-action="note-check" data-id="${n.id}" ${state.noteSel.includes(n.id)?"checked":""}><span></span></label>`:"";
+    const acts=!batch?`<div class="li-acts">
       <span class="act" data-action="nt-arc" data-id="${n.id}" title="${n.archived?"取消归档":"归档"}"><svg><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 4h22v4H1z"/><path d="M10 12h4"/></svg><i>${n.archived?"还原":"归档"}</i></span>
       <svg style="width:15px;height:15px;stroke:var(--sub);fill:none;stroke-width:1.8;align-self:center;" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
-    </div>
-  </div>`;
+    </div>`:"";
+    return `<div class="list-item" ${batch?'':`style="cursor:pointer;" data-action="nt-open" data-id="${n.id}"`}>
+      ${chk}<div class="li-main"><div class="li-title">${esc(n.title||"未命名笔记")} <span class="tag qc">${esc(n.category)}</span></div>
+        <div class="li-sub">${n.date} · ${esc((n.content||"").replace(/\n/g," ").slice(0,42))}${(n.content||"").length>42?"…":""}</div></div>
+      ${acts}
+    </div>`;
+  };
+  const batchBar=batch?`<div class="batch-bar" style="margin-bottom:10px;">
+    <label class="chk"><input type="checkbox" data-action="note-all" ${view.length&&view.every(n=>state.noteSel.includes(n.id))?"checked":""}><span></span></label>
+    <span class="tiny">已选 ${state.noteSel.length}</span>
+    <div style="flex:1;"></div>
+    <div class="btn btn-line btn-sm" data-action="note-arc-sel">归档</div>
+    <div class="btn btn-line btn-sm" data-action="note-del-sel" style="color:#B0736F;border-color:#B0736F;">删除</div>
+  </div>`:"";
   let html="";
   gkeys.forEach(d=>{html+=`<div class="group-head"><b>${d}</b><span class="cnt">${groups[d].length} 篇</span></div>`+groups[d].map(item).join("");});
   if(!view.length)html=`<div class="empty">${state.noteArchived?"暂无归档笔记":"还没有笔记，点右上角「新建笔记」开始书写"}</div>`;
   html+=shown<list.length?`<div class="load-hint" data-action="note-more"><span class="spin"></span>已展示 ${shown} / ${list.length} 篇，点击加载更多</div>`:(list.length?`<div class="load-hint">已展示全部 ${list.length} 篇</div>`:"");
-  return html;
+  return batchBar+html;
 }
 function renderNoteListOnly(){const el=$("#noteList");if(el)el.innerHTML=noteListInner();}
 function noteDirHtml(){
   const catChips=["all",...noteCats()].map(c=>`<span class="chip ${!state.noteArchived&&state.noteCat===c?"on":""}" data-nc="${c}">${c==="all"?"全部":esc(c)}</span>`).join("")
     +`<span class="chip ${state.noteArchived?"on":""}" data-nc="__arc">已归档</span>`;
-  return `<div class="card">
-    <div class="card-title"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>学习笔记 · 目录
-      <span class="btn btn-line btn-sm" data-action="nt-new" style="margin-left:auto;">＋ 新建笔记</span></div>
+  return `
+    <div class="row" style="justify-content:flex-end;gap:8px;margin-bottom:10px;">
+      <span class="btn btn-line btn-sm" data-action="note-batch">${state.noteBatch?"完成":"批量"}</span>
+      <span class="btn btn-line btn-sm" data-action="nt-new">＋ 新建笔记</span>
+    </div>
     <div class="input" style="margin-bottom:10px;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg><input id="noteSearch" placeholder="全文搜索笔记标题与内容" value="${esc(state.noteQ)}"></div>
     <div class="chips-scroll" style="margin-bottom:8px;padding-right:18px;">${catChips}</div>
     <div id="noteList">${noteListInner()}</div>
-  </div>`;
+  `;
 }
 /* ---- 统一富文本工具栏（笔记 / 备忘详情页共用） ---- */
 const LH_MAP={compact:"1.5",std:"1.9",loose:"2.4"};
@@ -1292,10 +1561,13 @@ function renderNoteDetail(){
 
 /* ===================== 每日清单 ===================== */
 function renderTodo(){
-  const f=state.todoFilter;
+  const v=state.todoView||"all";
+  const f=state.todoFilter||"all";
   let list=store.todos.slice();
-  if(f!=="all"&&f!=="done")list=list.filter(t=>t.priority===f);
-  if(f==="done")list=list.filter(t=>t.done);
+  if(v==="todo")list=list.filter(t=>!t.archived&&!t.done);
+  else if(v==="archived")list=list.filter(t=>t.archived);
+  else list=list.filter(t=>!t.archived);
+  if(f!=="all")list=list.filter(t=>t.priority===f);
   const o={high:0,mid:1,low:2};
   list.sort((a,b)=>(a.done?1:0)-(b.done?1:0)||o[a.priority]-o[b.priority]);
   const dot={high:'<span class="dot dot-h"></span>',mid:'<span class="dot dot-m"></span>',low:'<span class="dot dot-l"></span>'};
@@ -1307,13 +1579,18 @@ function renderTodo(){
     <div class="li-acts">
       <span class="act ai" data-action="td-import" data-id="${t.id}" title="导入计时"><svg><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><i>导入</i></span>
       <span class="act" data-action="td-edit" data-id="${t.id}" title="编辑"><svg><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><i>编辑</i></span>
+      <span class="act" data-action="td-arc" data-id="${t.id}" title="${t.archived?"恢复待办":"归档"}"><svg><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 4h22v4H1z"/><path d="M10 12h4"/></svg><i>${t.archived?"恢复":"归档"}</i></span>
       <span class="act" data-action="td-del" data-id="${t.id}" title="删除"><svg><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg><i>删除</i></span>
     </div>
   </div>`).join("");
+  const vchip=(k,l)=>`<span class="chip ${v===k?"on":""}" data-action="td-view" data-v="${k}">${l}</span>`;
   const fchip=(k,l)=>`<span class="chip ${f===k?"on":""}" data-tf="${k}">${l}</span>`;
   return `
+  <div class="chips-scroll" style="margin-bottom:8px;">
+    ${vchip("all","全部")}${vchip("todo","待完成")}${vchip("archived","已归档")}
+  </div>
   <div class="chips-scroll" id="todoFilter" style="margin-bottom:14px;">
-    ${fchip("all","全部")}${fchip("high","高优先级")}${fchip("mid","中优先级")}${fchip("low","低优先级")}${fchip("done","已完成")}
+    ${fchip("all","全部")}${fchip("high","高")}${fchip("mid","中")}${fchip("low","低")}
   </div>
   <div class="input" style="margin-bottom:14px;cursor:pointer;" data-action="td-add">
     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>添加新任务…</span></div>
@@ -1344,19 +1621,31 @@ function renderMemo(){
   const rest=view.filter(m=>!m.star);
   const groups={};rest.forEach(m=>{(groups[m.date]=groups[m.date]||[]).push(m);});
   const gkeys=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
-  const itemHtml=m=>`<div class="list-item" style="cursor:pointer;" data-action="mm-open" data-id="${m.id}">
-    <div class="li-main"><div class="li-title">${m.star?'<span style="color:var(--accent);">⭐</span> ':""}${esc((m.content||"").replace(/\n/g," ").slice(0,60))}${(m.content||"").length>60?"…":""}</div>
-      <div class="li-sub">${m.date} · <span class="tag qc">${esc(m.tag)}</span>${m.images&&m.images.length?` · 含图 ${m.images.length}`:""}</div></div>
-    <div class="li-acts">
+  const itemHtml=m=>{
+    const chk=state.memoBatch?`<label class="chk" style="margin-right:10px;flex:none;"><input type="checkbox" data-action="memo-check" data-id="${m.id}" ${state.memoSel.includes(m.id)?"checked":""}><span></span></label>`:"";
+    const acts=!state.memoBatch?`<div class="li-acts">
       <span class="act" data-action="mm-star" data-id="${m.id}" title="标星"><svg><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.4 6.8 19.2l1-5.9L3.5 9.2l5.9-.8z"/></svg><i>标星</i></span>
       <span class="act" data-action="mm-arc" data-id="${m.id}" title="归档"><svg><path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/><path d="M1 4h22v4H1z"/><path d="M10 12h4"/></svg><i>归档</i></span>
       <span class="act" data-action="mm-del" data-id="${m.id}" title="删除"><svg><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg><i>删除</i></span>
-    </div>
-  </div>`;
+    </div>`:"";
+    return `<div class="list-item" ${state.memoBatch?'':`style="cursor:pointer;" data-action="mm-open" data-id="${m.id}"`}>
+      ${chk}<div class="li-main"><div class="li-title">${m.star?'<span style="color:var(--accent);">⭐</span> ':""}${esc((m.content||"").replace(/\n/g," ").slice(0,60))}${(m.content||"").length>60?"…":""}</div>
+        <div class="li-sub">${m.date} · <span class="tag qc">${esc(m.tag)}</span>${m.images&&m.images.length?` · 含图 ${m.images.length}`:""}</div></div>
+      ${acts}
+    </div>`;
+  };
+  const batchBar=state.memoBatch?`<div class="batch-bar" style="margin-bottom:10px;">
+    <label class="chk"><input type="checkbox" data-action="memo-all" ${view.length&&view.every(m=>state.memoSel.includes(m.id))?"checked":""}><span></span></label>
+    <span class="tiny">已选 ${state.memoSel.length}</span>
+    <div style="flex:1;"></div>
+    <div class="btn btn-line btn-sm" data-action="memo-arc-sel">归档</div>
+    <div class="btn btn-line btn-sm" data-action="memo-del-sel" style="color:#B0736F;border-color:#B0736F;">删除</div>
+  </div>`:"";
   let html="";
   if(starTop.length)html+=starTop.map(itemHtml).join("");
   gkeys.forEach(d=>{html+=`<div class="group-head"><b>${d}</b><span class="cnt">${groups[d].length} 条</span></div>`+groups[d].map(itemHtml).join("");});
   if(!view.length)html=`<div class="empty">暂无备忘录</div>`;
+  if(state.memoBatch)html=batchBar+html;
   const hint=shown<list.length?`<div class="load-hint" data-action="memo-more"><span class="spin"></span>已展示 ${shown} / ${list.length} 条</div>`:`<div class="load-hint">已展示全部 ${list.length} 条</div>`;
   // 时间索引（PC）
   const dates=[...new Set(store.memos.map(m=>m.date))].sort((a,b)=>b.localeCompare(a)).slice(0,7);
@@ -1367,6 +1656,7 @@ function renderMemo(){
   <div class="pc-flex">
     <div class="card" style="flex:1;">
       <div class="card-title"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>备忘录 · 目录
+        <span class="btn btn-line btn-sm" data-action="memo-batch">${state.memoBatch?"完成":"批量"}</span>
         <span class="btn btn-line btn-sm" data-action="mm-new" style="margin-left:auto;">＋ 长篇书写</span></div>
       <div class="row" style="margin-bottom:14px;gap:8px;flex-wrap:wrap;">
         <div class="input" style="flex:1;min-width:0;min-width:0;">
@@ -1434,7 +1724,7 @@ function saveMemoDetail(){
 }
 
 /* ===================== 渲染调度 ===================== */
-const TITLES={timer:"计时器",countdown:"倒数日",workout:"锻炼计划",study:"学习计划",todo:"每日清单",account:"每日记账",memo:"综合记录",noteDetail:"笔记详情",memoDetail:"备忘详情"};
+const TITLES={timer:"计时器",countdown:"倒数日",workout:"锻炼计划",study:"学习计划",todo:"每日清单",account:"每日记账",memo:"综合记录",trash:"回收站",noteDetail:"笔记详情",memoDetail:"备忘详情"};
 const NAV_OF={noteDetail:"study",memoDetail:"memo"};
 function go(page){
   if(page!=="workout")state.wkEdit=false;
@@ -1447,26 +1737,33 @@ function go(page){
   if(db){const showDP=(page==="workout"||page==="study"||page==="account");db.classList.toggle("show",showDP);db.innerHTML=showDP?dateBarHtml():"";}
   const mb=$("#moreBtn");
   if(mb)mb.style.display=(page==="workout"&&state.workoutDate!==todayStr())?"flex":"none";
-  const map={timer:renderTimer,countdown:renderCountdown,workout:renderWorkout,study:renderStudy,todo:renderTodo,account:renderAccount,memo:renderMemo,noteDetail:renderNoteDetail,memoDetail:renderMemoDetail};
+  const map={timer:renderTimer,countdown:renderCountdown,workout:renderWorkout,study:renderStudy,todo:renderTodo,account:renderAccount,memo:renderMemo,trash:renderTrash,noteDetail:renderNoteDetail,memoDetail:renderMemoDetail};
   $("#view").innerHTML=map[page]();
   if(page==="timer")afterTimer();
   if(page==="workout")afterWorkout();
   if(page==="memo")afterMemo();
   if(page==="account")afterAccount();
+  if(page==="countdown")afterCountdown(); else if(cdTickInt){clearInterval(cdTickInt);cdTickInt=null;}
   $("#view").scrollTop=0;
   // 回到顶部按钮
   const fab=$(".fab");if(fab)fab.classList.remove("show");
 }
-function render(){go(state.page);}
+function render(){go(state.page);updateSideTrash();}
 // 滚动显示回到顶部
 $("#view").addEventListener("scroll",()=>{const fab=$(".fab");if(!fab)return;if($("#view").scrollTop>400)fab.classList.add("show");else fab.classList.remove("show");});
 
 /* ===================== 通用模态 ===================== */
 const overlay=$("#overlay"),modal=$("#modal");
+const calOverlay=$("#calOverlay"),calModal=$("#calModal");
 function openModal(html){modal.innerHTML=html;overlay.classList.add("show");}
 function closeModal(){overlay.classList.remove("show");modal.innerHTML="";}
+function openCalModal(html){calModal.innerHTML=html;calOverlay.classList.add("show");}
+function closeCalModal(){calOverlay.classList.remove("show");calModal.innerHTML="";datePickerTarget=null;pendingDateField=null;}
 function closeNav(){const sb=document.querySelector(".sidebar");if(sb)sb.classList.remove("open");const m=document.getElementById("sideMask");if(m)m.classList.remove("show");}
+function updateSideTrash(){const b=document.getElementById("sideTrashCount");if(b)b.textContent=store.trash.length?String(store.trash.length):"";}
 overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
+/* 点日历遮罩空白处只关日历本身，绝不影响底层的新增/编辑弹窗（避免“弹窗闪退”） */
+calOverlay.addEventListener("click",e=>{if(e.target===calOverlay){closeCalModal();}});
 function field(label,inner){return `<div class="field"><label>${label}</label>${inner}</div>`;}
 
 /* 计时器导入选择器 */
@@ -1481,22 +1778,32 @@ function pickTimer(cb){
 
 /* ===================== 事件分发 ===================== */
 /* 工具栏按下时不抢编辑器焦点，保住文字选区 */
-document.addEventListener("mousedown",e=>{if(e.target.closest(".rt-bar"))e.preventDefault();});
+document.addEventListener("mousedown",e=>{const t=e.target;if(t&&typeof t.closest==="function"&&t.closest(".rt-bar"))e.preventDefault();});
 document.addEventListener("click",e=>{
-  const nav=e.target.closest("[data-nav]");
+  if(cdJustDragged)return;
+  const t=e.target;if(!t||typeof t.closest!=="function")return;
+  const nav=t.closest("[data-nav]");
   if(nav){go(nav.dataset.nav);closeNav();return;}
-  const jp=e.target.closest("[data-jump]");
+  const jp=t.closest("[data-jump]");
   if(jp){const d=jp.dataset.jump;const gh=[...document.querySelectorAll("#view .group-head b")].find(b=>b.textContent.includes(d));if(gh)gh.scrollIntoView({behavior:"smooth",block:"start"});return;}
-  const rt=e.target.closest("[data-rt]");
+  const rt=t.closest("[data-rt]");
   if(rt){rtExec(rt);return;}
-  const el=e.target.closest("[data-action]");
+  const el=t.closest("[data-action]");
   if(!el)return;
   const a=el.dataset.action,id=el.dataset.id;
   // 导航类
   if(a==="theme"){toggleTheme();return;}
   if(a==="top"){$("#view").scrollTo({top:0,behavior:"smooth"});return;}
-  if(a==="close"){closeModal();return;}
+  if(a==="close"){if(calOverlay.classList.contains("show")){closeCalModal();return;}closeModal();return;}
   if(a==="data-menu"){openDataMenu();return;}
+  if(a==="open-trash"){closeNav();closeModal();go("trash");return;}
+  if(a==="trash-check"){state.trashSel=state.trashSel||[];const ci=state.trashSel.indexOf(id);const chk=el.querySelector("input");if(chk&&chk.checked){if(ci<0)state.trashSel.push(id);}else{if(ci>=0)state.trashSel.splice(ci,1);}return;}
+  if(a==="trash-all"){const chk=el.querySelector("input");state.trashSel=chk&&chk.checked?store.trash.map(t=>t.id):[];return;}
+  if(a==="trash-restore"){restoreFromTrash(id);render();return;}
+  if(a==="trash-purge"){if(confirm("永久删除该数据？此操作不可恢复。")){purgeTrash(id);render();}return;}
+  if(a==="trash-restore-sel"){const sel=state.trashSel||[];if(!sel.length){toast("请先勾选要恢复的项");return;}sel.forEach(tid=>restoreFromTrash(tid));state.trashSel=[];render();return;}
+  if(a==="trash-purge-sel"){const sel=state.trashSel||[];if(!sel.length){toast("请先勾选要删除的项");return;}if(confirm("永久删除选中的 "+sel.length+" 条数据？此操作不可恢复。")){sel.forEach(tid=>purgeTrash(tid));state.trashSel=[];render();}return;}
+  if(a==="trash-clear"){if(!store.trash.length){toast("回收站为空");return;}if(confirm("清空回收站？所有数据将永久删除且不可恢复。")){clearTrash();state.trashSel=[];render();}return;}
 
   /* ---- 计时器 ---- */
   if(a==="timer-start"){state.timer.name=$("#timerName")?$("#timerName").value:state.timer.name;timerStart();return;}
@@ -1506,14 +1813,26 @@ document.addEventListener("click",e=>{
   if(a==="timer-import"){pickTimer(t=>{markImported(id,"timer");toast("已准备好导入，请在对应页面保存");closeModal();});return;}
   if(a==="timer-edit"){editTimer(id);return;}
   if(a==="timer-archive"){const t=store.timers.find(x=>x.id===id);if(t){t.archived=!t.archived;save();render();}return;}
-  if(a==="timer-del"){if(confirm("确定删除该计时记录？")){store.timers=store.timers.filter(x=>x.id!==id);save();render();}return;}
+  if(a==="timer-del"){const t=store.timers.find(x=>x.id===id);if(confirm("删除该计时记录？将移入回收站保留 "+TRASH_DAYS+" 天。")){moveToTrash("timer",t);render();}return;}
+
+  /* ---- 计时器历史：折叠 / 批量 ---- */
+  if(a==="hist-fold"){const g=el.dataset.g;state.histFold[g]=(state.histFold[g]!==false)?false:true;renderTimerListOnly();return;}
+  if(a==="timer-batch"){state.timerBatch=!state.timerBatch;if(!state.timerBatch)state.timerSel=[];render();return;}
+  if(a==="timer-check"){const sid=el.dataset.id;const i=state.timerSel.indexOf(sid);if(i>=0)state.timerSel.splice(i,1);else state.timerSel.push(sid);renderTimerListOnly();return;}
+  if(a==="timer-all"){const total=filteredTimers().length;const shown=Math.min(total,(state.histPage+1)*20);const list=filteredTimers().slice(0,shown);const all=list.length>0&&list.every(t=>state.timerSel.includes(t.id));list.forEach(t=>{const i=state.timerSel.indexOf(t.id);if(all){if(i>=0)state.timerSel.splice(i,1);}else{if(i<0)state.timerSel.push(t.id);}});renderTimerListOnly();return;}
+  if(a==="timer-arc-sel"){if(!state.timerSel.length){toast("请先选择计时");return;}state.timerSel.forEach(sid=>{const t=store.timers.find(x=>x.id===sid);if(t)t.archived=true;});const n=state.timerSel.length;state.timerSel=[];save();render();toast("已归档 "+n+" 条计时");return;}
+  if(a==="timer-del-sel"){if(!state.timerSel.length){toast("请先选择计时");return;}if(confirm("删除所选 "+state.timerSel.length+" 条计时？将移入回收站保留 "+TRASH_DAYS+" 天。")){state.timerSel.forEach(sid=>{const t=store.timers.find(x=>x.id===sid);if(t)moveToTrash("timer",t);});state.timerSel=[];render();}return;}
 
   /* ---- 倒数日 ---- */
   if(a==="cd-add"){addCountdown();return;}
   if(a==="cd-edit"){addCountdown(id);return;}
-  if(a==="cd-del"){if(confirm("删除该倒数事件？")){store.countdowns=store.countdowns.filter(c=>c.id!==id);save();render();}return;}
-  if(a==="cd-pin"){const c=store.countdowns.find(x=>x.id===id);if(c){store.countdowns.forEach(x=>x.pinned=false);c.pinned=true;save();render();}return;}
+  if(a==="cd-del"){const c=store.countdowns.find(x=>x.id===id);if(confirm("删除该倒数事件？将移入回收站保留 "+TRASH_DAYS+" 天。")){moveToTrash("countdown",c);render();}return;}
   if(a==="cd-ye"){const c=store.countdowns.find(x=>x.id===id);if(c){c.yearly=!c.yearly;save();render();}return;}
+  if(a==="cd-batch"){state.cdBatch=!state.cdBatch;if(!state.cdBatch)state.cdSel=[];render();return;}
+  if(a==="cd-check"){const cid=el.dataset.id;if(state.cdSel.includes(cid))state.cdSel=state.cdSel.filter(x=>x!==cid);else state.cdSel.push(cid);render();return;}
+  if(a==="cd-all"){const {view}=cdView();const all=view.length&&view.every(c=>state.cdSel.includes(c.id));if(all)state.cdSel=state.cdSel.filter(x=>!view.some(c=>c.id===x));else view.forEach(c=>{if(!state.cdSel.includes(c.id))state.cdSel.push(c.id);});render();return;}
+  if(a==="cd-del-sel"){if(!state.cdSel.length){toast("请先选择条目");return;}if(confirm("删除选中的 "+state.cdSel.length+" 个事件？将移入回收站保留 "+TRASH_DAYS+" 天。")){state.cdSel.forEach(id2=>{const c=store.countdowns.find(x=>x.id===id2);if(c)moveToTrash("countdown",c);});state.cdSel=[];state.cdBatch=false;render();}return;}
+  if(a==="cd-more"){state.cdPage=(state.cdPage||0)+1;render();return;}
 
   /* ---- 日期切换 ---- */
   if(a==="date-prev"){shiftDate(-1);return;}
@@ -1521,26 +1840,25 @@ document.addEventListener("click",e=>{
   if(a==="date-open"){openCalendar();return;}
   if(a==="date-field"){
     const cur=el.dataset.dfdate||todayStr();
-    openCalendar(cur,d=>{
-      el.dataset.dfdate=d;
-      const inp=$(el.dataset.dfinput);if(inp)inp.value=d;
-      const dsp=$(el.dataset.dfdisp);if(dsp){dsp.textContent=d;dsp.style.color="var(--text)";}
-    });
+    pendingDateField=el;
+    openCalendar(cur,d=>{writeDateField(el,d);pendingDateField=null;});
     return;
   }
   if(a==="date-clear"){el.closest(".input").dataset.dfdate="";const inp=$(el.closest(".input").dataset.dfinput);if(inp)inp.value="";return;}
-  if(a==="db-day"){setCurDate(el.dataset.dbday);render();return;}
+  if(a==="db-day"){const gdt=el.dataset.dbday;setCurDate(gdt);render();return;}
   if(a==="cal-day"){
-    const ds=e.target.closest("[data-action='cal-day']").dataset.date;
-    if(datePickerTarget){datePickerTarget.date=ds;datePickerTarget.onSelect(ds);datePickerTarget=null;closeModal();}
-    else{setCurDate(ds);closeModal();render();}
+    const ds=el.dataset.date;
+    if(datePickerTarget){datePickerTarget.onSelect(ds);datePickerTarget=null;pendingDateField=null;closeCalModal();}
+    else if(pendingDateField){writeDateField(pendingDateField,ds);pendingDateField=null;closeCalModal();}
+    else{setCurDate(ds);closeCalModal();render();}
     return;
   }
   if(a==="cal-prev"){calMonth.m--;if(calMonth.m<0){calMonth.m=11;calMonth.y--;}refreshCalendar();return;}
   if(a==="cal-next"){calMonth.m++;if(calMonth.m>11){calMonth.m=0;calMonth.y++;}refreshCalendar();return;}
   if(a==="cal-week"){
-    if(datePickerTarget){datePickerTarget.onSelect(todayStr());datePickerTarget=null;closeModal();}
-    else{setCurDate(todayStr());closeModal();render();}
+    if(datePickerTarget){datePickerTarget.onSelect(todayStr());datePickerTarget=null;pendingDateField=null;closeCalModal();}
+    else if(pendingDateField){writeDateField(pendingDateField,todayStr());pendingDateField=null;closeCalModal();}
+    else{setCurDate(todayStr());closeCalModal();render();}
     return;
   }
 
@@ -1604,33 +1922,44 @@ document.addEventListener("click",e=>{
     const acc=$("#acAccount")?$("#acAccount").value:null;
     const note=$("#acNote")?$("#acNote").value.trim():"";
     store.bills.push({id:uid(),date:state.acctDate,type:state.acctType,amount,cat:state.acctCat,account:acc,note,auto:false,tplId:null,ts:Date.now()});
-    state.acctCat="";state.acctAmount="";save();render();toast("已保存账单");return;
+    state.acctCat="";state.acctAmount="";state.acctPanels.bills=true;save();render();toast("已保存账单");return;
   }
   if(a==="ac-edit"){openBillModal(id);return;}
-  if(a==="ac-del"){if(confirm("删除该账单？")){store.bills=store.bills.filter(b=>b.id!==id);save();render();toast("已删除");}return;}
+  if(a==="ac-del"){const b=store.bills.find(x=>x.id===id);if(confirm("删除该账单？将移入回收站保留 "+TRASH_DAYS+" 天。")){moveToTrash("bill",b);render();}return;}
   if(a==="acct-panel"){const pid=el.dataset.id;state.acctPanels[pid]=!state.acctPanels[pid];const panel=el.closest(".wk-panel");if(panel){const body=panel.querySelector(".wk-panel-body");const arrow=panel.querySelector(".wp-arrow");if(state.acctPanels[pid]){body.style.display="";arrow.classList.add("open");}else{body.style.display="none";arrow.classList.remove("open");}}return;}
   if(a==="acct-add"){openAcctModal();return;}
   if(a==="acct-edit"){openAcctModal(id);return;}
   if(a==="acct-del"){
-    if(confirm("删除该账户？绑定此账户的账单将保留并标记为「未选账户」。")){
-      store.bills.forEach(b=>{if(b.account===id)b.account=null;});
-      store.accounts=store.accounts.filter(x=>x.id!==id);
-      save();render();toast("账户已删除");
+    const a2=store.accounts.find(x=>x.id===id);
+    if(confirm("删除该账户？将移入回收站保留 "+TRASH_DAYS+" 天；绑定此账户的账单会保留并标记为「未选账户」。")){
+      moveToTrash("account",a2);render();
     }
     return;
   }
   if(a==="tpl-add"){openTplModal();return;}
   if(a==="tpl-edit"){openTplModal(id);return;}
-  if(a==="tpl-del"){if(confirm("删除该模板？已生成的账单会保留。")){store.autotpls=store.autotpls.filter(x=>x.id!==id);save();render();toast("模板已删除");}return;}
+  if(a==="tpl-del"){const t=store.autotpls.find(x=>x.id===id);if(confirm("删除该模板？将移入回收站保留 "+TRASH_DAYS+" 天；已生成的账单会保留。")){moveToTrash("autotpl",t);render();}return;}
   if(a==="tpl-toggle"){const t=store.autotpls.find(x=>x.id===id);if(t){t.enabled=!t.enabled;save();render();}return;}
 
+  /* ---- 自定义收支分类 ---- */
+  if(a==="cat-add"){const pool=el.dataset.pool;const arr=pool==="in"?store.incomeCats:store.expenseCats;const inp=$("#catAdd_"+pool);const v=inp?inp.value.trim():"";if(!v){toast("请输入分类名称");return;}if(arr.includes(v)){toast("分类已存在");return;}arr.push(v);save();render();toast("已添加分类「"+v+"」");return;}
+  if(a==="cat-del"){const pool=el.dataset.pool;const arr=pool==="in"?store.incomeCats:store.expenseCats;const c=el.dataset.cat;if(confirm("删除收支分类「"+c+"」？\n已使用该分类的历史账单仍会正常显示，不会被删除。")){const i=arr.indexOf(c);if(i>=0)arr.splice(i,1);save();render();}return;}
+
   /* ---- 学习 ---- */
-  if(a==="st-add"){if(state.studyDate!==todayStr()){toast("历史日期仅查看");return;}addStudy();return;}
-  if(a==="st-edit"){if(state.studyDate!==todayStr()){toast("历史日期仅查看");return;}addStudy(id);return;}
-  if(a==="st-del"){if(state.studyDate!==todayStr()){toast("历史日期仅查看");return;}if(confirm("删除该学习任务？")){store.studies=store.studies.filter(s=>s.id!==id);save();render();}return;}
-  if(a==="st-done"){if(state.studyDate!==todayStr()){toast("历史日期仅查看");return;}const s=store.studies.find(x=>x.id===id);if(s){s.done=!s.done;save();render();}return;}
-  if(a==="st-import"){if(state.studyDate!==todayStr()){toast("历史日期不可导入");return;}pickTimer(t=>{const s=store.studies.find(x=>x.id===id);if(s){s.timerId=t.id;s.duration=(s.duration||0)+t.duration;if(!t.importedBy.includes("study"))t.importedBy.push("study");save();render();toast("已关联："+t.name);}});return;}
+  if(a==="st-view"){state.studyView=el.dataset.v;render();return;}
+  if(a==="st-arc"){const s=store.studies.find(x=>x.id===id);if(s){s.archived=!s.archived;save();render();toast(s.archived?"已归档":"已恢复至待办");}return;}
+  if(a==="st-add"){addStudy();return;}
+  if(a==="st-batch"){state.stBatch=!state.stBatch;if(!state.stBatch)state.stSel=[];render();return;}
+  if(a==="st-check"){const cid=el.dataset.id;if(state.stSel.includes(cid))state.stSel=state.stSel.filter(x=>x!==cid);else state.stSel.push(cid);renderStudyListOnly();return;}
+  if(a==="st-all"){const list=filteredStudies();const all=list.length&&list.every(s=>state.stSel.includes(s.id));if(all)state.stSel=state.stSel.filter(x=>!list.some(s=>s.id===x));else list.forEach(s=>{if(!state.stSel.includes(s.id))state.stSel.push(s.id);});renderStudyListOnly();return;}
+  if(a==="st-del-sel"){if(!state.stSel.length){toast("请先选择任务");return;}if(confirm("删除选中的 "+state.stSel.length+" 个任务？将移入回收站保留 "+TRASH_DAYS+" 天。")){state.stSel.forEach(id2=>{const s=store.studies.find(x=>x.id===id2);if(s)moveToTrash("study",s);});state.stSel=[];state.stBatch=false;render();}return;}
+  if(a==="st-arc-sel"){if(!state.stSel.length){toast("请先选择任务");return;}const arc=state.studyView!=="archived";store.studies.forEach(s=>{if(state.stSel.includes(s.id))s.archived=arc;});state.stSel=[];state.stBatch=false;save();render();toast(arc?"已批量归档":"已批量还原");return;}
+  if(a==="st-edit"){const s=store.studies.find(x=>x.id===id);if(s&&s.date!==todayStr()){toast("历史日期仅查看");return;}addStudy(id);return;}
+  if(a==="st-del"){const s=store.studies.find(x=>x.id===id);if(confirm("删除该学习任务？将移入回收站保留 "+TRASH_DAYS+" 天。")){moveToTrash("study",s);render();}return;}
+  if(a==="st-done"){const s=store.studies.find(x=>x.id===id);if(s&&s.date!==todayStr()){toast("历史日期仅查看");return;}if(s){s.done=!s.done;save();render();}return;}
+  if(a==="st-import"){const s=store.studies.find(x=>x.id===id);if(s&&s.date!==todayStr()){toast("历史日期不可导入");return;}pickTimer(t=>{const s=store.studies.find(x=>x.id===id);if(s){s.timerId=t.id;s.duration=(s.duration||0)+t.duration;if(!t.importedBy.includes("study"))t.importedBy.push("study");save();render();toast("已关联："+t.name);}});return;}
   if(a==="st-period"){state.stPeriod=el.dataset.p;render();return;}
+  if(a==="st-panel"){const pid=el.dataset.id;state.studyPanels[pid]=!state.studyPanels[pid];const panel=el.closest(".wk-panel");if(panel){const body=panel.querySelector(".wk-panel-body");const arrow=panel.querySelector(".wp-arrow");if(state.studyPanels[pid]){body.style.display="";arrow.classList.add("open");}else{body.style.display="none";arrow.classList.remove("open");}}return;}
   if(a==="st-unbind"){
     const s=store.studies.find(x=>x.id===id);
     if(s&&s.timerId){
@@ -1651,16 +1980,23 @@ document.addEventListener("click",e=>{
   if(a==="nt-new"){state.noteDetailId=null;go("noteDetail");return;}
   if(a==="nt-open"){state.noteDetailId=id;go("noteDetail");return;}
   if(a==="nt-arc"){const n=store.notes.find(x=>x.id===id);if(n){n.archived=!n.archived;save();render();toast(n.archived?"已归档":"已还原");}return;}
+  if(a==="note-batch"){state.noteBatch=!state.noteBatch;if(!state.noteBatch)state.noteSel=[];render();return;}
+  if(a==="note-check"){const cid=el.dataset.id;if(state.noteSel.includes(cid))state.noteSel=state.noteSel.filter(x=>x!==cid);else state.noteSel.push(cid);renderNoteListOnly();return;}
+  if(a==="note-all"){const list=filteredNotes();const view=list.slice(0,Math.min(list.length,(state.notePage+1)*20));const all=view.length&&view.every(n=>state.noteSel.includes(n.id));if(all)state.noteSel=state.noteSel.filter(x=>!view.some(n=>n.id===x));else view.forEach(n=>{if(!state.noteSel.includes(n.id))state.noteSel.push(n.id);});renderNoteListOnly();return;}
+  if(a==="note-arc-sel"){if(!state.noteSel.length){toast("请先选择笔记");return;}store.notes.forEach(n=>{if(state.noteSel.includes(n.id))n.archived=true;});state.noteSel=[];save();render();toast("已批量归档");return;}
+  if(a==="note-del-sel"){if(!state.noteSel.length){toast("请先选择笔记");return;}if(confirm("删除选中的 "+state.noteSel.length+" 篇笔记？将移入回收站保留 "+TRASH_DAYS+" 天。")){state.noteSel.forEach(id2=>{const n=store.notes.find(x=>x.id===id2);if(n)moveToTrash("note",n);});state.noteSel=[];state.noteBatch=false;render();}return;}
   if(a==="note-more"){state.notePage++;renderNoteListOnly();return;}
   if(a==="nt-back"){go("study");return;}
   if(a==="nd-img"){const f=$("#ndImgFile");if(f)f.click();return;}
   if(a==="nd-save"){saveNoteDetail();return;}
-  if(a==="nd-del"){if(confirm("删除这篇笔记？")){store.notes=store.notes.filter(x=>x.id!==state.noteDetailId);save();go("study");toast("笔记已删除");}return;}
+  if(a==="nd-del"){const n=store.notes.find(x=>x.id===state.noteDetailId);if(confirm("删除这篇笔记？将移入回收站保留 "+TRASH_DAYS+" 天。")){moveToTrash("note",n);go("study");}return;}
 
   /* ---- 清单 ---- */
+  if(a==="td-view"){state.todoView=el.dataset.v;render();return;}
+  if(a==="td-arc"){const t=store.todos.find(x=>x.id===id);if(t){t.archived=!t.archived;save();render();toast(t.archived?"已归档":"已恢复至待办");}return;}
   if(a==="td-add"){addTodo();return;}
   if(a==="td-edit"){addTodo(id);return;}
-  if(a==="td-del"){if(confirm("删除该任务？")){store.todos=store.todos.filter(t=>t.id!==id);save();render();}return;}
+  if(a==="td-del"){const t=store.todos.find(x=>x.id===id);if(confirm("删除该任务？将移入回收站保留 "+TRASH_DAYS+" 天。")){moveToTrash("todo",t);render();}return;}
   if(a==="td-done"){const t=store.todos.find(x=>x.id===id);if(t){t.done=!t.done;save();render();}return;}
   if(a==="td-import"){pickTimer(t=>{const td=store.todos.find(x=>x.id===id);if(td){td.timerId=t.id;td.duration=(td.duration||0)+t.duration;save();render();toast("已记录耗时："+fmt(t.duration));}});return;}
 
@@ -1670,14 +2006,26 @@ document.addEventListener("click",e=>{
   if(a==="memo-starfilter"){state.memoStar=!state.memoStar;state.memoPage=0;render();return;}
   if(a==="mm-star"){const m=store.memos.find(x=>x.id===id);if(m){m.star=!m.star;save();render();}return;}
   if(a==="mm-arc"){const m=store.memos.find(x=>x.id===id);if(m){m.archived=!m.archived;save();render();}return;}
-  if(a==="mm-del"){if(confirm("删除该备忘？")){store.memos=store.memos.filter(x=>x.id!==id);save();render();}return;}
+  if(a==="mm-del"){const m=store.memos.find(x=>x.id===id);if(confirm("删除该备忘？将移入回收站保留 "+TRASH_DAYS+" 天。")){moveToTrash("memo",m);render();}return;}
+  if(a==="memo-batch"){state.memoBatch=!state.memoBatch;if(!state.memoBatch)state.memoSel=[];render();return;}
+  if(a==="memo-check"){const cid=el.dataset.id;if(state.memoSel.includes(cid))state.memoSel=state.memoSel.filter(x=>x!==cid);else state.memoSel.push(cid);render();return;}
+  if(a==="memo-all"){const list=filteredMemos();const view=list.slice(0,Math.min(list.length,(state.memoPage+1)*20));const all=view.length&&view.every(m=>state.memoSel.includes(m.id));if(all)state.memoSel=state.memoSel.filter(x=>!view.some(m=>m.id===x));else view.forEach(m=>{if(!state.memoSel.includes(m.id))state.memoSel.push(m.id);});render();return;}
+  if(a==="memo-arc-sel"){if(!state.memoSel.length){toast("请先选择备忘");return;}store.memos.forEach(m=>{if(state.memoSel.includes(m.id))m.archived=true;});state.memoSel=[];save();render();toast("已批量归档");return;}
+  if(a==="memo-del-sel"){if(!state.memoSel.length){toast("请先选择备忘");return;}if(confirm("删除选中的 "+state.memoSel.length+" 条备忘？将移入回收站保留 "+TRASH_DAYS+" 天。")){state.memoSel.forEach(id2=>{const m=store.memos.find(x=>x.id===id2);if(m)moveToTrash("memo",m);});state.memoSel=[];state.memoBatch=false;render();}return;}
   if(a==="mm-open"){state.memoDetailId=id;go("memoDetail");return;}
   if(a==="mm-new"){state.memoDetailId=null;go("memoDetail");return;}
   if(a==="mm-back"){go("memo");return;}
   if(a==="md-img"){const f=$("#mdImgFile");if(f)f.click();return;}
   if(a==="md-save"){saveMemoDetail();return;}
   if(a==="md-star"){const m=store.memos.find(x=>x.id===state.memoDetailId);if(m){m.star=!m.star;save();el.classList.toggle("on",m.star);toast(m.star?"已标星":"已取消标星");}return;}
-  if(a==="data-export"){exportData();return;}
+  if(a==="data-export"){openModal(`<h3>导出数据</h3>
+    <div class="field" style="flex-direction:row;align-items:center;gap:10px;">
+      <label class="chk"><input type="checkbox" id="expTrash"><span></span></label>
+      <span>同时导出回收站数据（含 30 天内已删除内容）</span>
+    </div>
+    <div class="modal-actions"><div class="btn btn-text" data-action="close">取消</div><div class="btn btn-solid" id="expOk">导出</div></div>`);
+    const ok=$("#expOk");if(ok)ok.onclick=()=>{const inc=document.getElementById("expTrash")&&document.getElementById("expTrash").checked;closeModal();exportData(inc);};
+    return;}
   if(a==="data-import"){$("#importFile").click();return;}
 });
 
@@ -1687,8 +2035,6 @@ document.addEventListener("click",e=>{
   if(seg){state.timer.mode=seg.dataset.mode;render();return;}
   const hf=e.target.closest("#histFilter .chip");
   if(hf){state.histFilter=hf.dataset.f;state.histPage=0;render();return;}
-  const cf=e.target.closest("#cdFilter .chip");
-  if(cf){if(cf.dataset.cf==="plus"){addCategory();return;}state.cdFilter=cf.dataset.cf;render();return;}
   const tf=e.target.closest("#todoFilter .chip");
   if(tf){state.todoFilter=tf.dataset.tf;render();return;}
   const nc=e.target.closest("[data-nc]");
@@ -1720,6 +2066,9 @@ document.addEventListener("input",e=>{
   else if(e.target.id==="timerCd")state.timer.cdMin=Math.max(1,parseInt(e.target.value)||25);
   else if(e.target.id==="memoSearch"){state.memoQ=e.target.value;state.memoPage=0;render();}
   else if(e.target.id==="noteSearch"){state.noteQ=e.target.value;state.notePage=0;renderNoteListOnly();}
+  else if(e.target.id==="stSearch"){state.stQ=e.target.value;renderStudyListOnly();}
+  else if(e.target.id==="cdSearch"){state.cdQ=e.target.value;state.cdPage=0;renderCountdownListOnly();}
+  else if(e.target.id==="histSearch"){state.histQ=e.target.value;state.histPage=0;renderTimerListOnly();}
   else if(e.target.id==="acAmount")state.acctAmount=e.target.value;
 });
 document.addEventListener("keydown",e=>{
@@ -1754,29 +2103,26 @@ function editTimer(id){
 }
 function addCountdown(id){
   const c=id?store.countdowns.find(x=>x.id===id):null;
-  const cats=["考试","生活","目标","节日","其他"];
   openModal(`<h3>${id?"编辑":"新增"}倒数事件</h3>
     ${field("事件名称",`<div class="input"><input id="cdTitle" value="${c?esc(c.title):""}" placeholder="如：考研初试"></div>`)}
     ${field("目标日期",dateFieldHtml("cdTarget",c?c.target:todayStr()))}
-    ${field("分类",`<select id="cdCat" class="input" style="width:100%;">${cats.map(x=>`<option ${c&&c.category===x?"selected":""}>${x}</option>`).join("")}</select>`)}
     ${field("备注",`<div class="input"><input id="cdNote" value="${c?esc(c.note):""}" placeholder="可选"></div>`)}
     <div class="field"><label>选项</label><div class="prio-pick">
-      <div class="prio-opt ${c&&c.pinned?"on":""}" data-pin>📌 置顶</div>
       <div class="prio-opt ${c&&c.yearly?"on":""}" data-ye>🔁 每年循环</div></div></div>
+    <div class="field"><label>已过去起算</label><div class="prio-pick">
+      <div class="prio-opt ${(c?c.pastMode:0)===0?"on":""}" data-pm="0">不含起始日</div>
+      <div class="prio-opt ${(c?c.pastMode:0)===1?"on":""}" data-pm="1">包含起始日（+1天）</div></div>
+      <div class="tiny" style="margin-top:4px;color:var(--sub);">仅当目标日期已过去时，决定「已经N天」显示天数（含起始日会多算 1 天）</div></div>
     <div class="modal-actions"><div class="btn btn-text" data-action="close">取消</div><div class="btn btn-solid" id="cdOk">保存</div></div>`);
-  let pin=c&&c.pinned,ye=c&&c.yearly;
-  modal.querySelector("[data-pin]").onclick=function(){pin=!pin;this.classList.toggle("on",pin);};
+  let ye=c&&c.yearly, pastMode=c?c.pastMode||0:0;
   modal.querySelector("[data-ye]").onclick=function(){ye=!ye;this.classList.toggle("on",ye);};
+  modal.querySelectorAll("[data-pm]").forEach(p=>p.onclick=function(){pastMode=Number(this.dataset.pm);modal.querySelectorAll("[data-pm]").forEach(x=>x.classList.remove("on"));this.classList.add("on");});
   $("#cdOk").onclick=()=>{
     const title=$("#cdTitle").value.trim();if(!title){toast("请填写名称");return;}
-    if(id){Object.assign(c,{title,target:$("#cdTarget").value,category:$("#cdCat").value,note:$("#cdNote").value,pinned:pin,yearly:ye});}
-    else{const nc={id:uid(),title,target:$("#cdTarget").value,category:$("#cdCat").value,note:$("#cdNote").value,pinned:pin,yearly:ye};if(pin)store.countdowns.forEach(x=>x.pinned=false);store.countdowns.push(nc);}
+    if(id){Object.assign(c,{title,target:$("#cdTarget").value,note:$("#cdNote").value,yearly:ye,pastMode});}
+    else{const nc={id:uid(),title,target:$("#cdTarget").value,note:$("#cdNote").value,yearly:ye,pastMode};store.countdowns.push(nc);}
     save();closeModal();render();
   };
-}
-function addCategory(){
-  const name=prompt("新增倒数日分类名称：");
-  if(name&&name.trim()){toast("分类「"+name.trim()+"」已记录（可在新增时选用）");}
 }
 function addStudy(id){
   const s=id?store.studies.find(x=>x.id===id):null;
@@ -1792,7 +2138,7 @@ function addStudy(id){
   $("#stOk").onclick=()=>{
     const title=$("#stTitle").value.trim();if(!title){toast("请填写任务名");return;}
     if(id){s.title=title;s.deadline=$("#stDead").value;s.priority=prio;}
-    else store.studies.push({id:uid(),title,deadline:$("#stDead").value,priority:prio,timerId:null,duration:0,done:false,date:state.studyDate});
+    else store.studies.push({id:uid(),title,deadline:$("#stDead").value,priority:prio,timerId:null,duration:0,done:false,date:todayStr()});
     save();closeModal();render();
   };
 }
@@ -1841,21 +2187,99 @@ function memoSave(){
   store.memos.unshift({id:uid(),content,html:"",tag:$("#memoTag").value,star:false,archived:false,date:todayStr(),ts:Date.now(),images:[]});
   save();render();toast("已保存，点击条目可进入详情继续书写");
 }
+/* ===================== 全局回收站 ===================== */
+const TRASH_DAYS=30;
+const TRASH_FROM_NAME={timer:"计时器",countdown:"倒数日",workout:"锻炼计划",study:"学习计划",note:"学习笔记",todo:"每日清单",memo:"日常记录",bill:"账单",account:"账户",autotpl:"自动记账模板"};
+const TRASH_KEY={timer:"timers",countdown:"countdowns",workout:"workouts",study:"studies",note:"notes",todo:"todos",memo:"memos",bill:"bills",account:"accounts",autotpl:"autotpls"};
+function trashRemainDays(t){return Math.max(0,Math.ceil((t.deletedAt+TRASH_DAYS*86400e3-Date.now())/86400e3));}
+function moveToTrash(from,obj){
+  if(!obj)return;
+  store.trash.push({id:uid(),from,deletedAt:Date.now(),data:JSON.parse(JSON.stringify(obj))});
+  const arr=store[TRASH_KEY[from]];
+  if(arr)store[TRASH_KEY[from]]=arr.filter(x=>x.id!==obj.id);
+  if(from==="account"){store.bills.forEach(b=>{if(b.account===obj.id)b.account=null;});}
+  save();toast("已移入回收站（保留 "+TRASH_DAYS+" 天）");
+}
+function restoreFromTrash(tid){
+  const i=store.trash.findIndex(x=>x.id===tid);if(i<0)return;
+  const item=store.trash[i];const key=TRASH_KEY[item.from];if(!key){store.trash.splice(i,1);save();return;}
+  let data=item.data;
+  if(store[key].some(x=>x.id===data.id))data={...data,id:uid()};
+  store[key].push(data);
+  if(data.timerId){const t=store.timers.find(x=>x.id===data.timerId);if(t){const tag=item.from==="study"?"study":item.from==="todo"?"todo":item.from==="workout"?"workout":null;if(tag&&!t.importedBy.includes(tag))t.importedBy.push(tag);}}
+  store.trash.splice(i,1);save();toast("已恢复至原模块");
+}
+function purgeTrash(tid){store.trash=store.trash.filter(x=>x.id!==tid);save();toast("已永久删除");}
+function clearTrash(){store.trash=[];save();toast("回收站已清空");}
+function autoPurgeTrash(){const before=store.trash.length;store.trash=store.trash.filter(x=>x.deletedAt+TRASH_DAYS*86400e3>Date.now());if(store.trash.length!==before){save();toast("已自动清理过期的回收站数据");}}
+function trashSummary(item){
+  const d=item.data;let label="";
+  if(item.from==="timer")label=d.name||"计时记录";
+  else if(item.from==="countdown")label=d.title||"倒数日";
+  else if(item.from==="workout")label=(d.tags&&d.tags.join("、"))||"锻炼记录";
+  else if(item.from==="study")label=d.title||"学习任务";
+  else if(item.from==="note")label=d.title||(d.content||"").slice(0,20)||"笔记";
+  else if(item.from==="todo")label=d.title||"任务";
+  else if(item.from==="memo")label=(d.content||"").slice(0,20)||"备忘";
+  else if(item.from==="bill")label=(d.cat||"")+" "+fmtMoney(d.amount||0);
+  else if(item.from==="account")label=d.name||"账户";
+  else if(item.from==="autotpl")label=(d.type==="in"?"收入":"支出")+" "+(d.cat||"")+" "+fmtMoney(d.amount||0);
+  return esc(String(label));
+}
+function renderTrash(){
+  updateSideTrash();
+  autoPurgeTrash();
+  const groups={};store.trash.forEach(t=>{(groups[t.from]=groups[t.from]||[]).push(t);});
+  const order=["timer","countdown","workout","study","note","todo","memo","bill","account","autotpl"];
+  let body="";
+  if(!store.trash.length){body=`<div class="empty" style="padding:40px 0;text-align:center;">回收站为空</div>`;}
+  else{
+    order.forEach(from=>{
+      if(!groups[from])return;
+      body+=`<div class="trash-group"><div class="trash-group-title">${TRASH_FROM_NAME[from]} <span class="cnt">${groups[from].length}</span></div>`;
+      groups[from].forEach(t=>{
+        body+=`<div class="trash-item">
+          <label class="chk"><input type="checkbox" data-action="trash-check" data-id="${t.id}" ${state.trashSel&&state.trashSel.includes(t.id)?"checked":""}><span></span></label>
+          <div class="trash-info"><div class="trash-name">${trashSummary(t)}</div><div class="trash-meta">删除 ${t.deletedAt?new Date(t.deletedAt).toLocaleDateString("zh-CN"):""} · 保留 ${trashRemainDays(t)} 天</div></div>
+          <div class="trash-acts">
+            <span class="act" data-action="trash-restore" data-id="${t.id}" title="恢复"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><i>恢复</i></span>
+            <span class="act del" data-action="trash-purge" data-id="${t.id}" title="永久删除"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg><i>删除</i></span>
+          </div>
+        </div>`;
+      });
+      body+=`</div>`;
+    });
+  }
+  return `<div class="card" style="padding:18px;">
+    <div class="tiny" style="margin-bottom:14px;color:var(--sub);">删除的数据保留 ${TRASH_DAYS} 天，到期自动彻底销毁。恢复可还原至原模块并保留关联关系。</div>
+    ${body}
+    <div class="trash-bar">
+      <label class="chk"><input type="checkbox" data-action="trash-all"><span></span></label><span class="tiny">全选</span>
+      <div style="flex:1;"></div>
+      <div class="btn btn-line" data-action="trash-restore-sel">批量恢复</div>
+      <div class="btn btn-line" data-action="trash-purge-sel" style="color:#B0736F;border-color:#B0736F;">批量删除</div>
+      <div class="btn btn-text" data-action="trash-clear">清空</div>
+    </div>
+  </div>`;
+}
+
 function openDataMenu(){
   openModal(`<h3>数据同步</h3>
     <div class="tiny" style="margin-bottom:14px;">当前为浏览器本地存储。导出文件可在另一台设备（同款浏览器导入）实现手动同步；真正的实时云端同步需后续接入后端。</div>
     <div class="modal-actions">
+      <div class="btn btn-line" data-action="open-trash">回收站（${store.trash.length}）</div>
       <div class="btn btn-line" data-action="data-export">导出 JSON</div>
       <div class="btn btn-solid" data-action="data-import">导入 JSON</div>
     </div>
     <input type="file" id="importFile" accept="application/json" style="display:none;">
     <div class="modal-actions" style="margin-top:10px;"><div class="btn btn-text" data-action="close">关闭</div></div>`);
 }
-function exportData(){
+function exportData(includeTrash){
   const data={timers:store.timers,countdowns:store.countdowns,workouts:store.workouts,studies:store.studies,notes:store.notes,todos:store.todos,memos:store.memos,accounts:store.accounts,bills:store.bills,autotpls:store.autotpls};
+  if(includeTrash)data.trash=store.trash;
   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="qingci-data.json";a.click();
-  toast("已导出数据文件");
+  toast("已导出数据文件"+(includeTrash?"（含回收站）":""));
 }
 
 /* 计时器导入选择（模态内点击） */
@@ -1990,9 +2414,9 @@ function renderAccount(){
   const dayIn=dayBills.filter(b=>b.type==="in").reduce((a,b)=>a+b.amount,0);
   const dayOut=dayBills.filter(b=>b.type==="out").reduce((a,b)=>a+b.amount,0);
   const type=state.acctType||"out";
-  const cats=type==="in"?IN_CATS:OUT_CATS;
+  const cats=type==="in"?store.incomeCats:store.expenseCats;
   const acctOpts=store.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("");
-  const formBody=`
+  const addFormBody=`
     <div class="ac-type"><span class="ac-t ${type==="in"?"on":""}" data-action="ac-type" data-t="in">收入</span><span class="ac-t exp ${type==="out"?"on":""}" data-action="ac-type" data-t="out">支出</span></div>
     <input class="ac-amount" id="acAmount" type="number" inputmode="decimal" placeholder="0.00" value="${state.acctAmount||""}">
     <div class="ac-cats">${cats.map(c=>`<div class="ac-cat ${state.acctCat===c?"on":""}" data-action="ac-cat" data-c="${c}">${c}</div>`).join("")}</div>
@@ -2002,8 +2426,9 @@ function renderAccount(){
       </select>
     </div>
     <div class="input" style="margin-bottom:12px;"><input id="acNote" placeholder="备注（可选）" style="border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%;"></div>
-    <div class="btn btn-solid" style="width:100%;" data-action="ac-save">保存账单</div>
-    ${dayBills.length?`<div class="ac-summary" style="margin-top:14px;">${mdLabel(d)} 收入 <b style="color:var(--accent)">${fmtMoney(dayIn)}</b> · 支出 <b style="color:#C97B6E">${fmtMoney(dayOut)}</b> · 净 <b>${fmtMoney(dayIn-dayOut)}</b></div>`:""}
+    <div class="btn btn-solid" style="width:100%;" data-action="ac-save">保存账单</div>`;
+  const billsListBody=`
+    ${dayBills.length?`<div class="ac-summary" style="margin-top:2px;">${mdLabel(d)} 收入 <b style="color:var(--accent)">${fmtMoney(dayIn)}</b> · 支出 <b style="color:#C97B6E">${fmtMoney(dayOut)}</b> · 净 <b>${fmtMoney(dayIn-dayOut)}</b></div>`:`<div class="ac-summary" style="margin-top:2px;color:var(--sub);">${mdLabel(d)} 暂无收支</div>`}
     <div class="tiny" style="margin:10px 0 6px;color:var(--sub);">${mdLabel(d)} 收支记录（${dayBills.length} 条）</div>
     ${dayBills.length?dayBills.map(billRow).join(""):`<div class="empty" style="padding:14px 0;">当日暂无账单，添加第一笔吧</div>`}`;
   const expMap={};rangeBills.filter(b=>b.type==="out").forEach(b=>{expMap[b.cat]=(expMap[b.cat]||0)+b.amount;});
@@ -2039,13 +2464,24 @@ function renderAccount(){
       ${store.autotpls.length?store.autotpls.map(tplRow).join(""):`<div class="empty" style="padding:12px 0;">暂无自动记账模板</div>`}
     </div>
     <div class="btn btn-line" style="width:100%;margin-top:6px;" data-action="tpl-add">+ 新增模板</div>`;
+  const catPool=(pool,title,arr)=>`
+    <div class="tiny" style="font-weight:600;margin:10px 0 6px;">${title}（${arr.length}）</div>
+    <div class="cat-pool">${arr.length?arr.map(c=>`<span class="cat-chip">${esc(c)}<span class="cat-x" data-action="cat-del" data-pool="${pool}" data-cat="${esc(c)}" title="删除">×</span></span>`).join(""):`<span class="tiny" style="color:var(--sub)">暂无分类，请在下方新增</span>`}</div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <div class="input" style="flex:1;"><input id="catAdd_${pool}" placeholder="新增${title}名称"></div>
+      <div class="btn btn-line btn-sm" data-action="cat-add" data-pool="${pool}">添加</div>
+    </div>`;
+  const catsBody=catPool("in","收入分类",store.incomeCats)+catPool("out","支出分类",store.expenseCats);
   return `
   <div class="card">
     <div class="card-title"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><circle cx="17" cy="13" r="1.6"/></svg>每日记账 · ${mdLabel(d)} ${weekdayLabel(d)}${isToday?" · 今日":""}</div>
   </div>
-  ${acctPanel("form","新增账单",'<path d="M12 5v14M5 12h14"/>', state.acctCat?("已选 "+state.acctCat):"收入 / 支出", formBody)}
+  ${acctPanel("add","【新增收支】",'<path d="M12 5v14M5 12h14"/>', state.acctCat?("已选 "+state.acctCat):"收入 / 支出", addFormBody)}
+  ${acctPanel("bills","当日账单",'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', dayBills.length?("收入 "+fmtMoney(dayIn)+" · 支出 "+fmtMoney(dayOut)):(mdLabel(d)+" 暂无账单"), billsListBody)}
+  ${acctPanel("stats","记账统计",'<path d="M4 20V10M10 20V4M16 20v-7M2 20h18"/>', periodName(period)+" · 收入 "+fmtMoney(sumIn)+" 支出 "+fmtMoney(sumOut), statsBody)}
   ${acctPanel("accounts","账户管理",'<path d="M3 7h18v12H3z"/><path d="M3 7l2-3h13l2 3"/>', store.accounts.length+" 个账户 · 实时结余", acctBody)}
-  ${acctPanel("autotpl","自动记账模板",'<path d="M3 12h18M12 3v18"/>', store.autotpls.length+(store.autotpls.length===1?" 个模板":" 个模板"), tplBody)}`;
+  ${acctPanel("autotpl","自动记账模板",'<path d="M3 12h18M12 3v18"/>', store.autotpls.length+(store.autotpls.length===1?" 个模板":" 个模板"), tplBody)}
+  ${acctPanel("cats","收支分类管理",'<path d="M4 6h16M4 12h16M4 18h10"/>', "收入 "+store.incomeCats.length+" · 支出 "+store.expenseCats.length+" 类", catsBody)}`;
 }
 function afterAccount(){}
 /* ---- 账单 / 账户 / 模板 弹窗 ---- */
@@ -2053,7 +2489,7 @@ function openBillModal(id){
   const b=id?store.bills.find(x=>x.id===id):null;
   let type=b?b.type:(state.acctType||"out"), cat=b?b.cat:(state.acctCat||"");
   const amt=b?b.amount:"", note=b?(b.note||"").replace("【自动记账】",""):"", acct=b?b.account:"";
-  const drawCats=()=>((type==="in"?IN_CATS:OUT_CATS).map(c=>`<div class="ac-cat ${c===cat?"on":""}" data-c="${c}">${c}</div>`).join(""));
+  const drawCats=()=>((type==="in"?store.incomeCats:store.expenseCats).map(c=>`<div class="ac-cat ${c===cat?"on":""}" data-c="${c}">${c}</div>`).join(""));
   openModal(`<h3>${id?"编辑账单":"新增账单"}</h3>
     <div class="field"><label>类型</label><div class="ac-type" style="margin-bottom:0;"><span class="ac-t ${type==="in"?"on":""}" id="bmIn">收入</span><span class="ac-t exp ${type==="out"?"on":""}" id="bmOut">支出</span></div></div>
     <div class="field"><label>金额</label><div class="input"><input id="bmAmount" type="number" inputmode="decimal" value="${amt}" placeholder="0.00"></div></div>
@@ -2098,7 +2534,7 @@ function openTplModal(id){
   let type=t?t.type:(state.acctType||"out"), cycle=t?t.cycle:"monthly", cat=t?t.cat:"";
   let weekday=t?t.weekday:new Date().getDay(), monthday=t?t.monthday:1;
   const start=t?t.start:todayStr(), end=t?t.end:"", amt=t?t.amount:"", note=t?t.note:"", acct=t?t.account:"";
-  const drawCats=()=>((type==="in"?IN_CATS:OUT_CATS).map(c=>`<div class="ac-cat ${c===cat?"on":""}" data-c="${c}">${c}</div>`).join(""));
+  const drawCats=()=>((type==="in"?store.incomeCats:store.expenseCats).map(c=>`<div class="ac-cat ${c===cat?"on":""}" data-c="${c}">${c}</div>`).join(""));
   const whenHTML=cycle==="weekly"
     ?`<div class="prio-pick" id="tmWk">${WD.map((w,i)=>`<div class="prio-opt ${i===weekday?"on":""}" data-w="${i}">${w}</div>`).join("")}</div>`
     :`<div class="input"><input id="tmMd" type="number" min="1" max="31" value="${monthday}" placeholder="1-31"></div>`;
