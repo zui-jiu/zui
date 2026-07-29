@@ -342,6 +342,83 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
 .menu-item:last-of-type{border-bottom:none;}
 .menu-item svg{width:17px;height:17px;stroke:var(--accent);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;}
 .menu-item .mi-sub{font-size:11px;color:var(--sub);margin-top:2px;}
+/* ===== 移动端汉堡抽屉导航（方案一） ===== */
+.menu-btn{display:none;}
+.side-mask{display:none;position:fixed;inset:0;background:rgba(42,51,49,.42);z-index:40;}
+.side-mask.show{display:block;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@media(max-width:768px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;height:100dvh;z-index:50;transform:translateX(-100%);transition:transform .26s ease;box-shadow:0 10px 40px rgba(0,0,0,.18);}
+  .sidebar.open{transform:none;}
+  .menu-btn{display:flex;}
+  .tabbar{display:none;}            /* 底部 Tab 完全移除，改用汉堡抽屉 */
+  .header{padding:13px 16px;gap:10px;}
+  .header h1{font-size:16px;}
+}
+
+/* ===== 每日记账模块 ===== */
+.seg .on{background:var(--accent);color:#fff;}
+.ac-type{display:inline-flex;background:var(--bg);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;}
+.ac-type .ac-t{font-size:13px;padding:8px 18px;border-radius:9px;cursor:pointer;color:var(--sub);font-weight:600;transition:.15s;user-select:none;}
+.ac-type .ac-t.on{background:var(--accent);color:#fff;}
+.ac-type .ac-t.exp.on{background:#C97B6E;}     /* 支出用偏暖青瓷红 */
+.ac-amount{font-size:30px;font-weight:700;color:var(--text);width:100%;border:none;background:transparent;outline:none;font-family:inherit;margin-bottom:12px;font-variant-numeric:tabular-nums;}
+.ac-amount::placeholder{color:var(--sub);font-weight:500;}
+.ac-cats{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-bottom:12px;}
+.ac-cats::-webkit-scrollbar{display:none;}
+.ac-cat{flex:none;padding:9px 15px;border-radius:12px;background:var(--bg);color:var(--sub);font-size:13px;cursor:pointer;border:1px solid transparent;white-space:nowrap;user-select:none;transition:.15s;}
+.ac-cat.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);font-weight:600;}
+.ac-row{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+.ac-row .input{flex:1;}
+.bill-item{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);}
+.bill-item:last-child{border-bottom:none;}
+.bill-amt{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;min-width:88px;text-align:right;}
+.bill-amt.in{color:var(--accent);}
+.bill-amt.out{color:#C97B6E;}
+.bill-meta{flex:1;min-width:0;}
+.bill-cat{font-size:14px;font-weight:600;color:var(--text);}
+.bill-sub{font-size:11.5px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bill-sub .auto-tag{color:var(--accent);background:var(--accent-soft);padding:1px 6px;border-radius:6px;margin-left:4px;}
+.bill-acts{display:flex;gap:10px;flex:none;}
+.bill-acts .act{display:flex;align-items:center;gap:3px;color:var(--sub);cursor:pointer;font-size:11px;user-select:none;}
+.bill-acts .act svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.bill-acts .act.del:hover{color:#C97B6E;}
+.bill-acts .act.edt:hover{color:var(--accent);}
+.ac-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px;}
+.ac-stat{text-align:center;background:var(--bg);border-radius:14px;padding:12px 6px;}
+.ac-stat b{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;}
+.ac-stat i{font-style:normal;font-size:11px;color:var(--sub);}
+.ac-stat.bal b{color:var(--accent);}
+/* 收支双柱趋势 */
+.acct-trend{display:flex;align-items:flex-end;gap:5px;height:120px;padding:8px 2px 0;position:relative;}
+.acct-col{flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center;gap:2px;cursor:pointer;touch-action:manipulation;min-width:0;}
+.acct-col .bc{width:42%;max-width:14px;border-radius:5px 5px 0 0;opacity:.85;transition:opacity .15s;position:relative;}
+.acct-col .bc.in{background:var(--accent);}
+.acct-col .bc.out{background:#C97B6E;}
+.acct-col:hover .bc,.acct-col.active .bc{opacity:1;}
+.acct-legend{display:flex;gap:14px;font-size:11px;color:var(--sub);margin-top:8px;}
+.acct-legend i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle;}
+.ac-summary{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--sub);margin:6px 0 14px;flex-wrap:wrap;}
+.ac-summary b{color:var(--text);}
+.acct-panel .acct-list-item{display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--line);}
+.acct-panel .acct-list-item:last-child{border-bottom:none;}
+.acct-name{flex:1;font-size:14px;font-weight:600;color:var(--text);}
+.acct-bal{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;min-width:90px;text-align:right;}
+.acct-bal.neg{color:#C97B6E;}
+.acct-tpl{display:flex;align-items:center;gap:10px;padding:12px 4px;border-bottom:1px solid var(--line);}
+.acct-tpl:last-child{border-bottom:none;}
+.acct-tpl .tpl-main{flex:1;min-width:0;}
+.acct-tpl .tpl-t{font-size:13.5px;font-weight:600;color:var(--text);}
+.acct-tpl .tpl-s{font-size:11.5px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.acct-tpl .tpl-amt{font-weight:700;font-variant-numeric:tabular-nums;}
+.acct-tpl .tpl-amt.in{color:var(--accent);}
+.acct-tpl .tpl-amt.out{color:#C97B6E;}
+/* 开关 */
+.switch{width:42px;height:24px;border-radius:14px;background:var(--line);position:relative;cursor:pointer;transition:.2s;flex:none;}
+.switch.on{background:var(--accent);}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;}
+.switch.on::after{left:21px;}
+
 </style>
 </head>
 <body>
@@ -353,6 +430,7 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
     <div class="side-item" data-nav="workout"><svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M2.5 9.5v5M21.5 9.5v5M6.5 12h11"/></svg>锻炼计划</div>
     <div class="side-item" data-nav="study"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>学习计划</div>
     <div class="side-item" data-nav="todo"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>每日清单</div>
+    <div class="side-item" data-nav="account"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><circle cx="17" cy="13" r="1.6"/></svg>每日记账</div>
     <div class="side-item" data-nav="memo"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>综合记录</div>
     <div class="side-foot">
       <svg style="width:14px;height:14px;stroke:var(--sub);fill:none;stroke-width:1.6;stroke-linecap:round;" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
@@ -362,6 +440,9 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
 
   <div class="main">
     <div class="header">
+      <div class="icon-btn menu-btn" data-action="open-nav" title="菜单">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </div>
       <h1 id="pageTitle">计时器</h1>
       <div class="spacer"></div>
       <div class="date-bar" id="dateBar"></div>
@@ -378,14 +459,7 @@ img.att{width:46px;height:46px;border-radius:10px;object-fit:cover;margin-top:6p
     <div class="content" id="view"></div>
   </div>
 
-  <nav class="tabbar">
-    <div class="tab" data-nav="timer"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6"/></svg>计时器</div>
-    <div class="tab" data-nav="countdown"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>倒数日</div>
-    <div class="tab" data-nav="workout"><svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M2.5 9.5v5M21.5 9.5v5M6.5 12h11"/></svg>锻炼计划</div>
-    <div class="tab" data-nav="study"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>学习计划</div>
-    <div class="tab" data-nav="todo"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>每日清单</div>
-    <div class="tab" data-nav="memo"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>综合记录</div>
-  </nav>
+  <div class="side-mask" id="sideMask" data-action="close-nav"></div>
 </div>
 
 <div class="fab" data-action="top" title="回到顶部">
@@ -430,6 +504,9 @@ const store={
   notes:DB.get("notes",null),
   todos:DB.get("todos",null),
   memos:DB.get("memos",null),
+  accounts:DB.get("accounts",null),
+  bills:DB.get("bills",null),
+  autotpls:DB.get("autotpls",null),
   settings:DB.get("settings",{theme:"light",prioFilters:"all"})
 };
 function save(){
@@ -437,6 +514,7 @@ function save(){
   DB.set("workouts",store.workouts);DB.set("studies",store.studies);
   DB.set("notes",store.notes);DB.set("todos",store.todos);
   DB.set("memos",store.memos);DB.set("settings",store.settings);
+  DB.set("accounts",store.accounts);DB.set("bills",store.bills);DB.set("autotpls",store.autotpls);
 }
 function seed(){
   const t=todayStr();
@@ -492,6 +570,9 @@ store.notes.forEach(n=>{
   if(n.html===undefined)n.html="";
 });
 store.timers.forEach(t=>{if(!t.importedBy)t.importedBy=[];});
+if(!store.accounts){const presets=["微信","支付宝","储蓄卡","信用卡","现金","理财"];store.accounts=presets.map(n=>({id:uid(),name:n,init:0}));}
+if(!store.bills)store.bills=[];
+if(!store.autotpls)store.autotpls=[];
 if(store.settings.theme==="dark")document.documentElement.classList.add("dark");
 
 /* ===================== 全局状态 ===================== */
@@ -503,6 +584,8 @@ const state={
   todoFilter:"all",
   memoTag:"all", memoTime:"all", memoQ:"", memoStar:false, memoPage:0, memoArchived:false,
   workoutDate:todayStr(), studyDate:todayStr(),
+  acctDate:todayStr(), acctType:"out", acctCat:"", acctPeriod:"week",
+  acctPanels:{form:true,accounts:false,autotpl:false},
   wkEdit:false,               // 历史日期打卡临时编辑模式
   wkPeriod:"week",            // 锻炼统计周期：week/month/year
   stPeriod:"week",            // 学习统计周期：week/month/year
@@ -685,8 +768,8 @@ function renderCountdown(){
 }
 
 /* ===================== 日期选择 + 日历弹窗 ===================== */
-function curDate(){return state.page==="workout"?state.workoutDate:state.studyDate;}
-function setCurDate(d){if(state.page==="workout"){state.workoutDate=d;state.wkEdit=false;}else state.studyDate=d;}
+function curDate(){if(state.page==="account")return state.acctDate;return state.page==="workout"?state.workoutDate:state.studyDate;}
+function setCurDate(d){if(state.page==="workout"){state.workoutDate=d;state.wkEdit=false;}else if(state.page==="account"){state.acctDate=d;}else state.studyDate=d;}
 function shiftDate(n){setCurDate(addDays(curDate(),n));render();}
 let calMonth=null;
 let datePickerTarget=null; // {date,onSelect} 通用日期选择回调
@@ -1318,7 +1401,7 @@ function saveMemoDetail(){
 }
 
 /* ===================== 渲染调度 ===================== */
-const TITLES={timer:"计时器",countdown:"倒数日",workout:"锻炼计划",study:"学习计划",todo:"每日清单",memo:"综合记录",noteDetail:"笔记详情",memoDetail:"备忘详情"};
+const TITLES={timer:"计时器",countdown:"倒数日",workout:"锻炼计划",study:"学习计划",todo:"每日清单",account:"每日记账",memo:"综合记录",noteDetail:"笔记详情",memoDetail:"备忘详情"};
 const NAV_OF={noteDetail:"study",memoDetail:"memo"};
 function go(page){
   if(page!=="workout")state.wkEdit=false;
@@ -1328,14 +1411,15 @@ function go(page){
   $$(".tab").forEach(e=>e.classList.toggle("active",e.dataset.nav===navKey));
   $("#pageTitle").textContent=TITLES[page];
   const db=$("#dateBar");
-  if(db){const showDP=(page==="workout"||page==="study");db.classList.toggle("show",showDP);db.innerHTML=showDP?dateBarHtml():"";}
+  if(db){const showDP=(page==="workout"||page==="study"||page==="account");db.classList.toggle("show",showDP);db.innerHTML=showDP?dateBarHtml():"";}
   const mb=$("#moreBtn");
   if(mb)mb.style.display=(page==="workout"&&state.workoutDate!==todayStr())?"flex":"none";
-  const map={timer:renderTimer,countdown:renderCountdown,workout:renderWorkout,study:renderStudy,todo:renderTodo,memo:renderMemo,noteDetail:renderNoteDetail,memoDetail:renderMemoDetail};
+  const map={timer:renderTimer,countdown:renderCountdown,workout:renderWorkout,study:renderStudy,todo:renderTodo,account:renderAccount,memo:renderMemo,noteDetail:renderNoteDetail,memoDetail:renderMemoDetail};
   $("#view").innerHTML=map[page]();
   if(page==="timer")afterTimer();
   if(page==="workout")afterWorkout();
   if(page==="memo")afterMemo();
+  if(page==="account")afterAccount();
   $("#view").scrollTop=0;
   // 回到顶部按钮
   const fab=$(".fab");if(fab)fab.classList.remove("show");
@@ -1348,6 +1432,7 @@ $("#view").addEventListener("scroll",()=>{const fab=$(".fab");if(!fab)return;if(
 const overlay=$("#overlay"),modal=$("#modal");
 function openModal(html){modal.innerHTML=html;overlay.classList.add("show");}
 function closeModal(){overlay.classList.remove("show");modal.innerHTML="";}
+function closeNav(){const sb=document.querySelector(".sidebar");if(sb)sb.classList.remove("open");const m=document.getElementById("sideMask");if(m)m.classList.remove("show");}
 overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
 function field(label,inner){return `<div class="field"><label>${label}</label>${inner}</div>`;}
 
@@ -1366,7 +1451,7 @@ function pickTimer(cb){
 document.addEventListener("mousedown",e=>{if(e.target.closest(".rt-bar"))e.preventDefault();});
 document.addEventListener("click",e=>{
   const nav=e.target.closest("[data-nav]");
-  if(nav){go(nav.dataset.nav);return;}
+  if(nav){go(nav.dataset.nav);closeNav();return;}
   const jp=e.target.closest("[data-jump]");
   if(jp){const d=jp.dataset.jump;const gh=[...document.querySelectorAll("#view .group-head b")].find(b=>b.textContent.includes(d));if(gh)gh.scrollIntoView({behavior:"smooth",block:"start"});return;}
   const rt=e.target.closest("[data-rt]");
@@ -1470,6 +1555,39 @@ document.addEventListener("click",e=>{
   if(a==="wkcal-day"){const ds=el.dataset.date;closeModal();state.workoutDate=ds;state.wkEdit=false;render();return;}
   if(a==="wkcal-today"){closeModal();state.workoutDate=todayStr();state.wkEdit=false;render();return;}
 
+  /* ---- 每日记账 ---- */
+  if(a==="open-nav"){const sb=document.querySelector(".sidebar");if(sb)sb.classList.add("open");const m=document.getElementById("sideMask");if(m)m.classList.add("show");return;}
+  if(a==="close-nav"){closeNav();return;}
+  if(a==="ac-type"){const am=document.getElementById("acAmount");if(am)state.acctAmount=am.value;state.acctType=el.dataset.t;state.acctCat="";render();return;}
+  if(a==="ac-cat"){const am=document.getElementById("acAmount");if(am)state.acctAmount=am.value;state.acctCat=el.dataset.c;render();return;}
+  if(a==="acct-period"){state.acctPeriod=el.dataset.p;render();return;}
+  if(a==="ac-save"){
+    const amount=parseFloat($("#acAmount")?$("#acAmount").value:"");
+    if(!(amount>0)){toast("请输入有效金额");return;}
+    if(!state.acctCat){toast("请选择收支分类");return;}
+    const acc=$("#acAccount")?$("#acAccount").value:null;
+    const note=$("#acNote")?$("#acNote").value.trim():"";
+    store.bills.push({id:uid(),date:state.acctDate,type:state.acctType,amount,cat:state.acctCat,account:acc,note,auto:false,tplId:null,ts:Date.now()});
+    state.acctCat="";state.acctAmount="";save();render();toast("已保存账单");return;
+  }
+  if(a==="ac-edit"){openBillModal(id);return;}
+  if(a==="ac-del"){if(confirm("删除该账单？")){store.bills=store.bills.filter(b=>b.id!==id);save();render();toast("已删除");}return;}
+  if(a==="acct-panel"){const pid=el.dataset.id;state.acctPanels[pid]=!state.acctPanels[pid];const panel=el.closest(".wk-panel");if(panel){const body=panel.querySelector(".wk-panel-body");const arrow=panel.querySelector(".wp-arrow");if(state.acctPanels[pid]){body.style.display="";arrow.classList.add("open");}else{body.style.display="none";arrow.classList.remove("open");}}return;}
+  if(a==="acct-add"){openAcctModal();return;}
+  if(a==="acct-edit"){openAcctModal(id);return;}
+  if(a==="acct-del"){
+    if(confirm("删除该账户？绑定此账户的账单将保留并标记为「未选账户」。")){
+      store.bills.forEach(b=>{if(b.account===id)b.account=null;});
+      store.accounts=store.accounts.filter(x=>x.id!==id);
+      save();render();toast("账户已删除");
+    }
+    return;
+  }
+  if(a==="tpl-add"){openTplModal();return;}
+  if(a==="tpl-edit"){openTplModal(id);return;}
+  if(a==="tpl-del"){if(confirm("删除该模板？已生成的账单会保留。")){store.autotpls=store.autotpls.filter(x=>x.id!==id);save();render();toast("模板已删除");}return;}
+  if(a==="tpl-toggle"){const t=store.autotpls.find(x=>x.id===id);if(t){t.enabled=!t.enabled;save();render();}return;}
+
   /* ---- 学习 ---- */
   if(a==="st-add"){if(state.studyDate!==todayStr()){toast("历史日期仅查看");return;}addStudy();return;}
   if(a==="st-edit"){if(state.studyDate!==todayStr()){toast("历史日期仅查看");return;}addStudy(id);return;}
@@ -1566,6 +1684,7 @@ document.addEventListener("input",e=>{
   else if(e.target.id==="timerCd")state.timer.cdMin=Math.max(1,parseInt(e.target.value)||25);
   else if(e.target.id==="memoSearch"){state.memoQ=e.target.value;state.memoPage=0;render();}
   else if(e.target.id==="noteSearch"){state.noteQ=e.target.value;state.notePage=0;renderNoteListOnly();}
+  else if(e.target.id==="acAmount")state.acctAmount=e.target.value;
 });
 document.addEventListener("keydown",e=>{
   if(e.target.id==="memoInput"&&e.key==="Enter"&&!e.shiftKey){e.preventDefault();memoSave();}
@@ -1697,7 +1816,7 @@ function openDataMenu(){
     <div class="modal-actions" style="margin-top:10px;"><div class="btn btn-text" data-action="close">关闭</div></div>`);
 }
 function exportData(){
-  const data={timers:store.timers,countdowns:store.countdowns,workouts:store.workouts,studies:store.studies,notes:store.notes,todos:store.todos,memos:store.memos};
+  const data={timers:store.timers,countdowns:store.countdowns,workouts:store.workouts,studies:store.studies,notes:store.notes,todos:store.todos,memos:store.memos,accounts:store.accounts,bills:store.bills,autotpls:store.autotpls};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="qingci-data.json";a.click();
   toast("已导出数据文件");
@@ -1709,7 +1828,270 @@ document.addEventListener("click",e=>{
   if(pick&&state.importCb){const t=store.timers.find(x=>x.id===pick.dataset.pick);const cb=state.importCb;state.importCb=null;cb(t);}
 });
 
+/* ===================== 每日记账 ===================== */
+const IN_CATS=["工资","兼职","红包","理财","其他收入"];
+const OUT_CATS=["餐饮","交通","购物","娱乐","学习","医疗","房租","其他支出"];
+function fmtMoney(n){const v=Math.round((n||0)*100)/100;return "¥"+v.toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function accountBalance(id){const a=store.accounts.find(x=>x.id===id);let bal=a?a.init:0;store.bills.forEach(b=>{if(b.account===id)bal+=(b.type==="in"?b.amount:-b.amount);});return bal;}
+function moneyRatio(map,emptyText){
+  const entries=Object.entries(map).filter(e=>e[1]!==0).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));
+  if(!entries.length)return `<div class="empty" style="padding:12px 0;">${emptyText}</div>`;
+  const maxV=Math.max(...entries.map(e=>Math.abs(e[1])),1);
+  return entries.map(([name,val])=>`<div class="row cat-ratio"><span class="name">${esc(name)}</span><div class="bar-bg"><i class="bar-fill-i" style="width:${Math.round(Math.abs(val)/maxV*100)}%;"></i></div><span class="val">${fmtMoney(val)}</span></div>`).join("");
+}
+function acctBalanceRatio(){
+  const map={};store.accounts.forEach(a=>map[a.name]=0);
+  store.bills.forEach(b=>{const a=store.accounts.find(x=>x.id===b.account);if(a)map[a.name]=(map[a.name]||0)+(b.type==="in"?b.amount:-b.amount);});
+  const entries=Object.entries(map);
+  if(!entries.length)return `<div class="empty" style="padding:12px 0;">暂无账户</div>`;
+  const maxV=Math.max(...entries.map(e=>Math.abs(e[1])),1);
+  return entries.map(([name,val])=>`<div class="row cat-ratio"><span class="name">${esc(name)}</span><div class="bar-bg"><i class="bar-fill-i" style="width:${Math.round(Math.abs(val)/maxV*100)}%;"></i></div><span class="val" style="color:${val<0?'#C97B6E':'var(--accent)'}">${fmtMoney(val)}</span></div>`).join("");
+}
+function acctTrendChart(dateStr,period){
+  const [s,e]=rangeBy(dateStr,period);
+  let labels=[],income=[],expense=[],xLabels=[];
+  if(period==="week"){
+    const days=weekOf(dateStr);
+    labels=days.map(ds=>WD[new Date(ds+"T00:00:00").getDay()]);
+    xLabels=days.map(ds=>mdLabel(ds));
+    days.forEach(ds=>{const bs=store.bills.filter(b=>b.date===ds);income.push(bs.filter(b=>b.type==="in").reduce((a,b)=>a+b.amount,0));expense.push(bs.filter(b=>b.type==="out").reduce((a,b)=>a+b.amount,0));});
+  }else if(period==="month"){
+    const y=+dateStr.split("-")[0],m=+dateStr.split("-")[1]-1,dc=new Date(y,m+1,0).getDate();
+    labels=Array.from({length:dc},(_,i)=>{const d=i+1;return (d===1||d%5===0||d===dc)?String(d):"";});
+    xLabels=Array.from({length:dc},(_,i)=>`${m+1}月${i+1}日`);
+    for(let i=0;i<dc;i++){const ds=`${y}-${pad(m+1)}-${pad(i+1)}`;const bs=store.bills.filter(b=>b.date===ds);income.push(bs.filter(b=>b.type==="in").reduce((a,b)=>a+b.amount,0));expense.push(bs.filter(b=>b.type==="out").reduce((a,b)=>a+b.amount,0));}
+  }else{
+    const y=+dateStr.split("-")[0];
+    labels=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+    xLabels=labels;
+    for(let i=0;i<12;i++){const ms=`${y}-${pad(i+1)}-01`,me=`${y}-${pad(i+1)}-${pad(new Date(y,i+1,0).getDate())}`;const bs=store.bills.filter(b=>b.date>=ms&&b.date<=me);income.push(bs.filter(b=>b.type==="in").reduce((a,b)=>a+b.amount,0));expense.push(bs.filter(b=>b.type==="out").reduce((a,b)=>a+b.amount,0));}
+  }
+  const hasData=income.some(v=>v>0)||expense.some(v=>v>0);
+  const title=period==="week"?"本周收支趋势":period==="month"?"本月收支趋势":"本年收支趋势";
+  if(!hasData)return `<div class="chart-title">${title}</div><div class="chart-empty">暂无收支数据</div>`;
+  const maxV=Math.max(...income,...expense,1);
+  const step=maxV>1000?1000:maxV>100?100:10;
+  const yMax=Math.ceil(maxV/step)*step;
+  const cols=labels.map((l,i)=>`<div class="acct-col" data-tip="${esc(xLabels[i])} · 收入 ${fmtMoney(income[i])} / 支出 ${fmtMoney(expense[i])}"><div class="bc in" style="height:${Math.min(100,Math.round(income[i]/maxV*100))}%;"></div><div class="bc out" style="height:${Math.min(100,Math.round(expense[i]/maxV*100))}%;"></div></div>`).join("");
+  return `<div class="chart-title">${title}</div>
+    <div style="position:relative;">
+      <div class="y-axis"><span>${fmtMoney(yMax)}</span><span>${fmtMoney(yMax/2)}</span><span>0</span></div>
+      <div class="acct-trend" style="margin-left:30px;">${cols}</div>
+    </div>
+    <div class="bar-labels" style="margin-left:30px;">${labels.map(l=>`<span>${esc(l)}</span>`).join("")}</div>
+    <div class="acct-legend"><span><i style="background:var(--accent)"></i>收入</span><span><i style="background:#C97B6E"></i>支出</span></div>
+    <div class="tiny" style="margin-top:4px;color:var(--sub);text-align:right;">纵轴：金额</div>`;
+}
+function billRow(b){
+  const a=store.accounts.find(x=>x.id===b.account);
+  const cls=b.type==="in"?"in":"out", sign=b.type==="in"?"+":"-";
+  return `<div class="bill-item">
+    <div class="bill-amt ${cls}">${sign}${fmtMoney(b.amount)}</div>
+    <div class="bill-meta"><div class="bill-cat">${esc(b.cat)}</div>
+      <div class="bill-sub">${a?esc(a.name):"未选账户"}${b.note?(" · "+esc(b.note.replace("【自动记账】",""))):""}${b.auto?'<span class="auto-tag">自动记账</span>':""}</div></div>
+    <div class="bill-acts">
+      <span class="act edt" data-action="ac-edit" data-id="${b.id}"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+      <span class="act del" data-action="ac-del" data-id="${b.id}"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span>
+    </div></div>`;
+}
+function tplRow(t){
+  const a=store.accounts.find(x=>x.id===t.account);
+  const cyc={daily:"每日",weekly:"每周",monthly:"每月"}[t.cycle]||t.cycle;
+  const when=t.cycle==="weekly"?("周"+(WD[t.weekday]||"")):t.cycle==="monthly"?(t.monthday+" 日"):"";
+  const range=t.start?(t.start+(t.end?(" ~ "+t.end):"")):"";
+  return `<div class="acct-tpl">
+    <div class="tpl-main"><div class="tpl-t">${cyc}${when?(" · "+when):""} · ${esc(t.cat)}${t.note?(" · "+esc(t.note)):""}</div>
+      <div class="tpl-s">${t.type==="in"?"收入":"支出"} ${fmtMoney(t.amount)} · 账户 ${a?esc(a.name):"未选"}${range?(" · "+range):""}</div></div>
+    <div class="tpl-amt ${t.type}">${t.type==="in"?"+":"-"}${fmtMoney(t.amount)}</div>
+    <div class="switch ${t.enabled?"on":""}" data-action="tpl-toggle" data-id="${t.id}"></div>
+    <div class="bill-acts"><span class="act edt" data-action="tpl-edit" data-id="${t.id}"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+      <span class="act del" data-action="tpl-del" data-id="${t.id}"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span></div>
+  </div>`;
+}
+function acctPanel(id,title,ico,summary,body){
+  const open=state.acctPanels[id]!==false;
+  return `<div class="wk-panel acct-panel">
+    <div class="wk-panel-head" data-action="acct-panel" data-id="${id}">
+      <svg class="wp-ico" viewBox="0 0 24 24">${ico}</svg>
+      <span class="wp-title">${title}</span>
+      ${summary?`<span class="wp-sum">${summary}</span>`:""}
+      <svg class="wp-arrow ${open?"open":""}" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="wk-panel-body" style="${open?"":"display:none;"}">${body}</div>
+  </div>`;
+}
+/* 自动记账：页面每次加载校验当日模板，去重生成 */
+function runAutoTemplates(){
+  const today=todayStr();
+  const t0=new Date(today+"T00:00:00");
+  const wd=t0.getDay(), dom=t0.getDate(), lastDay=new Date(t0.getFullYear(),t0.getMonth()+1,0).getDate();
+  let changed=false;
+  store.autotpls.forEach(t=>{
+    if(!t.enabled)return;
+    if(t.start&&today<t.start)return;
+    if(t.end&&today>t.end)return;
+    let match=false;
+    if(t.cycle==="daily")match=true;
+    else if(t.cycle==="weekly")match=(t.weekday===wd);
+    else if(t.cycle==="monthly")match=(t.monthday===dom)||(t.monthday>lastDay&&dom===lastDay);
+    if(!match)return;
+    if(store.bills.some(b=>b.tplId===t.id&&b.date===today))return;
+    store.bills.push({id:uid(),date:today,type:t.type,amount:t.amount,cat:t.cat,account:t.account,note:(t.note||"")+"【自动记账】",auto:true,tplId:t.id,ts:Date.now()});
+    changed=true;
+  });
+  if(changed)save();
+}
+function renderAccount(){
+  runAutoTemplates();
+  const d=state.acctDate, isToday=d===todayStr();
+  const period=state.acctPeriod||"week";
+  const [rStart,rEnd]=rangeBy(d,period);
+  const rangeBills=store.bills.filter(b=>b.date>=rStart&&b.date<=rEnd);
+  const sumIn=rangeBills.filter(b=>b.type==="in").reduce((a,b)=>a+b.amount,0);
+  const sumOut=rangeBills.filter(b=>b.type==="out").reduce((a,b)=>a+b.amount,0);
+  const bal=sumIn-sumOut;
+  const dayBills=store.bills.filter(b=>b.date===d).sort((a,b)=>a.ts-b.ts);
+  const dayIn=dayBills.filter(b=>b.type==="in").reduce((a,b)=>a+b.amount,0);
+  const dayOut=dayBills.filter(b=>b.type==="out").reduce((a,b)=>a+b.amount,0);
+  const type=state.acctType||"out";
+  const cats=type==="in"?IN_CATS:OUT_CATS;
+  const acctOpts=store.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("");
+  const formBody=`
+    <div class="ac-type"><span class="ac-t ${type==="in"?"on":""}" data-action="ac-type" data-t="in">收入</span><span class="ac-t exp ${type==="out"?"on":""}" data-action="ac-type" data-t="out">支出</span></div>
+    <input class="ac-amount" id="acAmount" type="number" inputmode="decimal" placeholder="0.00" value="${state.acctAmount||""}">
+    <div class="ac-cats">${cats.map(c=>`<div class="ac-cat ${state.acctCat===c?"on":""}" data-action="ac-cat" data-c="${c}">${c}</div>`).join("")}</div>
+    <div class="input" style="margin-bottom:12px;">
+      <select id="acAccount" style="border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%;">
+        <option value="">选择账户</option>${acctOpts}
+      </select>
+    </div>
+    <div class="input" style="margin-bottom:12px;"><input id="acNote" placeholder="备注（可选）" style="border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%;"></div>
+    <div class="btn btn-solid" style="width:100%;" data-action="ac-save">保存账单</div>
+    ${dayBills.length?`<div class="ac-summary" style="margin-top:14px;">${mdLabel(d)} 收入 <b style="color:var(--accent)">${fmtMoney(dayIn)}</b> · 支出 <b style="color:#C97B6E">${fmtMoney(dayOut)}</b> · 净 <b>${fmtMoney(dayIn-dayOut)}</b></div>`:""}
+    <div class="tiny" style="margin:10px 0 6px;color:var(--sub);">${mdLabel(d)} 收支记录（${dayBills.length} 条）</div>
+    ${dayBills.length?dayBills.map(billRow).join(""):`<div class="empty" style="padding:14px 0;">当日暂无账单，添加第一笔吧</div>`}`;
+  const expMap={};rangeBills.filter(b=>b.type==="out").forEach(b=>{expMap[b.cat]=(expMap[b.cat]||0)+b.amount;});
+  const statsBody=`
+    <div class="row" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;"><div class="tiny" style="font-weight:600;">${periodName(period)}统计</div>${segHtml("acct-period",period)}</div>
+    <div class="ac-stat-row">
+      <div class="ac-stat"><b style="color:var(--accent)">${fmtMoney(sumIn)}</b><i>总收入</i></div>
+      <div class="ac-stat"><b style="color:#C97B6E">${fmtMoney(sumOut)}</b><i>总支出</i></div>
+      <div class="ac-stat bal"><b>${fmtMoney(bal)}</b><i>本期结余</i></div>
+    </div>
+    <div style="margin-top:8px;"><div class="tiny" style="margin-bottom:8px;">支出分类占比</div>${moneyRatio(expMap,"暂无支出数据")}</div>
+    ${acctTrendChart(d,period)}
+    <div class="tiny" style="margin-top:14px;margin-bottom:8px;">各账户收支占比</div>
+    ${acctBalanceRatio()}`;
+  const acctBody=`
+    <div class="acct-panel">
+      ${store.accounts.map(a=>{const b=accountBalance(a.id);return `<div class="acct-list-item"><div class="acct-name">${esc(a.name)}</div><div class="acct-bal ${b<0?'neg':''}">${fmtMoney(b)}</div><div class="bill-acts"><span class="act edt" data-action="acct-edit" data-id="${a.id}"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span><span class="act del" data-action="acct-del" data-id="${a.id}"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></span></div></div>`;}).join("")}
+    </div>
+    <div class="btn btn-line" style="width:100%;margin-top:6px;" data-action="acct-add">+ 新增账户</div>`;
+  const tplBody=`
+    <div class="acct-panel">
+      ${store.autotpls.length?store.autotpls.map(tplRow).join(""):`<div class="empty" style="padding:12px 0;">暂无自动记账模板</div>`}
+    </div>
+    <div class="btn btn-line" style="width:100%;margin-top:6px;" data-action="tpl-add">+ 新增模板</div>`;
+  return `
+  <div class="card">
+    <div class="card-title"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><circle cx="17" cy="13" r="1.6"/></svg>每日记账 · ${mdLabel(d)} ${weekdayLabel(d)}${isToday?" · 今日":""}</div>
+  </div>
+  ${acctPanel("form","新增账单",'<path d="M12 5v14M5 12h14"/>', state.acctCat?("已选 "+state.acctCat):"收入 / 支出", formBody)}
+  ${acctPanel("accounts","账户管理",'<path d="M3 7h18v12H3z"/><path d="M3 7l2-3h13l2 3"/>', store.accounts.length+" 个账户 · 实时结余", acctBody)}
+  ${acctPanel("autotpl","自动记账模板",'<path d="M3 12h18M12 3v18"/>', store.autotpls.length+(store.autotpls.length===1?" 个模板":" 个模板"), tplBody)}`;
+}
+function afterAccount(){}
+/* ---- 账单 / 账户 / 模板 弹窗 ---- */
+function openBillModal(id){
+  const b=id?store.bills.find(x=>x.id===id):null;
+  let type=b?b.type:(state.acctType||"out"), cat=b?b.cat:(state.acctCat||"");
+  const amt=b?b.amount:"", note=b?(b.note||"").replace("【自动记账】",""):"", acct=b?b.account:"";
+  const drawCats=()=>((type==="in"?IN_CATS:OUT_CATS).map(c=>`<div class="ac-cat ${c===cat?"on":""}" data-c="${c}">${c}</div>`).join(""));
+  openModal(`<h3>${id?"编辑账单":"新增账单"}</h3>
+    <div class="field"><label>类型</label><div class="ac-type" style="margin-bottom:0;"><span class="ac-t ${type==="in"?"on":""}" id="bmIn">收入</span><span class="ac-t exp ${type==="out"?"on":""}" id="bmOut">支出</span></div></div>
+    <div class="field"><label>金额</label><div class="input"><input id="bmAmount" type="number" inputmode="decimal" value="${amt}" placeholder="0.00"></div></div>
+    <div class="field"><label>分类</label><div class="ac-cats" id="bmCats">${drawCats()}</div></div>
+    <div class="field"><label>账户</label><div class="input"><select id="bmAccount" style="border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%;"><option value="">未选账户</option>${store.accounts.map(a=>`<option value="${a.id}" ${a.id===acct?"selected":""}>${esc(a.name)}</option>`).join("")}</select></div></div>
+    <div class="field"><label>备注</label><div class="input"><input id="bmNote" value="${esc(note)}" placeholder="可选"></div></div>
+    <div class="modal-actions"><div class="btn btn-text" data-action="close">取消</div><div class="btn btn-solid" id="bmOk" data-id="${id||""}">保存</div></div>`);
+  const syncType=()=>{$("#bmIn").classList.toggle("on",type==="in");$("#bmOut").classList.toggle("on",type==="out");$("#bmCats").innerHTML=drawCats();bindCats();};
+  function bindCats(){modal.querySelectorAll("#bmCats .ac-cat").forEach(el=>el.onclick=()=>{cat=el.dataset.c;modal.querySelectorAll("#bmCats .ac-cat").forEach(x=>x.classList.remove("on"));el.classList.add("on");});}
+  const inp=$("#bmAmount");if(inp)inp.value=amt;
+  $("#bmIn").onclick=()=>{type="in";syncType();};
+  $("#bmOut").onclick=()=>{type="out";syncType();};
+  bindCats();
+  $("#bmOk").onclick=()=>{
+    const amount=parseFloat($("#bmAmount").value);
+    if(!(amount>0)){toast("请输入有效金额");return;}
+    if(!cat){toast("请选择分类");return;}
+    const acc=$("#bmAccount").value||null, nt=$("#bmNote").value.trim();
+    if(id){const x=store.bills.find(y=>y.id===id);if(x){x.type=type;x.amount=amount;x.cat=cat;x.account=acc;x.note=x.auto?(nt+"【自动记账】"):nt;}}
+    else store.bills.push({id:uid(),date:state.acctDate,type,amount,cat,account:acc,note:nt,auto:false,tplId:null,ts:Date.now()});
+    save();closeModal();render();toast(id?"已更新":"已保存账单");
+  };
+}
+function openAcctModal(id){
+  const a=id?store.accounts.find(x=>x.id===id):null;
+  openModal(`<h3>${id?"编辑账户":"新增账户"}</h3>
+    <div class="field"><label>账户名称</label><div class="input"><input id="amName" value="${a?esc(a.name):""}" placeholder="如：微信 / 储蓄卡"></div></div>
+    <div class="field"><label>初始余额</label><div class="input"><input id="amInit" type="number" step="0.01" value="${a?a.init:0}" placeholder="0.00"></div></div>
+    <div class="modal-actions"><div class="btn btn-text" data-action="close">取消</div><div class="btn btn-solid" id="amOk">保存</div></div>`);
+  $("#amOk").onclick=()=>{
+    const name=$("#amName").value.trim();if(!name){toast("请输入账户名称");return;}
+    const init=parseFloat($("#amInit").value)||0;
+    if(id){const x=store.accounts.find(y=>y.id===id);if(x){x.name=name;x.init=init;}}
+    else store.accounts.push({id:uid(),name,init});
+    save();closeModal();render();toast("账户已保存");
+  };
+}
+function openTplModal(id){
+  const t=id?store.autotpls.find(x=>x.id===id):null;
+  let type=t?t.type:(state.acctType||"out"), cycle=t?t.cycle:"monthly", cat=t?t.cat:"";
+  let weekday=t?t.weekday:new Date().getDay(), monthday=t?t.monthday:1;
+  const start=t?t.start:todayStr(), end=t?t.end:"", amt=t?t.amount:"", note=t?t.note:"", acct=t?t.account:"";
+  const drawCats=()=>((type==="in"?IN_CATS:OUT_CATS).map(c=>`<div class="ac-cat ${c===cat?"on":""}" data-c="${c}">${c}</div>`).join(""));
+  const whenHTML=cycle==="weekly"
+    ?`<div class="prio-pick" id="tmWk">${WD.map((w,i)=>`<div class="prio-opt ${i===weekday?"on":""}" data-w="${i}">${w}</div>`).join("")}</div>`
+    :`<div class="input"><input id="tmMd" type="number" min="1" max="31" value="${monthday}" placeholder="1-31"></div>`;
+  openModal(`<h3>${id?"编辑模板":"新增自动记账模板"}</h3>
+    <div class="field"><label>收支类型</label><div class="ac-type" style="margin-bottom:0;"><span class="ac-t ${type==="in"?"on":""}" id="tmIn">收入</span><span class="ac-t exp ${type==="out"?"on":""}" id="tmOut">支出</span></div></div>
+    <div class="field"><label>金额</label><div class="input"><input id="tmAmount" type="number" inputmode="decimal" value="${amt}" placeholder="0.00"></div></div>
+    <div class="field"><label>分类</label><div class="ac-cats" id="tmCats">${drawCats()}</div></div>
+    <div class="field"><label>绑定账户</label><div class="input"><select id="tmAccount" style="border:none;background:transparent;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%;"><option value="">未选账户</option>${store.accounts.map(a=>`<option value="${a.id}" ${a.id===acct?"selected":""}>${esc(a.name)}</option>`).join("")}</select></div></div>
+    <div class="field"><label>备注</label><div class="input"><input id="tmNote" value="${esc(note)}" placeholder="可选"></div></div>
+    <div class="field"><label>循环周期</label><div class="prio-pick" id="tmCycle">${["daily","weekly","monthly"].map(c=>`<div class="prio-opt ${c===cycle?"on":""}" data-c="${c}">${{daily:"每日",weekly:"每周",monthly:"每月"}[c]}</div>`).join("")}</div></div>
+    <div class="field" id="tmWhenField" style="${cycle==="daily"?"display:none;":""}"><label>${cycle==="weekly"?"每周星期":"每月日期"}</label>${whenHTML}</div>
+    <div class="field"><label>生效起始日期</label>${dateFieldHtml("tmStart",start)}</div>
+    <div class="field"><label>生效结束日期（留空=永久）</label>${dateFieldHtml("tmEnd",end)}</div>
+    <div class="modal-actions"><div class="btn btn-text" data-action="close">取消</div><div class="btn btn-solid" id="tmOk" data-id="${id||""}">保存</div></div>`);
+  const syncType=()=>{$("#tmIn").classList.toggle("on",type==="in");$("#tmOut").classList.toggle("on",type==="out");$("#tmCats").innerHTML=drawCats();bindCats();};
+  function bindCats(){modal.querySelectorAll("#tmCats .ac-cat").forEach(el=>el.onclick=()=>{cat=el.dataset.c;modal.querySelectorAll("#tmCats .ac-cat").forEach(x=>x.classList.remove("on"));el.classList.add("on");});}
+  $("#tmIn").onclick=()=>{type="in";syncType();};
+  $("#tmOut").onclick=()=>{type="out";syncType();};
+  bindCats();
+  modal.querySelectorAll("#tmCycle .prio-opt").forEach(el=>el.onclick=()=>{cycle=el.dataset.c;modal.querySelectorAll("#tmCycle .prio-opt").forEach(x=>x.classList.remove("on"));el.classList.add("on");renderTmWhen();});
+  function renderTmWhen(){
+    const f=$("#tmWhenField");if(!f)return;
+    if(cycle==="daily"){f.style.display="none";f.innerHTML="";return;}
+    f.style.display="";
+    if(cycle==="weekly"){f.innerHTML=`<label>每周星期</label><div class="prio-pick" id="tmWk">${WD.map((w,i)=>`<div class="prio-opt ${i===weekday?"on":""}" data-w="${i}">${w}</div>`).join("")}</div>`;const wp=$("#tmWk");if(wp)wp.querySelectorAll(".prio-opt").forEach(el=>el.onclick=()=>{weekday=+el.dataset.w;wp.querySelectorAll(".prio-opt").forEach(x=>x.classList.remove("on"));el.classList.add("on");});}
+    else{f.innerHTML=`<label>每月日期</label><div class="input"><input id="tmMd" type="number" min="1" max="31" value="${monthday}" placeholder="1-31"></div>`;}
+  }
+  $("#tmOk").onclick=()=>{
+    const amount=parseFloat($("#tmAmount").value);if(!(amount>0)){toast("请输入有效金额");return;}
+    if(!cat){toast("请选择分类");return;}
+    let wd2=weekday,md2=monthday;
+    if(cycle==="weekly"){const wp=$("#tmWk");if(wp){const on=wp.querySelector(".prio-opt.on");wd2=on?+on.dataset.w:weekday;}}
+    if(cycle==="monthly"){const md=$("#tmMd");md2=md?Math.min(31,Math.max(1,parseInt(md.value)||1)):1;}
+    const obj={type,amount,cat,account:$("#tmAccount").value||null,note:$("#tmNote").value.trim(),cycle,weekday:wd2,monthday:md2,start:$("#tmStart").value,end:$("#tmEnd").value,enabled:true};
+    if(id){const x=store.autotpls.find(y=>y.id===id);if(x)Object.assign(x,obj);}
+    else store.autotpls.push(Object.assign({id:uid()},obj));
+    save();closeModal();render();toast(id?"模板已更新":"模板已添加");
+  };
+}
+
 /* ===================== 启动 ===================== */
+runAutoTemplates();
 go("timer");
 </script>
 </body>
