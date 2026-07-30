@@ -141,6 +141,38 @@ img{-webkit-touch-callout:none;}
 .tl-fchip.on i{background:var(--c);opacity:1;}
 .tl-fchip:hover{border-color:var(--c);}
 .tl-hint{font-size:11.5px;color:var(--sub);margin-top:8px;line-height:1.6;}
+/* 数据源筛选：折叠胶囊按钮 + 下拉浮层 */
+.tl-topbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.tl-fwrap{position:relative;}
+.tl-fbtn{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:20px;background:var(--card);
+  border:1px solid var(--line);color:var(--text);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:.16s;box-shadow:var(--shadow);}
+.tl-fbtn svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+.tl-fbtn em{font-style:normal;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:9px;padding:1px 7px;}
+.tl-fbtn .cr{font-size:10px;color:var(--sub);transition:transform .18s;line-height:1;}
+.tl-fbtn:hover{border-color:var(--accent);}
+.tl-fbtn.open{border-color:var(--accent);color:var(--accent);}
+.tl-fbtn.open .cr{transform:rotate(180deg);color:var(--accent);}
+.tl-fpop{position:absolute;top:calc(100% + 8px);left:0;z-index:60;min-width:264px;max-width:min(94vw,400px);
+  background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;box-shadow:0 10px 30px rgba(0,0,0,.11);
+  animation:tlPop .16s ease;}
+@keyframes tlPop{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:none;}}
+.tl-fpop-h{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600;color:var(--sub);margin-bottom:10px;}
+.tl-fpop-h span[data-action]{color:var(--accent);cursor:pointer;font-weight:600;}
+/* 内容卡片内部头部：视图 Tab（左） + 日期与翻页（右） */
+.tl-vhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.tl-vhead .seg span{padding:6px 15px;font-size:12.5px;}
+.tl-nav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.tl-nlabel{font-size:13px;font-weight:600;color:var(--text);min-width:96px;text-align:center;letter-spacing:.2px;}
+.tl-today{font-size:11.5px;color:var(--accent);background:var(--accent-soft);border-radius:12px;padding:4px 10px;cursor:pointer;font-weight:600;white-space:nowrap;}
+.tl-today:hover{filter:brightness(.96);}
+/* 锻炼 / 学习：卡片内联日期切换 */
+.dnav{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.dnav-lbl{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--text);
+  background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:4px 11px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.dnav-lbl svg{width:13px;height:13px;stroke:var(--sub);fill:none;stroke-width:1.7;flex:none;}
+.dnav-lbl:hover{border-color:var(--accent);color:var(--accent);}
+.dnav-lbl:hover svg{stroke:var(--accent);}
 /* 日视图 */
 .tl-day{display:flex;flex-direction:column;gap:2px;}
 .tl-allday{display:grid;grid-template-columns:52px 1fr;gap:10px;padding-bottom:10px;margin-bottom:6px;border-bottom:1px dashed var(--line);}
@@ -204,6 +236,16 @@ img{-webkit-touch-callout:none;}
   .tl-hr{font-size:11px;padding-right:6px;}
   .tl-mcell{border-radius:8px;}
   .tl-mday{font-size:12px;}
+  .tl-vhead{gap:8px;}
+  .tl-vhead .seg span{padding:6px 12px;font-size:12px;}
+  .tl-nlabel{min-width:auto;font-size:12.5px;}
+  .tl-fpop{min-width:0;width:min(92vw,340px);}
+  .dnav{margin-left:auto;justify-content:flex-end;}
+  .dnav-lbl{padding:4px 9px;font-size:12px;}
+}
+@media(max-width:430px){
+  .card-title{flex-wrap:wrap;}
+  .dnav{width:100%;margin-left:0;padding-top:4px;}
 }
 
 .content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:22px;max-width:1080px;width:100%;margin:0 auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;}
@@ -739,7 +781,7 @@ if(store.settings.theme==="dark")document.documentElement.classList.add("dark");
 
 /* ===================== 全局状态 ===================== */
 const state={
-  page:"timer",
+  page:"timeline",
   timer:{running:false,mode:"up",name:"",elapsed:0,last:0,cdMin:25,id:null},
   histFilter:"all", histPage:0, histQ:"", histFold:{}, timerBatch:false, timerSel:[],
   cdFilter:"all", cdBatch:false, cdSel:[], cdQ:"", cdPage:0,
@@ -758,7 +800,8 @@ const state={
   timelineView:"day", timelineDate:todayStr(),
   // 时间线数据源多选筛选：计时器记录为历史耗时数据，默认不勾选，避免条目拥挤
   tlSrc:{workout:true,study:true,todo:true,countdown:true,timer:false},
-  pageStack:["timer"], __popping:false,
+  tlFilterOpen:false,         // 数据源筛选下拉浮层（默认收起）
+  pageStack:["timeline"], __popping:false,
   importCb:null
 };
 let timerInt=null;
@@ -1414,7 +1457,15 @@ function renderWorkout(){
   return `
   ${roBanner}
   <div class="card">
-    <div class="card-title"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>${mdLabel(d)} ${weekdayLabel(d)}${isToday?" · 今日":""}</div>
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>${mdLabel(d)} ${weekdayLabel(d)}${isToday?" · 今日":""}
+      <span class="dnav">
+        ${isToday?"":`<span class="tl-today" data-action="date-today">回到今天</span>`}
+        <button class="db-arrow" data-action="date-prev" title="前一天">‹</button>
+        <span class="dnav-lbl" data-action="date-open" title="点击选择日期"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>选择日期</span>
+        <button class="db-arrow" data-action="date-next" title="后一天">›</button>
+      </span>
+    </div>
     <div style="font-size:13px;color:${w&&w.tags.length?"var(--accent)":"var(--sub)"};font-weight:600;">${w&&w.tags.length?("已打卡："+w.tags.join("、")+" ✓"):(isToday?"尚未训练打卡":"当日无训练打卡")}</div>
   </div>
   <div class="card">
@@ -1559,7 +1610,15 @@ function renderStudy(){
     ${chart}`;
   return `
   <div class="card">
-    <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${mdLabel(d)} ${weekdayLabel(d)} 学习总览</div>
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${mdLabel(d)} ${weekdayLabel(d)} 学习总览
+      <span class="dnav">
+        ${d===todayStr()?"":`<span class="tl-today" data-action="date-today">回到今天</span>`}
+        <button class="db-arrow" data-action="date-prev" title="前一天">‹</button>
+        <span class="dnav-lbl" data-action="date-open" title="点击选择日期"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>选择日期</span>
+        <button class="db-arrow" data-action="date-next" title="后一天">›</button>
+      </span>
+    </div>
     <div class="stat" style="text-align:left;"><b style="font-size:26px;">${fmt(dayDur)}</b><i>当日专注学习时长（仅导入计时）</i></div>
   </div>
   ${stPanel("tasks","待学任务",'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', `${list.length} 个任务 · ${sv==="all"?"全部":sv==="todo"?"待完成":"已归档"}`, tasksBody)}
@@ -1873,7 +1932,9 @@ function go(page){
   $$(".tab").forEach(e=>e.classList.toggle("active",e.dataset.nav===navKey));
   $("#pageTitle").textContent=TITLES[page];
   const db=$("#dateBar");
-  if(db){const showDP=(page==="workout"||page==="study"||page==="account"||page==="timeline");db.classList.toggle("show",showDP);db.innerHTML=showDP?dateBarHtml():"";}
+  // 顶部日期选择栏仅记账页保留；时间线 / 锻炼 / 学习的日期切换全部下沉到内容卡片内部
+  if(db){const showDP=(page==="account");db.classList.toggle("show",showDP);db.innerHTML=showDP?dateBarHtml():"";}
+  if(page!=="timeline")state.tlFilterOpen=false;
   const mb=$("#moreBtn");
   if(mb)mb.style.display=(page==="workout"&&state.workoutDate!==todayStr())?"flex":"none";
   const map={timer:renderTimer,countdown:renderCountdown,workout:renderWorkout,study:renderStudy,todo:renderTodo,account:renderAccount,memo:renderMemo,trash:renderTrash,timeline:renderTimeline,noteDetail:renderNoteDetail,memoDetail:renderMemoDetail};
@@ -1928,6 +1989,8 @@ document.addEventListener("click",e=>{
   const rt=t.closest("[data-rt]");
   if(rt){rtExec(rt);return;}
   const el=t.closest("[data-action]");
+  // 数据源筛选浮层：点击按钮与浮层以外的任何区域自动收起（筛选状态保留）
+  if(state.tlFilterOpen&&!t.closest("#tlFwrap")){state.tlFilterOpen=false;if(state.page==="timeline")render();}
   if(!el)return;
   const a=el.dataset.action,id=el.dataset.id;
   // 导航类
@@ -1978,6 +2041,7 @@ document.addEventListener("click",e=>{
   /* ---- 日期切换 ---- */
   if(a==="date-prev"){shiftDate(-1);return;}
   if(a==="date-next"){shiftDate(1);return;}
+  if(a==="date-today"){setCurDate(todayStr());render();return;}
   if(a==="date-open"){openCalendar();return;}
   if(a==="date-field"){
     const cur=el.dataset.dfdate||todayStr();
@@ -2009,11 +2073,14 @@ document.addEventListener("click",e=>{
     if(nv&&nv!==state.timelineView){state.timelineView=nv;render();}
     return;
   }
+  if(a==="tl-filter-toggle"){state.tlFilterOpen=!state.tlFilterOpen;render();return;}
   if(a==="tl-src"){
     const k=el.dataset.k;
-    if(k&&state.tlSrc[k]!==undefined){state.tlSrc[k]=!state.tlSrc[k];render();}
+    if(k&&state.tlSrc[k]!==undefined){state.tlSrc[k]=!state.tlSrc[k];state.tlFilterOpen=true;render();}
     return;
   }
+  if(a==="tl-src-reset"){state.tlSrc={workout:true,study:true,todo:true,countdown:true,timer:false};state.tlFilterOpen=true;render();toast("已恢复默认数据源");return;}
+  if(a==="tl-today"){state.timelineDate=todayStr();render();return;}
   if(a==="tl-day"){
     const ds=el.dataset.date;
     if(ds){state.timelineDate=ds;state.timelineView="day";render();}
@@ -2499,12 +2566,24 @@ function tlEvents(s,e){
   });
 }
 function tlAnySrc(){return TL_SRC.some(o=>state.tlSrc[o.k]);}
+/* 数据源筛选：默认折叠，只留一枚胶囊按钮；点击展开临时下拉浮层，点空白处自动收起，状态不重置 */
 function tlFilterHtml(){
-  return `<div class="tl-filter">${TL_SRC.map(o=>{
+  const open=state.tlFilterOpen===true;
+  const onCount=TL_SRC.filter(o=>state.tlSrc[o.k]).length;
+  const chips=TL_SRC.map(o=>{
     const on=state.tlSrc[o.k]?"on":"";
     return `<span class="tl-fchip ${on}" style="--c:${tlColor(o.k)};" data-action="tl-src" data-k="${o.k}"${o.tip?` title="${o.tip}"`:""}><i></i>${o.name}</span>`;
-  }).join("")}</div>
-  <div class="tl-hint">勾选要展示的板块，日 / 周 / 月视图实时过滤。计时器记录属于历史耗时数据、非计划待办，默认关闭，复盘时再开启。</div>`;
+  }).join("");
+  const pop=open?`<div class="tl-fpop" id="tlFpop">
+    <div class="tl-fpop-h"><span>展示以下板块的数据</span><span data-action="tl-src-reset">恢复默认</span></div>
+    <div class="tl-filter">${chips}</div>
+    <div class="tl-hint">计时器记录属于历史耗时数据、非计划待办，默认关闭，复盘时再开启。</div>
+  </div>`:"";
+  return `<div class="tl-topbar"><div class="tl-fwrap" id="tlFwrap">
+    <button class="tl-fbtn ${open?"open":""}" data-action="tl-filter-toggle">
+      <svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>数据源筛选<em>${onCount}</em><i class="cr">▼</i>
+    </button>${pop}
+  </div></div>`;
 }
 function tlEmptyHtml(msg){return `<div class="empty" style="padding:44px 0;">${msg}</div>`;}
 /* ---- 日视图：纵向 24 小时轴，无事件时段不占位 ---- */
@@ -2541,13 +2620,13 @@ function tlWeekBody(ds){
     const list=by[d]||[],dt=new Date(d+"T00:00:00");
     const show=list.slice(0,MAX).map(x=>`<div class="tl-mini ${x.done?"done":""}" style="--c:${tlColor(x.type)};" data-action="tl-goto" data-type="${x.type}" data-date="${x.date}" data-id="${x.id}"><span>${esc(x.title)}</span></div>`).join("");
     const more=list.length>MAX?`<div class="tl-more" data-action="tl-day" data-date="${d}">+${list.length-MAX} 更多</div>`:"";
-    return `<div class="tl-wcol ${d===today?"today":""}">
+    return `<div class="tl-wcol ${d===today?"today":""}" data-action="tl-day" data-date="${d}" style="cursor:pointer;">
       <div class="tl-whead" data-action="tl-day" data-date="${d}"><b>${weekdayLabel(d)}</b><i>${dt.getMonth()+1}/${dt.getDate()}</i></div>
       <div class="tl-wbody">${show||`<div class="tl-wempty">—</div>`}${more}</div>
     </div>`;
   }).join("");
   return `<div class="tl-weekwrap"><div class="tl-week">${cols}</div></div>
-    <div class="tl-hint">点击日期或「+N 更多」切入日视图查看完整内容；点击条目直接前往对应模块。</div>`;
+    <div class="tl-hint">点击任意一天的格子即可切入该日的日视图；点击条目直接前往对应模块。上方 ‹ › 可翻上一周 / 下一周。</div>`;
 }
 /* ---- 月视图：自然月日历方格 ---- */
 function tlMonthBody(ds){
@@ -2566,7 +2645,7 @@ function tlMonthBody(ds){
     const pop=list.length?`<div class="tl-pop"><div class="tl-pop-h">${mdLabel(d)} · ${weekdayLabel(d)} · ${list.length} 条</div>
       ${list.slice(0,5).map(x=>`<div class="tl-pop-i" style="--c:${tlColor(x.type)};"><b></b><span>${esc(x.title)}</span></div>`).join("")}
       ${list.length>5?`<div class="tl-pop-i" style="opacity:.7;"><span style="color:var(--sub);">还有 ${list.length-5} 条…</span></div>`:""}</div>`:"";
-    cells+=`<div class="tl-mcell ${list.length?"has":""} ${d===today?"today":""}"${list.length?` data-action="tl-day" data-date="${d}"`:""}>
+    cells+=`<div class="tl-mcell ${list.length?"has":""} ${d===today?"today":""}" data-action="tl-day" data-date="${d}" style="cursor:pointer;">
       <span class="tl-mday">${dnum}</span><span class="tl-mdots">${dots}</span>${pop}</div>`;
   }
   const rest=(7-((lead+total)%7))%7;
@@ -2574,26 +2653,34 @@ function tlMonthBody(ds){
   return `<div class="tl-mhead">${["一","二","三","四","五","六","日"].map(w=>`<span>${w}</span>`).join("")}</div>
     <div class="tl-mgrid">${cells}</div>
     ${items.length?"":tlEmptyHtml("本月暂无相关计划或记录")}
-    <div class="tl-hint">彩色圆点表示当日存在事件，悬浮可预览摘要，点击日期跳转日视图。</div>`;
+    <div class="tl-hint">彩色圆点表示当日存在事件，悬浮可预览摘要，点击任意日期方格即可跳转该日的日视图。上方 ‹ › 可翻上一月 / 下一月。</div>`;
+}
+/* 视图 Tab 放内容卡片左上角（不带 margin-left:auto） */
+function tlSegHtml(v){
+  return `<span class="seg">${[{p:"day",label:"日"},{p:"week",label:"周"},{p:"month",label:"月"}]
+    .map(it=>`<span class="${v===it.p?"on":""}" data-action="tl-view" data-p="${it.p}">${it.label}</span>`).join("")}</span>`;
 }
 function renderTimeline(){
-  const v=state.timelineView,d=state.timelineDate,[s,e]=rangeBy(d,v);
-  let label="";
-  if(v==="day")label=`${mdLabel(d)} · ${weekdayLabel(d)}`;
-  else if(v==="week")label=`${mdLabel(s)} - ${mdLabel(e)}`;
-  else label=`${d.split("-")[0]} 年 ${+d.split("-")[1]} 月`;
+  const v=state.timelineView,d=state.timelineDate,[s,e]=rangeBy(d,v),today=todayStr();
+  let label="",prevTip="",nextTip="";
+  if(v==="day"){label=`${mdLabel(d)} · ${weekdayLabel(d)}`;prevTip="前一天";nextTip="后一天";}
+  else if(v==="week"){label=`${mdLabel(s)} - ${mdLabel(e)}`;prevTip="上一周";nextTip="下一周";}
+  else{label=`${d.split("-")[0]} 年 ${+d.split("-")[1]} 月`;prevTip="上一月";nextTip="下一月";}
+  const inRange=today>=s&&today<=e;
   const body=!tlAnySrc()
-    ? tlEmptyHtml("未选择任何数据源<br>请在上方勾选需要展示的板块")
+    ? tlEmptyHtml("未选择任何数据源<br>请点击左上角「数据源筛选」勾选板块")
     : v==="day"?tlDayBody(d):v==="week"?tlWeekBody(d):tlMonthBody(d);
   return `
-  <div class="card" style="margin-bottom:14px;">
-    <div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>数据源筛选</div>
-    ${tlFilterHtml()}
-  </div>
+  ${tlFilterHtml()}
   <div class="card">
-    <div class="card-title" style="justify-content:space-between;">
-      <span style="display:flex;align-items:center;gap:8px;">${esc(label)}</span>
-      ${segHtmlG("tl-view",v,[{p:"day",label:"日"},{p:"week",label:"周"},{p:"month",label:"月"}])}
+    <div class="tl-vhead">
+      ${tlSegHtml(v)}
+      <div class="tl-nav">
+        ${inRange?"":`<span class="tl-today" data-action="tl-today">回到今天</span>`}
+        <button class="db-arrow" data-action="date-prev" title="${prevTip}">‹</button>
+        <span class="tl-nlabel">${esc(label)}</span>
+        <button class="db-arrow" data-action="date-next" title="${nextTip}">›</button>
+      </div>
     </div>
     ${body}
   </div>`;
@@ -2920,9 +3007,9 @@ function openTplModal(id){
 
 /* ===================== 启动 ===================== */
 runAutoTemplates();
-go("timer");
+go("timeline");
 // 移动端返回键守卫：先压入一个空 guard，让返回键触发 popstate 而不是直接退出
-history.replaceState({page:"timer"},"");
+history.replaceState({page:"timeline"},"");
 history.pushState({guard:true},"");
 window.addEventListener("popstate",e=>{
   if(overlay.classList.contains("show")){closeModal();history.pushState({page:state.page},"");return;}
@@ -2932,7 +3019,7 @@ window.addEventListener("popstate",e=>{
     state.__popping=true;go(e.state.page);state.__popping=false;return;
   }
   // guard 被弹出：若不在首页则回到首页，否则让浏览器默认退出
-  if(state.page!=="timer"){state.__popping=true;go("timer");state.__popping=false;}
+  if(state.page!=="timeline"){state.__popping=true;go("timeline");state.__popping=false;}
 });
 </script>
 </body>
