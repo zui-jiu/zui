@@ -211,8 +211,8 @@ img{-webkit-touch-callout:none;}
 /* 总览事件浮窗 */
 .tl-popover{position:fixed;z-index:70;width:280px;max-width:calc(100vw - 16px);max-height:70vh;overflow:auto;
   background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.14);
-  padding:10px 0;}
-.tl-popover-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px 8px;border-bottom:1px solid var(--line);margin-bottom:8px;}
+  padding:0 0 10px;}
+.tl-popover-h{position:sticky;top:0;background:var(--card);z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 8px;border-bottom:1px solid var(--line);margin:0 0 8px;}
 .tl-popover-h b{font-size:13px;font-weight:600;color:var(--text);}
 .tl-popover-h span{font-size:15px;color:var(--sub);cursor:pointer;padding:2px 4px;}
 .tl-popover-h span:hover{color:var(--accent);}
@@ -2117,6 +2117,20 @@ function updateSideTrash(){/* 左侧栏回收站不再显示条数徽标 */}
 overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
 /* 点日历遮罩空白处只关日历本身，绝不影响底层的新增/编辑弹窗（避免“弹窗闪退”） */
 calOverlay.addEventListener("click",e=>{if(e.target===calOverlay){closeCalModal();}});
+/* 移动端：日历弹窗左右滑动切换月份（横向滑动距离 > 纵向，且超过阈值） */
+let calSwipeStart=null;
+calModal.addEventListener("touchstart",e=>{calSwipeStart={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
+calModal.addEventListener("touchend",e=>{
+  if(!calSwipeStart)return;
+  const endX=e.changedTouches[0].clientX,endY=e.changedTouches[0].clientY;
+  const dx=endX-calSwipeStart.x,dy=endY-calSwipeStart.y;
+  calSwipeStart=null;
+  if(Math.abs(dx)<50||Math.abs(dx)<=Math.abs(dy))return;
+  if(!calOverlay.classList.contains("show"))return;
+  if(dx<0){calMonth.m++;if(calMonth.m>11){calMonth.m=0;calMonth.y++;}}
+  else{calMonth.m--;if(calMonth.m<0){calMonth.m=11;calMonth.y--;}}
+  refreshCalendar();
+},{passive:true});
 function field(label,inner){return `<div class="field"><label>${label}</label>${inner}</div>`;}
 
 /* 计时器导入选择器：仅显示当前页面日期对应的计时记录 */
