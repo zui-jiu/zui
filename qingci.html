@@ -928,17 +928,26 @@ const state={
 let timerInt=null;
 
 /* ===================== 计时器 ===================== */
+function timerTick(){
+  const tm=state.timer;if(!tm.running)return;
+  const now=Date.now();
+  const delta=Math.floor((now-tm.last)/1000);
+  if(delta<=0)return;
+  if(tm.mode==="up")tm.elapsed+=delta;
+  else{
+    tm.elapsed-=delta;
+    if(tm.elapsed<=0){tm.elapsed=0;timerStop(true);return;}
+  }
+  tm.last=now;
+  const el=$("#timerBig");if(el)el.textContent=fmt(tm.elapsed);
+  const st=$("#timerState");if(st)st.textContent=(tm.mode==="up"?"正计时":"倒计时")+(tm.running?"进行中":"已暂停");
+}
 function timerStart(){
   const tm=state.timer;
   if(tm.running)return;
   tm.running=true;tm.last=Date.now();
   if(!tm.id)tm.id=uid();
-  timerInt=setInterval(()=>{
-    if(tm.mode==="up")tm.elapsed+=1;
-    else{tm.elapsed-=1;if(tm.elapsed<=0){tm.elapsed=0;timerStop(true);}}
-    const el=$("#timerBig");if(el)el.textContent=fmt(tm.elapsed);
-    const st=$("#timerState");if(st)st.textContent=(tm.mode==="up"?"正计时":"倒计时")+(tm.running?"进行中":"已暂停");
-  },1000);
+  timerInt=setInterval(timerTick,1000);
   render();
 }
 function timerPause(){
@@ -955,6 +964,8 @@ function timerStop(auto){
   state.timer={running:false,mode:tm.mode,name:"",elapsed:0,last:0,cdMin:tm.cdMin,id:null};
   render();
 }
+/* 切回页面/解锁屏幕时立即根据真实时间校准计时器，弥补移动端后台冻结/节流导致的丢失 */
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&state.timer.running)timerTick();});
 function timerDisplay(){
   const tm=state.timer;
   return `<div class="card" style="text-align:center;padding:34px 16px 28px;">
@@ -1187,6 +1198,7 @@ function cdStartDrag(item,x,y,pointerId){
 }
 function cdPointerDown(e){
   if(state.cdBatch)return;
+  if(cdTouch&&cdTouch.item)return; // 移动端 touch 回退已接管
   const item=cdCanDrag(e.target); if(!item||!item.dataset.cdId)return;
   if(cdDrag){cdEnd();}
   cdDrag={el:item,started:false,longTimer:null,x:e.clientX,y:e.clientY,pointerId:e.pointerId};
@@ -1228,7 +1240,48 @@ document.addEventListener("pointerdown",cdPointerDown);
 document.addEventListener("pointermove",cdPointerMove,{passive:false});
 document.addEventListener("pointerup",cdEnd);
 document.addEventListener("pointercancel",cdEnd);
-document.addEventListener("touchstart",e=>{if(state.cdBatch)return; const item=cdCanDrag(e.target); if(item){/* touch fallback, pointer events handle most */}},{passive:false});
+/* 移动端 touch 回退：部分浏览器 pointer events 对长按拖拽支持不佳，用 touch 事件兜底 */
+let cdTouch=null;
+document.addEventListener("touchstart",e=>{
+  if(state.cdBatch)return;
+  if(cdDrag&&cdDrag.started)return;
+  const item=cdCanDrag(e.target); if(!item)return;
+  const t=e.touches[0];
+  cdTouch={item,el:null,x:t.clientX,y:t.clientY,t:Date.now(),started:false};
+},{passive:true});
+document.addEventListener("touchmove",e=>{
+  if(!cdTouch)return;
+  const t=e.touches[0];
+  if(!cdTouch.started){
+    if(Math.abs(t.clientX-cdTouch.x)>8||Math.abs(t.clientY-cdTouch.y)>8){cdTouch=null;return;}
+    if(Date.now()-cdTouch.t<400)return;
+    cdTouch.started=true;cdTouch.el=cdTouch.item;
+    const el=cdTouch.el;
+    el.classList.add("dragging");el.style.opacity=".55";el.style.pointerEvents="none";
+    toast("拖动排序（松手保存）");
+  }
+  e.preventDefault();
+  const el=cdTouch.el, under=document.elementFromPoint(t.clientX,t.clientY);
+  const tItem=under&&under.closest?under.closest(".list-item.cd-item"):null;
+  if(tItem&&tItem!==el&&tItem.dataset.cdId){
+    const r=tItem.getBoundingClientRect();
+    const after=(t.clientY-(r.top+r.height/2))>0;
+    el.parentNode.insertBefore(el, after?tItem.nextSibling:tItem);
+  }
+},{passive:false});
+document.addEventListener("touchend",e=>{
+  if(!cdTouch)return;
+  const t=cdTouch;cdTouch=null;
+  if(t.started&&t.el){
+    t.el.classList.remove("dragging");t.el.style.opacity="";t.el.style.pointerEvents="";
+    const ids=[...t.el.parentNode.querySelectorAll(".list-item.cd-item")].map(n=>n.dataset.cdId).filter(Boolean);
+    store.countdowns.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id));
+    save();
+    cdJustDragged=true;setTimeout(()=>{cdJustDragged=false;},350);
+    if(state.page==="countdown")renderCountdown();
+  }
+});
+document.addEventListener("touchcancel",e=>{if(cdTouch){const t=cdTouch;cdTouch=null;if(t.started&&t.el){t.el.classList.remove("dragging");t.el.style.opacity="";t.el.style.pointerEvents="";}}});
 document.addEventListener("contextmenu",e=>{
   const item=e.target&&e.target.closest?e.target.closest(".cd-item"):null;
   if(item)e.preventDefault();
@@ -2805,7 +2858,8 @@ function tlEvents(s,e){
     }else if(c.target>=s&&c.target<=e)hit.push(c.target);
     hit.forEach(ds=>{
       const diff=daysBetween(todayStr(),ds);
-      const bits=[diff>0?`还有 ${diff} 天`:diff<0?`已经${-diff}天`:"就是今天"];
+      const pastDays=diff<0?(Math.abs(diff)+(c.pastMode?1:0)):0;
+      const bits=[diff>0?`还有 ${diff} 天`:diff<0?`已经${pastDays}天`:"就是今天"];
       if(c.yearly)bits.push("每年循环");
       if(c.note)bits.push(c.note);
       arr.push({type:"countdown",id:c.id,date:ds,ts:null,dur:0,done:false,title:c.title||"倒数日",sub:bits.join(" · ")});
