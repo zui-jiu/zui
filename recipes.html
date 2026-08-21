@@ -1232,6 +1232,12 @@ function init(){
   // 软键盘弹起时隐藏底部生成按钮，避免遮挡
   document.addEventListener("focusin",e=>{ if(e.target.matches("input,textarea")){ const ab=document.querySelector(".action-bar"); if(ab)ab.style.display="none"; } });
   document.addEventListener("focusout",e=>{ if(e.target.matches("input,textarea")){ const ab=document.querySelector(".action-bar"); if(ab)ab.style.display="flex"; } });
+  // 注册 Service Worker —— 让 Chrome 识别为可安装 PWA（而非仅快捷方式）
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",()=>{
+      navigator.serviceWorker.register("./sw.js").then(()=>{}).catch(()=>{});
+    });
+  }
 }
 init();
 </script>
