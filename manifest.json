@@ -2,7 +2,7 @@
   "name": "减脂菜单工作台",
   "short_name": "减脂菜单",
   "description": "基于家中食材或盲盒自动生成减脂方案，支持饮食禁忌、身体数据与采购清单",
-  "start_url": "./caidan.html",
+  "start_url": "./recipes.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -11,9 +11,9 @@
   "lang": "zh-CN",
   "icons": [
     {
-      "src": "icon.jpg",
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
